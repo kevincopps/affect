@@ -1,0 +1,469 @@
+#include <algorithm>
+#include <cassert>
+#include <cstring>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::vector;
+
+extern "C" {
+#include "exodusII.h"
+}
+
+#include "connect.hpp"
+#include "duration.hpp"
+#include "element_topology.hpp"
+#include "connect_util.hpp"
+
+
+void convert_to_tetra8(const std::string& filename, bool isDistFactorUnity) {
+
+  int64_t CPU_word_size, IO_word_size, error;
+  float version;
+  CPU_word_size = sizeof(double);
+  IO_word_size = 0;
+
+  int64_t exoin = ex_open (filename.c_str(), EX_READ, &CPU_word_size,
+                       &IO_word_size, &version);
+  if (exoin < 1) {
+    cerr << "Could not open file: " << 
+                 filename << 
+                 endl << 
+                 "exiting..." << 
+                 endl;
+    exit(1);
+  }
+
+  // read database parameters
+  int64_t num_dim, num_nodes, num_elem, num_elem_blk,
+      num_node_sets, num_side_sets;
+  char title[MAX_LINE_LENGTH+1];
+  
+  error = ex_get_init (exoin, title, &num_dim, &num_nodes,
+                       &num_elem, &num_elem_blk, 
+                       &num_node_sets, &num_side_sets);
+  cout  << "----------------" << endl
+        << "EXODUS II FILE: " << filename << endl
+        << "  title = " << title << endl
+        << "  num_dim = " << num_dim << endl
+        << "  num_nodes = " << num_nodes  << endl
+        << "  num_elem = " << num_elem << endl
+        << "  num_elem_blk = " << num_elem_blk << endl
+        << "  num_node_sets = " << num_node_sets << endl
+        << "  num_side_sets = " << num_side_sets << endl;
+  cout.flush();
+  
+  if (num_side_sets > 0) { // this routine does not work with sidesets yet
+    cout << endl << "!!! WARNING !!!" << endl <<
+            "  This function ignores sides sets, " <<
+            "they will not exist in the new mesh." << endl;
+  }
+  num_side_sets = 0;
+  
+  //
+  // read the node sets
+  //
+  vector<int64_t> node_set_ids(num_node_sets);
+  error = ex_get_node_set_ids(exoin, &node_set_ids[0]);
+  assert( error == 0);
+  vector< vector<int64_t> > node_lists(num_node_sets);
+  vector< vector<double> > dist_factors(num_node_sets);
+  
+  for (int64_t inodeset = 0; inodeset < num_node_sets; ++inodeset) {
+  
+    int64_t id = node_set_ids[inodeset];
+    int64_t num_nodes_in_set, num_df_in_set;
+    error = ex_get_node_set_param (exoin, id, &num_nodes_in_set, &num_df_in_set);
+
+    // read node set node list
+    node_lists[inodeset].resize(num_nodes_in_set, 0);
+    error = ex_get_node_set (exoin, id, &(node_lists[inodeset])[0] );
+    assert(error == 0);
+    to_zero_based(num_nodes_in_set, &(node_lists[inodeset])[0]);
+    
+    // read node set distribution factors
+    dist_factors[inodeset].resize(num_nodes_in_set, 0.0);
+    if (isDistFactorUnity) {
+      num_df_in_set = num_nodes_in_set;
+      std::fill(dist_factors[inodeset].begin(), dist_factors[inodeset].end(), 1.0);
+    }
+    else {
+      if (num_df_in_set == 0) continue;    
+      error = ex_get_node_set_dist_fact (exoin, id, &(dist_factors[inodeset])[0]);
+      assert(error == 0);
+    }
+  }
+
+  //
+  // get element block IDs
+  //
+  vector<int64_t> elem_blk_ids(num_elem_blk);
+  error = ex_get_elem_blk_ids (exoin, &elem_blk_ids[0]);
+  
+  if (num_elem_blk != 1) {
+    cerr << "Conversion to TETRA8 only works with a single element block." << endl;
+    exit(1);
+  }
+  
+  vector<double> x, y, z;  
+  vector<int64_t> elementToNode;
+
+  int64_t num_el_in_blk = 0;
+  int64_t numNewNodes = 0, numTotalNodes = 0;
+  for (int64_t iblock = 0; iblock < num_elem_blk; ++iblock) {
+  
+    int64_t id = elem_blk_ids[iblock];
+
+    int64_t numVertexPerElement, num_attr;
+    char elem_type[MAX_STR_LENGTH+1];
+
+    int64_t error = ex_get_elem_block (exoin, id, elem_type, &num_el_in_blk, 
+                                   &numVertexPerElement, &num_attr);
+
+    cout  << "  --------" << endl
+          << "  elem block ID: " << id << endl
+          << "    elem_type = " << elem_type << endl
+          << "    num_el_in_blk = " << num_el_in_blk << endl
+          << "    numVertexPerElement = " << numVertexPerElement << endl
+          << "    num_attr = " << num_attr << endl;
+
+    cout.flush();
+    
+    if ( ! is_element_name(elem_type,TET4_aliases) ) continue;
+    assert( numVertexPerElement == 4 );
+    
+    int64_t numVertex = num_nodes;
+    int64_t numElement = num_el_in_blk;
+    
+    //START_DURATION(0);
+        
+    vector<int64_t> elementToVertex(numVertexPerElement * numElement);
+    error = ex_get_elem_conn (exoin, id, &elementToVertex[0]);
+    
+    //STOP_DURATION(0,ex_get_elem_conn);        
+      
+    int64_t numVertexPerFace = 3;
+    
+    to_zero_based(numVertexPerElement*numElement, &elementToVertex[0]);
+    
+    vector<int64_t> vertexToElement, vertexToElementBegin;
+    int64_t maxElementPerVertex = 0;
+
+    //    
+    // process the vertex-to-element connectivity
+    //
+    START_DURATION(1);
+    maxElementPerVertex = connect_vertex_to_element(
+                            numVertex, 
+                            numVertexPerElement, 
+                            numElement, 
+                            &elementToVertex[0],
+                            vertexToElementBegin,
+                            vertexToElement);
+    STOP_DURATION(1,connect_vertex_to_element);
+    
+    //
+    // compute element neighbors
+    //
+    vector<int64_t> elemSet(maxElementPerVertex);
+    vector<int64_t> neighbor(TET4_num_face * numElement);
+    int64_t numBoundaryFaces = neighbor_tet(
+      numElement,
+      &elemSet[0],
+      &elementToVertex[0],
+      &vertexToElement[0],
+      &vertexToElementBegin[0],
+      &neighbor[0]);
+      
+    //
+    // read vertex node coordinates (only works for a single element block)
+    //
+    assert(num_elem_blk == 1);    
+    numNewNodes = (numElement * TET4_num_face - numBoundaryFaces) / 2 +
+                      numBoundaryFaces;
+    numTotalNodes = num_nodes + numNewNodes;
+    x.resize(numTotalNodes);
+    y.resize(numTotalNodes);
+    z.resize(numTotalNodes);
+    error = ex_get_coord(exoin, &x[0], &y[0], &z[0]);
+    assert(error == 0);
+      
+    //
+    // update arrays with the new nodes, one element at a time
+    //
+    numNewNodes = num_nodes;
+    elementToNode.resize(8 * numElement);
+    vector<int64_t> nodesets[3]; // node sets that three nodes on a face belong to
+    vector<int64_t> tempNodeSets, commonNodeSets;
+    for (int64_t ielem = 0; ielem < numElement; ++ielem) {
+      
+      // copy old nodes first
+      int64_t* first = &elementToVertex[ielem*4];
+      int64_t* last = first + 4;
+      int64_t* dest = &elementToNode[ielem*8];
+      std::copy(first, last, dest);
+      
+      // then add new side nodes
+      for (int64_t iside = 0; iside < 4; ++iside) {
+
+        int64_t nside = neighbor[ielem*4 + iside]; // get the neighbor
+        
+        // clear current node sets array
+        for (int64_t knode = 0; knode < 3; ++knode)
+          nodesets[knode].clear();
+
+        if (nside < 0 || nside > ielem) {
+
+          // this face is on the subdomain boundary, or
+          // this is the first time we have encountered this face
+          
+          // loop over surrounding vertex nodes on this face:
+          // average the coordinates, and dist factors,
+          // and make lists of nodesets that each vertex belongs to
+          double xsum = 0.0, ysum = 0.0, zsum = 0.0;
+          vector<double> avgDistFactors(num_node_sets, 0.0);
+
+          for (int64_t inode = 0; inode < 3; ++inode) {
+            int64_t index = TET4_face_vertex_order[3*iside+inode];
+            int64_t gnode = elementToVertex[ielem*4+index];
+            xsum += x[gnode];
+            ysum += y[gnode];
+            zsum += z[gnode];
+
+            // unless this face is on boundary,
+            // skip processing of node sets
+            if (nside >= 0) continue;
+            
+            for (int64_t jset = 0; jset < num_node_sets; ++jset) {
+
+              int64_t pos = 0, length = (int)node_lists[jset].size();
+              for ( ; pos < length; ++pos)
+                if (gnode == node_lists[jset].at(pos)) break;
+              if (pos >= length) continue;
+
+              // we found inode inside node_list[jset]
+              // add this jset to the set of nodesets that include inode
+              nodesets[inode].push_back( jset );
+                
+              // sum the distribution factor
+              if (!dist_factors[jset].empty())
+                avgDistFactors[jset] += dist_factors[jset].at(pos);
+            }
+          }
+
+          // coordinate is average of surrounding vertices
+          x[numNewNodes] = xsum / 3.0;
+          y[numNewNodes] = ysum / 3.0;
+          z[numNewNodes] = zsum / 3.0;
+          
+          // only process node sets if face is on boundary
+          if (nside < 0) {
+          
+            // distribution factors may not be fully populated,
+            // but average all of them
+            for (int64_t mset = 0; mset < num_node_sets; ++mset)
+              avgDistFactors[mset] /= 3.0;
+             
+            // if all surrounding vertices are members of same node set,
+            // add the new node to the set
+            commonNodeSets.clear(); // we will find if there is an intersection of the nodes in node sets
+            tempNodeSets.clear();
+            std::back_insert_iterator<vector<int64_t> > iterCommon ( commonNodeSets );
+            std::back_insert_iterator<vector<int64_t> > iterTemp ( tempNodeSets );
+            std::set_intersection( nodesets[0].begin(), nodesets[0].end(), 
+                                  nodesets[1].begin(), nodesets[1].end(), 
+                                  iterTemp);
+            std::set_intersection( nodesets[2].begin(), nodesets[2].end(), 
+                                  tempNodeSets.begin(), tempNodeSets.end(), 
+                                  iterCommon);
+            for (int64_t icommon = 0; icommon < (int)commonNodeSets.size(); ++icommon) {
+              int64_t kset = commonNodeSets[icommon];
+              node_lists[ kset ].push_back( numNewNodes );
+              if (!dist_factors[ kset ].empty()) {
+                double avgDist = avgDistFactors[kset];
+                dist_factors[kset].push_back( avgDist );
+              }
+            }
+          } // node sets for new nodes on boundary
+          
+          // set the entry in the element->node connectivity
+          int64_t localNode = TET8_face_vertex_order[4*iside + 3];
+          elementToNode[ielem*8 + localNode] = numNewNodes++;
+        }
+        else {
+          
+          // this node has already been initialized
+          // find out which neighbor's face this is
+          const int64_t* localVertex = &elementToVertex[ TET4_num_vertex*ielem ];
+          const int64_t* faceVertex = &TET4_face_vertex_order[ TET4_num_vertex_per_face*iside ];
+          int64_t ivertex0 = localVertex[ faceVertex[0] ],
+              ivertex1 = localVertex[ faceVertex[1] ],
+              ivertex2 = localVertex[ faceVertex[2] ];
+          
+          int64_t jside = which_face(
+            TET4_face_vertex_order,
+            TET4_num_face,
+            TET4_num_vertex_per_face,
+            &elementToVertex[TET4_num_vertex*nside],  // neighbor vertex nodes
+            ivertex0,
+            ivertex1, 
+            ivertex2);
+          assert( jside < TET4_num_face);
+            
+          // and get the new node number on this neighbor's face
+          int64_t newNode = elementToNode[nside*8 + 4 + jside];
+          
+          // set the entry in the element->node connectivity
+          int64_t localNode = TET8_face_vertex_order[4*iside + 3];
+          elementToNode[ielem*8 + localNode] = newNode;
+         
+        } // neighbor was found
+      } // iside
+    } // ielem
+  } // iblock
+
+  num_nodes = numNewNodes;
+  assert( num_nodes == numTotalNodes);
+  
+  //-----------------------------------------------------------------
+  // Write the output file.
+  //
+
+  /* create EXODUS II file */
+  std::string newFileName( filename + ".tet8" );
+  int64_t exoout = ex_create(
+                  newFileName.c_str(), /* filename path */
+                  EX_CLOBBER,/* create mode */
+                  &CPU_word_size,/* CPU float word size in bytes */
+                  &IO_word_size);/* I/O float word size in bytes */
+  /* ncopts = NC_VERBOSE; */
+
+  //
+  // initialize file with parameters
+  //
+  std::string outTitle(title + std::string("-tet8"));
+  error = ex_put_init (exoout, outTitle.c_str(), num_dim, num_nodes, num_elem,
+                       num_elem_blk, num_node_sets, num_side_sets);
+
+  //
+  // write nodal coordinates
+  //
+  error = ex_put_coord (exoout, &x[0], &y[0], &z[0]);
+  char *coord_names[3];
+  coord_names[0] = "xcoor";
+  coord_names[1] = "ycoor";
+  coord_names[2] = "zcoor";
+  error = ex_put_coord_names (exoout, coord_names);
+
+  //
+  // write element order map
+  //
+  {
+    vector<int64_t> elem_map(num_elem, 0);
+    for (int64_t i = 0; i < num_elem; i++)
+      elem_map[i] = i+1;
+    error = ex_put_map (exoout, &elem_map[0]);
+  }
+
+  /* write element block parameters */
+  error = ex_put_elem_block (exoout, elem_blk_ids[0], "TETRA8", 
+            num_el_in_blk, 8, 1);
+
+  /* write element block properties */
+  /*
+    prop_names[0] = "TOP";
+    prop_names[1] = "RIGHT";
+    error = ex_put_prop_names(exoid,EX_ELEM_BLOCK,2,prop_names);
+  */
+
+  //
+  // write element connectivity
+  //
+  to_one_based( num_el_in_blk*8, &elementToNode[0]);
+  error = ex_put_elem_conn (exoout, elem_blk_ids[0], &elementToNode[0]);
+
+  //
+  // write element block attributes
+  //
+  //attrib[0] = 3.14159;
+  //error = ex_put_elem_attr (exoid, ebids[0], attrib);
+
+  //
+  // write individual node sets
+  //
+  for (int64_t lset = 0; lset < num_node_sets; ++lset) {
+  
+    int64_t node_set_id = node_set_ids[lset];
+    int64_t num_nodes_in_set = (int)node_lists[lset].size();
+    int64_t num_dist_in_set = (int)dist_factors[lset].size();
+  
+    error = ex_put_node_set_param( exoout, node_set_id,
+              num_nodes_in_set, num_dist_in_set);
+    to_one_based(num_nodes_in_set, &(node_lists[lset])[0]);
+    error = ex_put_node_set (exoout, node_set_id, 
+              &(node_lists[lset])[0] );
+    error = ex_put_node_set_dist_fact (exoout, node_set_id, 
+              &(dist_factors[lset])[0] );
+    // error = ex_put_node_set_param (exoid, 21, 3, 3);
+    // error = ex_put_prop(exoid, EX_NODE_SET, 20, "FACE", 4);
+    //prop_array[0] = 1000;
+    //prop_array[1] = 2000;
+    //error = ex_put_prop_array(exoid, EX_NODE_SET, "VELOCITY", prop_array);  
+  }
+  
+  char* cdum = NULL;
+  float fdum;
+
+  //
+  // copy QA records
+  //
+  {
+    int64_t num_qa_rec;
+    const int64_t MAX_QA_REC = 120;
+    char *qa_record[MAX_QA_REC][4];
+    ex_inquire (exoin, EX_INQ_QA, &num_qa_rec, &fdum, cdum);
+    num_qa_rec += 1;
+    for (int64_t iqa = 0; iqa < num_qa_rec; ++iqa)
+      for (int64_t j = 0; j < 4; ++j)
+        qa_record[iqa][j] = (char *) calloc ((MAX_STR_LENGTH+1), sizeof(char));
+    if (num_qa_rec > 1) error = ex_get_qa (exoin, qa_record);  
+    
+    strcpy(qa_record[num_qa_rec-1][0], "AFFECT");
+    strcpy(qa_record[num_qa_rec-1][1], "alpha version");
+    strcpy(qa_record[num_qa_rec-1][2], "04/27/04");
+    strcpy(qa_record[num_qa_rec-1][3], "00:00:00");
+    error = ex_put_qa(exoout, num_qa_rec, qa_record);
+    for (int64_t iqa = 0; iqa < num_qa_rec; ++iqa)
+      for (int64_t j = 0; j < 4; ++j)
+        free(qa_record[iqa][j]);
+  }
+
+  //
+  // copy information records
+  //
+  {
+    const int64_t MAXINFO = 120;
+    char *info[MAXINFO];
+    int64_t num_info;
+    error = ex_inquire (exoin,EX_INQ_INFO,&num_info,&fdum,cdum);
+    num_info += 1;
+    for ( int64_t iinfo = 0; iinfo < num_info; iinfo++)
+      info[iinfo] = (char *) calloc ((MAX_LINE_LENGTH+1), sizeof(char));
+    if (num_info > 1) error = ex_get_info (exoin, info);  
+    strcpy(info[num_info-1], "TETRA4 mesh converted to TETRA8 by AFFECT.");
+    error = ex_put_info (exoout, num_info, info);
+    for ( int64_t iinfo = 0; iinfo < num_info; iinfo++)
+      free(info[iinfo]);
+  }
+
+  ex_close(exoin);
+  ex_close(exoout);
+
+  return;
+}
+

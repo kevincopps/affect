@@ -4,7 +4,10 @@
 *.so
 
 # Packages
+__pycache__
+.cache
 *.egg
+*.eggs
 *.egg-info
 dist
 build
@@ -17,20 +20,33 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-__pycache__
 
 # Installer logs
 pip-log.txt
 
-# Unit test / coverage reports
+# testing / benchmarks / coverage reports
+benchmarks/env
 .coverage
 .tox
-nosetests.xml
+
+# documentation
+docs/_build
+
+# examples and notebooks
+demo/.ipynb_checkpoints
 
 # Translations
 *.mo
 
-# Mr Developer
+# Komodo IDE
+*.komodoproject
+
+# IDE
+.idea
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Other
+.DS_Store
+*_dropbox

@@ -7,14 +7,15 @@ CLEAN_PRINT = @echo "${BOLD}Removing previous build results.${NORMAL}"
 
 build:
 	$(BUILD_PRINT)
-	@cd affect && ./build.sh
+	@python setup.py build_ext -i 2>&1 | python makewarn.py "warning: \"Using deprecated NumPy API" 4 3
 
 test:
-	cd tests && nosetests -v -s
+	pytest -s affect/tests
 
 clean:
 	$(CLEAN_PRINT)
-	@cd affect && rm -rf exodus.c exodus.so build
+	@rm -rf build
+	@cd affect && rm -rf exodus.cpp connect.cpp *.so __pycache__
 
 doc:
 	@cd doc && make html

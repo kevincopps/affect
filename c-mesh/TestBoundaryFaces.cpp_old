@@ -1,0 +1,189 @@
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include <iomanip>
+#include <locale>
+#include <string>
+#include <vector>
+
+#include "duration.hpp"
+#include "connect.hpp"
+#include "element_topology.hpp"
+
+using namespace std;
+using namespace argos;
+
+bool is_element_3d( int64_t numVertexPerElement, char* elementName) {
+  return  (numVertexPerElement == 8 && is_element_name(elementName,HEX8_aliases)) ||
+          (numVertexPerElement == 4 && is_element_name(elementName,TET4_aliases)) ||
+          (numVertexPerElement == 6 && is_element_name(elementName,WEDGE6_aliases));
+}
+
+//
+// Test all the connectivity generating functions.
+//
+void TestBoundaryFaces(
+  char* elementName, 
+  int64_t numVertexPerElement, 
+  int64_t numVertexPerFace,
+  int64_t numElement, 
+  int64_t numVertex,
+  int64_t * elementToVertex,
+  vector<int>& boundaryFaceToVertex) {
+
+  to_zero_based(numVertexPerElement*numElement, elementToVertex);
+  
+  vector<int64_t> vertexToElement, vertexToElementBegin;
+  int64_t maxElementPerVertex = 0;
+  int64_t numBoundaryFaces = 0;
+  int64_t numFacePerElement = 0;
+
+  if ( is_element_3d( numVertexPerElement, elementName) ) {
+
+    // process the vertex-to-element connectivity
+    START_DURATION(1);
+
+    maxElementPerVertex = connect_vertex_to_element(
+                            numVertex, 
+                            numVertexPerElement, 
+                            numElement, 
+                            elementToVertex,
+                            vertexToElementBegin,
+                            vertexToElement);
+
+    STOP_DURATION(1,connect_vertex_to_element);
+    
+    if ( is_element_name(elementName,HEX8_aliases))
+      numFacePerElement = HEX8_num_face;
+    else if (is_element_name(elementName,TET4_aliases))
+      numFacePerElement = TET4_num_face;
+    else if (is_element_name(elementName,WEDGE6_aliases))
+      numFacePerElement = WEDGE6_num_face;
+    else
+      cerr << "TestBoundaryFaces: not ready for numFacePerElement " << 
+              elementName << endl;
+    
+    // and get element neighbors    
+    vector<int64_t> neighbor( numFacePerElement );
+    int64_t numBoundaryQuadFace, numBoundaryTriFace;
+    
+    connect_element_to_element(
+      elementName,
+      numElement,
+      maxElementPerVertex,
+      elementToVertex,
+      &vertexToElementBegin[0],
+      &vertexToElement[0],
+      &neighbor[0],
+      &numBoundaryQuadFace,
+      &numBoundaryTriFace);
+    
+    // fill in the boundary face to vertex connectivity
+    boundaryFaceToVertex.resize( 
+      4*numBoundaryQuadFace + 3*numBoundaryTriFace );
+    numBoundaryFaces = numBoundaryQuadFace + numBoundaryTriFace;
+    START_DURATION(3);
+    connect_boundary_face_to_vertex(
+      elementName, 
+      numElement,
+      numBoundaryQuadFace,
+      numBoundaryTriFace,
+      &elementToVertex[0],
+      &neighbor[0],
+      &boundaryFaceToVertex[0]);
+    STOP_DURATION(3, connect_boundary_face_to_vertex);
+  }
+  else {
+    
+    // 2D element topology
+    boundaryFaceToVertex.resize( numVertexPerElement * numElement );
+    std::copy( elementToVertex, 
+              elementToVertex + numVertexPerElement * numElement, 
+              &boundaryFaceToVertex[0] );
+    numBoundaryFaces = numElement;
+  }
+                            
+  cout << "numBoundaryFaces = " << numBoundaryFaces << endl;
+  cout.flush();
+
+  vertexToElementBegin.resize(0);
+  vertexToElement.resize(0);
+
+
+  //// fix the off by one error
+  //for (int64_t i = 0; i < length; i++)
+  //  boundaryFaceToVertex[i] -= 1;
+
+  //  
+  // determine the edge-to-vertex connectivity
+  //
+  vector<int64_t> edgeToVertex;
+  int64_t numEdge = 0;
+  
+  START_DURATION(3);
+
+  vector<int64_t> vertexToFace, vertexToFaceBegin;
+  int64_t maxFacePerNode = connect_vertex_to_element(
+    numVertex, 
+    numVertexPerFace, 
+    numBoundaryFaces, 
+    &boundaryFaceToVertex[0],
+    vertexToFaceBegin,
+    vertexToFace);
+
+  const int64_t * edgeVertexOrder;
+  if ( numVertexPerElement == 8 && is_element_name(elementName,HEX8_aliases))
+    edgeVertexOrder = QUAD4_edge_vertex_order;
+  else if (numVertexPerElement == 4 && is_element_name(elementName,TET4_aliases))
+    edgeVertexOrder = TRI3_edge_vertex_order;
+  else if (numVertexPerElement == 4 && is_element_name(elementName,QUAD4_aliases))
+    edgeVertexOrder = QUAD4_edge_vertex_order;
+  else if (numVertexPerElement == 3 && is_element_name(elementName,TRI3_aliases))
+    edgeVertexOrder = TRI3_edge_vertex_order;
+  else
+    cerr << "TestBoundaryFaces: not ready for numVertexPerElement = " << 
+            numVertexPerElement << endl;
+
+  vector<int64_t> faceToEdge(numVertexPerFace*numBoundaryFaces);
+  int64_t numExternalEdges;
+  connect_element_to_edge(
+    numBoundaryFaces,
+    numVertexPerFace,
+    numVertexPerFace,
+    edgeVertexOrder,
+    &boundaryFaceToVertex[0],
+    &vertexToFaceBegin[0],
+    &vertexToFace[0],
+    &faceToEdge[0],
+    &numEdge,
+    &numExternalEdges);
+
+  edgeToVertex.resize(2*numEdge);
+  int64_t nEdge = 0;
+  const int64_t * localEdge = &faceToEdge[0];
+  const int64_t * localVertex = &boundaryFaceToVertex[0];
+  for (int64_t iFace = 0; iFace < numBoundaryFaces; ++iFace, 
+    localEdge += numVertexPerFace, localVertex += numVertexPerFace) {
+    for (int64_t iEdge = 0; iEdge < numVertexPerFace; ++iEdge) {
+      if (localEdge[iEdge] == nEdge) {
+        edgeToVertex[2*nEdge]   = localVertex[edgeVertexOrder[2*iEdge]];
+        edgeToVertex[2*nEdge+1] = localVertex[edgeVertexOrder[2*iEdge+1]];
+        ++nEdge;
+      }
+    }
+  }
+  STOP_DURATION(3,edgeToVertex);
+
+  cout << "numEdge = " << numEdge << endl;
+  cout.flush();
+#ifdef AFFECT_VERBOSE
+  cout << "----Debugging edgeToVertex" << endl;
+  for (int64_t i = 0; i < numEdge; ++i ) {
+    cout << " edge " << setw(3) << i << " has vertices" <<
+            " " << edgeToVertex[2*i] << 
+            " " << edgeToVertex[2*i+1] << endl;
+  }
+#endif
+
+  return;
+}

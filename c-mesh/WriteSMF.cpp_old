@@ -1,0 +1,59 @@
+#include <cassert>
+#include <ostream>
+#include <iomanip>
+
+using namespace std;
+
+void WriteSMF(ostream& out,
+              int64_t numVertex, 
+              const float* vertices,
+              int64_t numFace,
+              int64_t numVertexPerFace,
+              const int64_t* faceVertices) {
+
+  assert(numVertex > 0);
+  assert(numFace > 0);
+
+  int64_t numTriangle;
+  if (numVertexPerFace == 4)
+    numTriangle = 2 * numFace;
+  else
+    numTriangle = numFace;
+
+  out << "#$SMF 1.0" << endl;
+  out << "#$vertices " << numVertex << endl;
+  out << "#$faces " << numTriangle << endl;
+
+  //out << setprecision(6);
+  
+  for (int64_t i = 0; i < numVertex; ++i) {
+
+    int64_t j = 3*i;
+
+    //out << "v " << fixed << setw(11) << vertices[i] << " " <<
+    //               fixed << setw(11) << vertices[i+1] << " " <<
+    //               fixed << setw(11) << vertices[i+2] << endl;
+    //out << "v " << fixed << vertices[i]   << " " <<
+    //               fixed << vertices[i+1] << " " <<
+    //               fixed << vertices[i+2] << endl;
+    out << "v " << vertices[j]   << " " <<
+                   vertices[j+1] << " " <<
+                   vertices[j+2] << endl;
+  }
+
+  for (int64_t i = 0; i < numFace; ++i) {
+
+    int64_t j = numVertexPerFace*i;
+
+    out << "f " << faceVertices[j]   << " " <<
+                   faceVertices[j+1] << " " <<
+                   faceVertices[j+2] << endl;
+
+    if (numVertexPerFace == 4) {
+
+      out << "f " << faceVertices[j]   << " " <<
+                     faceVertices[j+2] << " " <<
+                     faceVertices[j+3] << endl;
+    }
+  }
+}

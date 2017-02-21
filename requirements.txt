@@ -1,0 +1,7 @@
+Cython
+netcdf4
+numpy
+pytest
+pytest-runner
+sphinx>=1.5.1
+sphinx_rtd_theme>=0.1.9

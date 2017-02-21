@@ -1,0 +1,203 @@
+// FaceEdge.cpp : Defines the entry point64_t for the console application.
+//
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <tchar.h>
+
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::vector;
+
+extern "C" {
+#include "exodusII.h"
+}
+
+#include "duration.hpp"
+#include "element_topology.hpp"
+
+void processFile(const std::string& filename);
+
+  void convert_to_tetra8(const std::string& filename, bool isDistFactUnity);
+}  
+
+void TestBoundaryFaces(
+  char* elem_type, 
+  int64_t numVertexPerElement,
+  int64_t numVertexPerFace,
+  int64_t nElem, 
+  int64_t numVertex,
+  int64_t * elementToVertex,
+  vector<int>& boundaryFaceToNode);
+  
+void WriteSMF(
+  std::ostream& out,
+  int64_t numVertex, 
+  const float* vertices,
+  int64_t numFace,
+  int64_t numVertexPerFace,
+  const int64_t* triangleVertices);
+
+int64_t _tmain(int64_t argc, _TCHAR* argv[])
+{
+  if (argc < 3) {
+    cerr << "Usage: connect [-tet8] directory file0 [file1 [file2 [...]]]" << endl;
+    return 1;
+  }
+  
+  std::string arg1(argv[1]);
+  
+  if (arg1 == "-tet8") {
+  
+    std::string directory(argv[2]);
+    int64_t numFiles = argc - 3;
+
+    for (int64_t iFile = 0; iFile < numFiles; ++iFile) {
+      
+      std::string filename = directory + "/" + argv[iFile+3];
+
+      convert_to_tetra8(filename, true);
+    }
+  
+  }
+  else {
+    
+    int64_t numFiles = argc - 2;
+
+    for (int64_t iFile = 0; iFile < numFiles; ++iFile) {
+      
+      std::string filename = arg1 + "/" + argv[iFile+2];
+
+      processFile(filename);
+    }
+  }
+
+	return 0;
+}
+
+void processFile(const std::string& filename) {
+
+  int64_t CPU_word_size, IO_word_size, error;
+  float version;
+  CPU_word_size = sizeof(float);
+  IO_word_size = 0;
+
+  int64_t exoid = ex_open (filename.c_str(), EX_READ, &CPU_word_size,
+                       &IO_word_size, &version);
+  if (exoid < 1) {
+    cerr << "Could not open file: " << 
+                 filename << 
+                 endl << 
+                 "exiting..." << 
+                 endl;
+    exit(1);
+  }
+
+  // read database parameters
+  int64_t num_dim, num_nodes, num_elem, num_elem_blk,
+      num_node_sets, num_side_sets;
+  char title[MAX_LINE_LENGTH+1];
+  
+  error = ex_get_init (exoid, title, &num_dim, &num_nodes,
+                       &num_elem, &num_elem_blk, 
+                       &num_node_sets, &num_side_sets);
+  cout  << "----------------" << endl
+        << "EXODUS II FILE: " << filename << endl
+        << "  title = " << title << endl
+        << "  num_dim = " << num_dim << endl
+        << "  num_nodes = " << num_nodes  << endl
+        << "  num_elem = " << num_elem << endl
+        << "  num_elem_blk = " << num_elem_blk << endl
+        << "  num_node_sets = " << num_node_sets << endl
+        << "  num_side_sets = " << num_side_sets << endl;
+  cout.flush();
+
+  // get element block IDs
+  vector<int64_t> elem_blk_ids(num_elem_blk);
+  error = ex_get_elem_blk_ids (exoid, &elem_blk_ids[0]);
+
+  for (int64_t iblock = 0; iblock < num_elem_blk; ++iblock) {
+
+    int64_t id = elem_blk_ids[iblock];
+
+    int64_t num_el_in_blk, numVertexPerElement, num_attr;
+    char elem_type[MAX_STR_LENGTH+1];
+
+    START_DURATION(0);
+
+    int64_t error = ex_get_elem_block (exoid, id, elem_type, &num_el_in_blk, 
+                                   &numVertexPerElement, &num_attr);
+
+    vector<int64_t> connect(numVertexPerElement*num_el_in_blk);
+    error = ex_get_elem_conn (exoid, id, &connect[0]);
+    
+    cout  << "  --------" << endl
+          << "  elem block ID: " << id << endl
+          << "    elem_type = " << elem_type << endl
+          << "    num_el_in_blk = " << num_el_in_blk << endl
+          << "    numVertexPerElement = " << numVertexPerElement << endl
+          << "    num_attr = " << num_attr << endl;
+
+    STOP_DURATION(0,read element block);    
+    
+    cout.flush();
+    
+    int64_t numVertexPerFace;
+    if ( (numVertexPerElement == 8 && is_element_name(elem_type,HEX8_aliases)) ||
+         (numVertexPerElement == 4 && is_element_name(elem_type,QUAD4_aliases)) ||
+         (numVertexPerElement == 6 && is_element_name(elem_type,WEDGE6_aliases)) )
+      numVertexPerFace = 4;
+    else
+      numVertexPerFace = 3;
+      
+    // get memory to hold the face to vertex connections
+    vector<int64_t> boundaryFaceToNode;
+
+    START_DURATION(1);
+
+    TestBoundaryFaces(
+      elem_type, 
+      numVertexPerElement,
+      numVertexPerFace,
+      num_el_in_blk, 
+      num_nodes,
+      &connect[0],
+      boundaryFaceToNode);
+      
+    STOP_DURATION(1,TestBoundaryFaces);
+
+#ifdef WRITE_SMF
+    if (numVertexPerElement == 4 || numVertexPerElement == 8) {
+
+      vector<float> x_coor(num_nodes), y_coor(num_nodes), z_coor(num_nodes);
+      error = ex_get_coord(exoid, &x_coor[0], &y_coor[0], &z_coor[0]);
+      vector<float> vertices(3*num_nodes);
+      for (int64_t i = 0; i < num_nodes; ++i) {
+        int64_t j = 3*i;
+        vertices[j]   = x_coor[i];
+        vertices[j+1] = y_coor[i];
+        vertices[j+2] = z_coor[i];
+      }
+
+      int64_t numVertexPerFace = numVertexPerElement == 8 ? 4 : 3;
+
+      ofstream output;
+      output.open("output.smf", ios_base::out); // | ios_base::app);
+      WriteSMF(output,
+                num_nodes,
+                &vertices[0],
+                int(boundaryFaceToNode.size())/numVertexPerFace,
+                numVertexPerFace,
+                &boundaryFaceToNode[0]);
+    }
+#endif // WRITE_SMF
+    
+  }
+
+  ex_close(exoid);
+
+  return;
+}
