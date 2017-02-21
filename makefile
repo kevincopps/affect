@@ -1,4 +1,4 @@
-.PHONY: build test clean doc
+.PHONY: build test clean docs
 
 BOLD = `tput bold`
 NORMAL = `tput sgr0`
@@ -17,5 +17,5 @@ clean:
 	@rm -rf build
 	@cd affect && rm -rf exodus.cpp connect.cpp *.so __pycache__
 
-doc:
-	@cd doc && make html
+docs:
+	@cd docs && make html
