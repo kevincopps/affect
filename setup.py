@@ -1,20 +1,26 @@
 #!/usr/bin/env python
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-
-# from distutils.core import setup
-from distutils.extension import Extension
+from setuptools import setup
+from setuptools.extension import Extension
 import distutils.ccompiler
-import multiprocessing.pool
-from Cython.Build import cythonize
 import getpass
 import glob
 import os
 from sys import platform as _platform
+import multiprocessing.pool
 import numpy as np
+
+# Allows setup to be loaded without failing with an ImportError from Cython.
+#   Later when the setup_requires argument to the setup() function is handled,
+#   Cython will be installed and the setup script will be re-executed.
+#   Since at that point Cython is installed, you'll be able to successfully import cythonize
+try:
+    from Cython.Build import cythonize
+except ImportError:
+     def cythonize(*args, **kwargs):
+         from Cython.Build import cythonize
+         return cythonize(*args, **kwargs)
+
 
 NUMBER_PARALLEL_COMPILES = 4
 
@@ -137,7 +143,8 @@ setup(
     maintainer_email='kdcopps@sandia.gov',
     url='https://github.com/kdcopps/affect',
     packages=['affect'],
-    setup_requires=['pytest-runner'],
+    install_requires=['setuptools', 'numpy', 'cython', 'netcdf4',],
+    setup_requires=['setuptools', 'numpy', 'cython', 'pytest-runner'],
     tests_require=['pytest'],
     classifiers=['Programming Language :: Python :: 3', ],
     zip_safe=False
