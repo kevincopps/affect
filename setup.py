@@ -8,7 +8,6 @@ import glob
 import os
 from sys import platform as _platform
 import multiprocessing.pool
-import numpy as np
 
 # Allows setup to be loaded without failing with an ImportError from Cython.
 #   Later when the setup_requires argument to the setup() function is handled,
