@@ -21,6 +21,14 @@ except ImportError:
          from Cython.Build import cythonize
          return cythonize(*args, **kwargs)
 
+try:
+    import numpy
+    def get_numpy_include():
+        return numpy.get_include()
+except ImportError:
+    def get_numpy_include():
+        import numpy
+        return numpy.get_include()
 
 NUMBER_PARALLEL_COMPILES = 4
 
@@ -74,7 +82,7 @@ connect_include = 'c-mesh'
 extensions = [
     Extension('affect.exodus',
               sources=['affect/exodus.pyx'],
-              include_dirs=[other_include, np.get_include()],
+              include_dirs=[other_include, get_numpy_include()],
               libraries=['iomp5', 'exoIIv2c'],
               library_dirs=[other_library],
               extra_compile_args=[  # '-I/usr/local/opt/llvm/include',
@@ -89,7 +97,7 @@ extensions = [
               language="c++",
               ),
     Extension('affect.connect',
-              include_dirs=[connect_include, other_include, np.get_include()],
+              include_dirs=[connect_include, other_include, get_numpy_include()],
               sources=connect_source_files,
               libraries=['iomp5'],
               library_dirs=[other_library],
@@ -143,8 +151,8 @@ setup(
     maintainer_email='kdcopps@sandia.gov',
     url='https://github.com/kdcopps/affect',
     packages=['affect'],
-    install_requires=['setuptools', 'numpy', 'cython', 'netcdf4',],
-    setup_requires=['setuptools', 'numpy', 'cython', 'pytest-runner'],
+    install_requires=['numpy', 'cython', 'netcdf4',],
+    setup_requires=['numpy', 'cython', 'pytest-runner'],
     tests_require=['pytest'],
     classifiers=['Programming Language :: Python :: 3', ],
     zip_safe=False
