@@ -3,10 +3,7 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "depends": [
-            "/Users/kdcopps/anaconda/lib/python3.5/site-packages/numpy/core/include/numpy/arrayobject.h",
-            "/Users/kdcopps/anaconda/lib/python3.5/site-packages/numpy/core/include/numpy/ufuncobject.h"
-        ],
+        "depends": [],
         "extra_compile_args": [
             "-stdlib=libc++",
             "-mmacosx-version-min=10.11",
@@ -21,8 +18,7 @@
         ],
         "include_dirs": [
             "c-mesh",
-            "/Users/kdcopps/anaconda/include",
-            "/Users/kdcopps/anaconda/lib/python3.5/site-packages/numpy/core/include"
+            "/Users/kdcopps/anaconda/include"
         ],
         "language": "c++",
         "libraries": [

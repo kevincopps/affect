@@ -2,6 +2,7 @@
 
 from setuptools import setup
 from setuptools.extension import Extension
+from setuptools.command.build_ext import build_ext as _build_ext
 import distutils.ccompiler
 import getpass
 import glob
@@ -20,14 +21,17 @@ except ImportError:
          from Cython.Build import cythonize
          return cythonize(*args, **kwargs)
 
-try:
-    import numpy
-    def get_numpy_include():
-        return numpy.get_include()
-except ImportError:
-    def get_numpy_include():
+# workaround for installing when numpy is not yet present
+class build_ext(_build_ext):
+    # taken from: stackoverflow.com/questions/19919905/
+    # how-to-bootstrap-numpy-installation-in-setup-py#21621689
+    def finalize_options(self):
+        _build_ext.finalize_options(self)
+        # prevent numpy from thinking it is still in its setup process
+        __builtins__.__NUMPY_SETUP__ = False
         import numpy
-        return numpy.get_include()
+        # place numpy includes first, see gh #156
+        self.include_dirs.insert(0, numpy.get_include())
 
 NUMBER_PARALLEL_COMPILES = 4
 
@@ -81,7 +85,7 @@ connect_include = 'c-mesh'
 extensions = [
     Extension('affect.exodus',
               sources=['affect/exodus.pyx'],
-              include_dirs=[other_include, get_numpy_include()],
+              include_dirs=[other_include],
               libraries=['iomp5', 'exoIIv2c'],
               library_dirs=[other_library],
               extra_compile_args=[  # '-I/usr/local/opt/llvm/include',
@@ -96,7 +100,7 @@ extensions = [
               language="c++",
               ),
     Extension('affect.connect',
-              include_dirs=[connect_include, other_include, get_numpy_include()],
+              include_dirs=[connect_include, other_include],
               sources=connect_source_files,
               libraries=['iomp5'],
               library_dirs=[other_library],
@@ -138,6 +142,7 @@ def parallel_c_compile(self, sources, output_dir=None, macros=None, include_dirs
 distutils.ccompiler.CCompiler.compile = parallel_c_compile
 
 setup(
+    cmdclass={'build_ext': build_ext},
     ext_modules=cythonize(extensions, compiler_directives={'language_level': 3, 'embedsignature': True}),
     name='affect',
     description='Affect - Processing Computational Simulations',
