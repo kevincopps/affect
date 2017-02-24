@@ -11,17 +11,6 @@ import os
 from sys import platform as _platform
 import multiprocessing.pool
 
-# Allows setup to be loaded without failing with an ImportError from Cython.
-#   Later when the setup_requires argument to the setup() function is handled,
-#   Cython will be installed and the setup script will be re-executed.
-#   Since at that point Cython is installed, you'll be able to successfully import cythonize
-try:
-    from Cython.Build import cythonize
-except ImportError:
-     def cythonize(*args, **kwargs):
-         from Cython.Build import cythonize
-         return cythonize(*args, **kwargs)
-
 
 class BuildExtensions(build_ext):
      """
@@ -40,21 +29,6 @@ class BuildExtensions(build_ext):
              if (hasattr(ext, 'include_dirs') and numpy_includes not in ext.include_dirs):
                  ext.include_dirs.append(numpy_includes)
          build_ext.run(self)
-
-
-# class BuildExtensions(build_ext):
-#     """
-#     A different workaround for installing when numpy is not yet present.
-#     Taken from: stackoverflow.com/questions/19919905/
-#     how-to-bootstrap-numpy-installation-in-setup-py#21621689
-#     """
-#     def finalize_options(self):
-#         build_ext.finalize_options(self)
-#         # prevent numpy from thinking it is still in its setup process
-#         __builtins__.__NUMPY_SETUP__ = False
-#         import numpy
-#         # place numpy includes first, see gh #156
-#         self.include_dirs.insert(0, numpy.get_include())
 
 NUMBER_PARALLEL_COMPILES = 4
 
@@ -87,7 +61,6 @@ elif _platform == 'win32':
     python_base = ''  # TODO: fix win32 platform setup
     other_include = python_base + '/include'
     other_library = python_base + '/lib'
-
 
 connect_source_files = ['affect/connect.pyx']
 connect_source_files += glob.glob('c-mesh/*.cpp')
@@ -178,10 +151,10 @@ setup(
     url='https://github.com/kdcopps/affect',
     packages=['affect'],
     classifiers=['Programming Language :: Python :: 3', ],
-    setup_requires=['cython', 'pytest-runner'],
+    setup_requires=['setuptools>=18.0', 'cython', 'pytest-runner'],
     install_requires=requirements,
     tests_require=['pytest'],
     zip_safe=False,
     cmdclass={'build_ext': BuildExtensions},
-    ext_modules=cythonize(extensions, compiler_directives={'language_level': 3, 'embedsignature': True})
+    ext_modules=extensions
 )
