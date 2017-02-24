@@ -2,7 +2,8 @@
 
 from setuptools import setup
 from setuptools.extension import Extension
-from setuptools.command.build_ext import build_ext as _build_ext
+from setuptools.command.build_ext import build_ext
+import pkg_resources
 import distutils.ccompiler
 import getpass
 import glob
@@ -21,17 +22,39 @@ except ImportError:
          from Cython.Build import cythonize
          return cythonize(*args, **kwargs)
 
-# workaround for installing when numpy is not yet present
-class build_ext(_build_ext):
-    # taken from: stackoverflow.com/questions/19919905/
-    # how-to-bootstrap-numpy-installation-in-setup-py#21621689
-    def finalize_options(self):
-        _build_ext.finalize_options(self)
-        # prevent numpy from thinking it is still in its setup process
-        __builtins__.__NUMPY_SETUP__ = False
-        import numpy
-        # place numpy includes first, see gh #156
-        self.include_dirs.insert(0, numpy.get_include())
+
+class BuildExtensions(build_ext):
+     """
+     Subclass setuptools build_ext command. Does the following
+     1) it makes sure numpy is available
+     2) it injects numpy's core/include directory in the include_dirs parameter of all extensions
+     3) it runs the original build_ext command
+     """
+
+     def run(self):
+         # According to
+         # https://pip.pypa.io/en/stable/reference/pip_install.html#installation-order
+         # at this point we can be sure pip has already installed numpy
+         numpy_includes = pkg_resources.resource_filename('numpy', 'core/include')
+         for ext in self.extensions:
+             if (hasattr(ext, 'include_dirs') and numpy_includes not in ext.include_dirs):
+                 ext.include_dirs.append(numpy_includes)
+         build_ext.run(self)
+
+
+# class BuildExtensions(build_ext):
+#     """
+#     A different workaround for installing when numpy is not yet present.
+#     Taken from: stackoverflow.com/questions/19919905/
+#     how-to-bootstrap-numpy-installation-in-setup-py#21621689
+#     """
+#     def finalize_options(self):
+#         build_ext.finalize_options(self)
+#         # prevent numpy from thinking it is still in its setup process
+#         __builtins__.__NUMPY_SETUP__ = False
+#         import numpy
+#         # place numpy includes first, see gh #156
+#         self.include_dirs.insert(0, numpy.get_include())
 
 NUMBER_PARALLEL_COMPILES = 4
 
@@ -154,11 +177,11 @@ setup(
     maintainer_email='kdcopps@sandia.gov',
     url='https://github.com/kdcopps/affect',
     packages=['affect'],
+    classifiers=['Programming Language :: Python :: 3', ],
     install_requires=requirements,
     setup_requires=['numpy', 'cython', 'pytest-runner'],
     tests_require=['pytest'],
-    classifiers=['Programming Language :: Python :: 3', ],
     zip_safe=False,
-    cmdclass={'build_ext': build_ext},
+    cmdclass={'build_ext': BuildExtensions},
     ext_modules=cythonize(extensions, compiler_directives={'language_level': 3, 'embedsignature': True})
 )
