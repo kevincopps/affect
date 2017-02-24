@@ -81,6 +81,8 @@ connect_include = 'c-mesh'
 # "brew install llvm"
 # may have to "export DYLD_LIBRARY_PATH=/usr/local/lib"
 #
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
 
 extensions = [
     Extension('affect.exodus',
@@ -126,7 +128,6 @@ def parallel_c_compile(self, sources, output_dir=None, macros=None, include_dirs
     macros, objects, extra_postargs, pp_opts, build = self._setup_compile(output_dir, macros, include_dirs, sources,
                                                                           depends, extra_postargs)
     cc_args = self._get_cc_args(pp_opts, debug, extra_preargs)
-
     def _single_compile(obj):
         try:
             src, ext = build[obj]
@@ -142,8 +143,6 @@ def parallel_c_compile(self, sources, output_dir=None, macros=None, include_dirs
 distutils.ccompiler.CCompiler.compile = parallel_c_compile
 
 setup(
-    cmdclass={'build_ext': build_ext},
-    ext_modules=cythonize(extensions, compiler_directives={'language_level': 3, 'embedsignature': True}),
     name='affect',
     description='Affect - Processing Computational Simulations',
     long_description=long_description,
@@ -155,9 +154,11 @@ setup(
     maintainer_email='kdcopps@sandia.gov',
     url='https://github.com/kdcopps/affect',
     packages=['affect'],
-    install_requires=['numpy', 'cython', 'netcdf4',],
+    install_requires=requirements,
     setup_requires=['numpy', 'cython', 'pytest-runner'],
     tests_require=['pytest'],
     classifiers=['Programming Language :: Python :: 3', ],
-    zip_safe=False
+    zip_safe=False,
+    cmdclass={'build_ext': build_ext},
+    ext_modules=cythonize(extensions, compiler_directives={'language_level': 3, 'embedsignature': True})
 )
