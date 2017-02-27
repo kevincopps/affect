@@ -151,7 +151,7 @@ setup(
     url='https://github.com/kdcopps/affect',
     packages=['affect'],
     classifiers=['Programming Language :: Python :: 3', ],
-    setup_requires=['setuptools>=18.0', 'cython', 'pytest-runner'],
+    setup_requires=['setuptools>=18.0', 'numpy', 'cython', 'pytest-runner'],
     install_requires=requirements,
     tests_require=['pytest'],
     zip_safe=False,
