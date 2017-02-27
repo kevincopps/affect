@@ -13,22 +13,22 @@ import multiprocessing.pool
 
 
 class BuildExtensions(build_ext):
-     """
-     Subclass setuptools build_ext command. Does the following
-     1) it makes sure numpy is available
-     2) it injects numpy's core/include directory in the include_dirs parameter of all extensions
-     3) it runs the original build_ext command
-     """
+    """
+    Subclass setuptools build_ext command. Does the following
+    1) it makes sure numpy is available
+    2) it injects numpy's core/include directory in the include_dirs parameter of all extensions
+    3) it runs the original build_ext command
+    """
 
-     def run(self):
-         # According to
-         # https://pip.pypa.io/en/stable/reference/pip_install.html#installation-order
-         # at this point we can be sure pip has already installed numpy
-         numpy_includes = pkg_resources.resource_filename('numpy', 'core/include')
-         for ext in self.extensions:
-             if (hasattr(ext, 'include_dirs') and numpy_includes not in ext.include_dirs):
-                 ext.include_dirs.append(numpy_includes)
-         build_ext.run(self)
+    def run(self):
+        # According to
+        # https://pip.pypa.io/en/stable/reference/pip_install.html#installation-order
+        # at this point we can be sure pip has already installed numpy
+        numpy_includes = pkg_resources.resource_filename('numpy', 'core/include')
+        for ext in self.extensions:
+            if hasattr(ext, 'include_dirs') and numpy_includes not in ext.include_dirs:
+                ext.include_dirs.append(numpy_includes)
+        build_ext.run(self)
 
 NUMBER_PARALLEL_COMPILES = 4
 
@@ -87,13 +87,13 @@ extensions = [
               libraries=['iomp5', 'exoIIv2c'],
               library_dirs=[other_library],
               extra_compile_args=[  # '-I/usr/local/opt/llvm/include',
-                                  '-I../exodus/exodus/cbind/include/',
+                                  '-I/Users/kdcopps/Developer/exodus/exodus/cbind/include/',
                                   '-stdlib=libc++',
                                   '-mmacosx-version-min=10.11',
                                   '-fopenmp',
                                   '-Wno-unused-function', '-Wno-sometimes-uninitialized', '-Wno-unreachable-code'],
               extra_link_args=['-L/usr/local/opt/llvm/lib',
-                               '-L../exodus/exodus/cbind/',
+                               '-L/Users/kdcopps/Developer/exodus/exodus/cbind/',
                                '-mmacosx-version-min=10.11'],
               language="c++",
               ),
@@ -119,11 +119,11 @@ def parallel_c_compile(self, sources, output_dir=None, macros=None, include_dirs
     """
     Function for monkey-patch of distutils.ccompiler to allow implement compilation of multip C/C++ files.
     """
-
     # those lines are copied from distutils.ccompiler.CCompiler directly
     macros, objects, extra_postargs, pp_opts, build = self._setup_compile(output_dir, macros, include_dirs, sources,
                                                                           depends, extra_postargs)
     cc_args = self._get_cc_args(pp_opts, debug, extra_preargs)
+
     def _single_compile(obj):
         try:
             src, ext = build[obj]
