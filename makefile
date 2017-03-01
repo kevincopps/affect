@@ -15,6 +15,7 @@ test:
 clean:
 	$(CLEAN_PRINT)
 	@rm -rf build
+	@rm -rf affect.egg-info
 	@cd affect && rm -rf exodus.cpp connect.cpp *.so __pycache__
 
 docs:

@@ -63,8 +63,8 @@ elif _platform == 'win32':
     other_library = python_base + '/lib'
 
 connect_source_files = ['affect/connect.pyx']
-connect_source_files += glob.glob('c-mesh/*.cpp')
-connect_include = 'c-mesh'
+connect_source_files += glob.glob('affect/src/connect/*.cpp')
+connect_include = 'affect/src/connect'
 
 # Prerequisites:
 #
