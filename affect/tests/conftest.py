@@ -31,10 +31,9 @@ def edb():
     ex.debug_messages(ex.VERBOSE | ex.DEBUG)  # turn on capturing debug messages
     e = ex.Database(path)
     print('\nOpening {} {}\n'.format(file_name, str(type(e))))
-    # by using a yield statement instead of return,
-    # all the code after the yield statement serves as the teardown code
+    # use yield instead of return
     yield e
-    # tear down and reset
+    # everything after yield serves as tear down and reset
     print('\nClosing {}\n'.format(file_name))
     e.close()
     ex.debug_messages(ex.DEFAULT)  # reset debug messages off
