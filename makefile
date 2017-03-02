@@ -10,7 +10,7 @@ build:
 	@python setup.py build_ext -i 2>&1 | python makewarn.py "warning: \"Using deprecated NumPy API" 4 3
 
 test:
-	pytest -s affect/tests
+	pytest -v -s affect/tests/test_database.py
 
 clean:
 	$(CLEAN_PRINT)

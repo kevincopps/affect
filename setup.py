@@ -66,6 +66,10 @@ connect_source_files = ['affect/connect.pyx']
 connect_source_files += glob.glob('affect/src/connect/*.cpp')
 connect_include = 'affect/src/connect'
 
+exodus_source_files = ['affect/exodus.pyx']
+exodus_source_files += glob.glob('affect/src/exodus/*.c')
+exodus_include = 'affect/src/exodus'
+
 # Prerequisites:
 #
 # A prebuilt exodus exoIIv2c library
@@ -82,18 +86,18 @@ with open('requirements.txt') as f:
 
 extensions = [
     Extension('affect.exodus',
-              sources=['affect/exodus.pyx'],
-              include_dirs=[other_include],
-              libraries=['iomp5', 'exoIIv2c'],
+              sources=exodus_source_files,
+              include_dirs=[exodus_include, other_include],
+              libraries=['iomp5','netcdf'],
               library_dirs=[other_library],
               extra_compile_args=[  # '-I/usr/local/opt/llvm/include',
-                                  '-I/Users/kdcopps/Developer/exodus/exodus/cbind/include/',
                                   '-stdlib=libc++',
                                   '-mmacosx-version-min=10.11',
                                   '-fopenmp',
-                                  '-Wno-unused-function', '-Wno-sometimes-uninitialized', '-Wno-unreachable-code'],
+                                  '-Dexodus_EXPORTS',
+                                  '-Wno-unused-function', '-Wno-sometimes-uninitialized', '-Wno-unreachable-code',
+                                  '-Wno-sign-compare'],
               extra_link_args=['-L/usr/local/opt/llvm/lib',
-                               '-L/Users/kdcopps/Developer/exodus/exodus/cbind/',
                                '-mmacosx-version-min=10.11'],
               language="c++",
               ),
