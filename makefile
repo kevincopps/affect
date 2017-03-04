@@ -4,6 +4,9 @@ BOLD = `tput bold`
 NORMAL = `tput sgr0`
 BUILD_PRINT = @echo "${BOLD}Building package and Cython extensions.${NORMAL}"
 CLEAN_PRINT = @echo "${BOLD}Removing previous build results.${NORMAL}"
+TEST_INSTALL_PRINT = @echo "${BOLD}Testing install in new environment.${NORMAL}"
+
+TEST_INSTALL_ENV := affect_test_install
 
 build:
 	$(BUILD_PRINT)
@@ -11,6 +14,16 @@ build:
 
 test:
 	pytest -v -s affect/tests/test_database.py
+
+test_install:
+	$(TEST_INSTALL_PRINT)
+	conda create --yes --name ${TEST_INSTALL_ENV} --file requirements.txt
+	source `which activate` ${TEST_INSTALL_ENV}
+	pip install git+file://$(CURDIR)
+	pip uninstall affect
+	source `which deactivate` ${TEST_INSTALL_ENV}
+	conda remove --yes --name ${TEST_INSTALL_ENV} --all
+
 
 clean:
 	$(CLEAN_PRINT)
