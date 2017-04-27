@@ -4,9 +4,22 @@ BOLD = `tput bold`
 NORMAL = `tput sgr0`
 BUILD_PRINT = @echo "${BOLD}Building package and Cython extensions.${NORMAL}"
 CLEAN_PRINT = @echo "${BOLD}Removing previous build results.${NORMAL}"
-TEST_INSTALL_PRINT = @echo "${BOLD}Testing install in new environment.${NORMAL}"
+TEST_PIP_INSTALL_PRINT = @echo "${BOLD}Testing pip install in empty environment.${NORMAL}"
 
-TEST_INSTALL_ENV := affect_test_install
+#
+# A function to create a new environment, activate it, and install our package, uninstall, and remove environment.
+# $(1) is name of new environment
+# $(2) is the current directory (root of our project)
+# $(3) is a temporary working directory
+#
+pip_install =                                  \
+	conda create --yes --name $(1) pytest;     \
+	source `which activate` $(1);              \
+	pip install git+file://$(2);               \
+	pip uninstall --yes affect;                \
+	source `which deactivate` $(1);            \
+	conda remove --yes --name $(1) --all
+
 
 build:
 	$(BUILD_PRINT)
@@ -15,15 +28,9 @@ build:
 test:
 	pytest -v -s affect/tests/test_database.py
 
-test_install:
-	$(TEST_INSTALL_PRINT)
-	conda create --yes --name ${TEST_INSTALL_ENV} --file requirements.txt
-	source `which activate` ${TEST_INSTALL_ENV}
-	pip install git+file://$(CURDIR)
-	pip uninstall affect
-	source `which deactivate` ${TEST_INSTALL_ENV}
-	conda remove --yes --name ${TEST_INSTALL_ENV} --all
-
+test_pip_install:
+	$(TEST_PIP_INSTALL_PRINT)
+	$(call pip_install,affect_test_pip_install,$(CURDIR))
 
 clean:
 	$(CLEAN_PRINT)
@@ -32,4 +39,4 @@ clean:
 	@cd affect && rm -rf exodus.cpp connect.cpp *.so __pycache__
 
 docs:
-	@cd docs && make html
+	@cd docs && rm -rf _build && make html

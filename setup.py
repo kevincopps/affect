@@ -8,9 +8,12 @@ import distutils.ccompiler
 import getpass
 import glob
 import os
-from sys import platform as _platform
+import sys
 import multiprocessing.pool
 
+long_description = """
+Affect is a library for processing computer simulation data on unstructured grids.
+"""
 
 class BuildExtensions(build_ext):
     """
@@ -26,41 +29,41 @@ class BuildExtensions(build_ext):
         # at this point we can be sure pip has already installed numpy
         numpy_includes = pkg_resources.resource_filename('numpy', 'core/include')
         for ext in self.extensions:
-            if hasattr(ext, 'include_dirs') and numpy_includes not in ext.include_dirs:
-                ext.include_dirs.append(numpy_includes)
+            if hasattr(ext, 'include_dirs'):
+                if numpy_includes not in ext.include_dirs:
+                    ext.include_dirs.append(numpy_includes)
         build_ext.run(self)
 
 NUMBER_PARALLEL_COMPILES = 4
 
-long_description = """
-Affect is a library for processing computer simulation data on unstructured grids.
-"""
-
 # platform specific header and library directories
-other_include = ''
 other_library = ''
+other_link_args = ''
+other_compile_args = ''
+exodus_compile_args = ''
+
+python_base = sys.prefix
+_platform = sys.platform
 
 if _platform == 'linux' or _platform == 'linux2':
     os.environ["CC"] = 'gcc'
     os.environ["CXX"] = 'gcc'
-    python_base = ''  # TODO: fix linux platform setup
-    other_include = python_base + '/include'
-    other_library = python_base + '/lib'
 elif _platform == 'darwin':
-    # prerequisite: brew install llvm (until Apple "clang -fopenmp" will work
-    # export PATH="/usr/local/opt/llvm/bin:${PATH}"
+    # Prerequisites:
+    #   brew install llvm (until Apple "clang -fopenmp" will be supported)
+    #   export PATH="/usr/local/opt/llvm/bin:${PATH}"
+    #   may also have to "export DYLD_LIBRARY_PATH=/usr/local/lib"?
     os.environ["CC"] = 'clang'
     os.environ["CXX"] = 'clang'
-    user = getpass.getuser()
-    python_base = '/Users/' + user + '/anaconda'
-    other_include = python_base + '/include'
-    other_library = python_base + '/lib'
+    other_library = ['/usr/local/opt/llvm/lib']  # location of libiomp5 (however, it may be in anaconda)
+    other_link_args = ['-mmacosx-version-min=10.11']
+    other_compile_args = ['-stdlib=libc++', '-mmacosx-version-min=10.11', '-fopenmp']
+    exodus_compile_args = ['-Dexodus_EXPORTS', '-Wno-unused-function', '-Wno-sometimes-uninitialized',
+                           '-Wno-unreachable-code', '-Wno-sign-compare']
+    connect_compile_args = ['-Wno-unused-function', '-Wno-unneeded-internal-declaration', '-Wno-unused-variable']
 elif _platform == 'win32':
     os.environ["CC"] = 'gcc'
     os.environ["CXX"] = 'gcc'
-    python_base = ''  # TODO: fix win32 platform setup
-    other_include = python_base + '/include'
-    other_library = python_base + '/lib'
 
 connect_source_files = ['affect/connect.pyx']
 connect_source_files += glob.glob('affect/src/connect/*.cpp')
@@ -70,50 +73,27 @@ exodus_source_files = ['affect/exodus.pyx']
 exodus_source_files += glob.glob('affect/src/exodus/*.c')
 exodus_include = 'affect/src/exodus'
 
-# Prerequisites:
-#
-# A prebuilt exodus exoIIv2c library
-#
-# Xcode command line tools
-# Run "xcode-select --install"
-#
-# OpenMP threading
-# "brew install llvm"
-# may have to "export DYLD_LIBRARY_PATH=/usr/local/lib"
-#
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
 extensions = [
     Extension('affect.exodus',
               sources=exodus_source_files,
-              include_dirs=[exodus_include, other_include],
-              libraries=['iomp5','netcdf'],
-              library_dirs=[other_library],
-              extra_compile_args=[  # '-I/usr/local/opt/llvm/include',
-                                  '-stdlib=libc++',
-                                  '-mmacosx-version-min=10.11',
-                                  '-fopenmp',
-                                  '-Dexodus_EXPORTS',
-                                  '-Wno-unused-function', '-Wno-sometimes-uninitialized', '-Wno-unreachable-code',
-                                  '-Wno-sign-compare'],
-              extra_link_args=['-L/usr/local/opt/llvm/lib',
-                               '-mmacosx-version-min=10.11'],
-              language="c++",
+              include_dirs=[exodus_include],
+              libraries=['iomp5', 'netcdf'],
+              library_dirs=other_library,
+              extra_compile_args=other_compile_args+exodus_compile_args,
+              extra_link_args=other_link_args,
+              language='c++',
               ),
     Extension('affect.connect',
-              include_dirs=[connect_include, other_include],
+              include_dirs=[connect_include],
               sources=connect_source_files,
               libraries=['iomp5'],
-              library_dirs=[other_library],
-              extra_compile_args=[  # '-I/usr/local/opt/llvm/include',
-                                  '-stdlib=libc++',
-                                  '-mmacosx-version-min=10.11',
-                                  '-fopenmp',
-                                  '-Wno-unused-function', '-Wno-unneeded-internal-declaration', '-Wno-unused-variable'],
-              extra_link_args=['-L/usr/local/opt/llvm/lib',
-                               '-mmacosx-version-min=10.11'],
-              language="c++",
+              library_dirs=other_library,
+              extra_compile_args=other_compile_args+connect_compile_args,
+              extra_link_args=other_link_args,
+              language='c++',
               ),
 ]
 
@@ -121,7 +101,7 @@ extensions = [
 def parallel_c_compile(self, sources, output_dir=None, macros=None, include_dirs=None, debug=0, extra_preargs=None,
                        extra_postargs=None, depends=None):
     """
-    Function for monkey-patch of distutils.ccompiler to allow implement compilation of multip C/C++ files.
+    Enable parallel compiles of C/C++ during development. A monkey-patch of the distutils.ccompiler.
     """
     # those lines are copied from distutils.ccompiler.CCompiler directly
     macros, objects, extra_postargs, pp_opts, build = self._setup_compile(output_dir, macros, include_dirs, sources,

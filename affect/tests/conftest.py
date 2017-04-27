@@ -28,7 +28,7 @@ def edb():
     # file_name = 'large25m/b6112_unstr_out.e'
 
     path = os.path.join(base_path, file_name)
-    ex.debug_messages(ex.VERBOSE | ex.DEBUG)  # turn on capturing debug messages
+    ex.debug_messages(ex.Messages.VERBOSE | ex.Messages.DEBUG)  # turn on capturing debug messages
     e = ex.Database(path)
     print('\nOpening {} {}\n'.format(file_name, str(type(e))))
     # use yield instead of return
@@ -36,7 +36,7 @@ def edb():
     # everything after yield serves as tear down and reset
     print('\nClosing {}\n'.format(file_name))
     e.close()
-    ex.debug_messages(ex.DEFAULT)  # reset debug messages off
+    ex.debug_messages(ex.Messages.DEFAULT)  # reset debug messages off
 
 
 

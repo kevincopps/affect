@@ -19,32 +19,36 @@ Access to the stored values and the structure of the :class:`.Database` is throu
 
 .. autosummary::
 
-    DatabaseFile
-    Database
-    Global
-    Field
-    FieldArray
-    Fields
-    Nodal
-    Blocks
-    Block
-    Maps
-    Map
-    Sets
-    Set
+   DatabaseFile
+   Database
+   Global
+   Field
+   FieldArray
+   Fields
+   Nodal
+   Blocks
+   Block
+   Maps
+   Map
+   Sets
+   Set
 
 See also the Exodus data model :doc:`glossary` for more information.
 
-Internal Memory Buffers
------------------------
+Array Data and Internal Memory Buffers
+--------------------------------------
 
-Some functions in this module that retrieve or modify data in an ExodusII database require allocating
-a temporary memory buffer for working space. The buffer memory is released before the function returns. A note near the
-documentation for these specific functions is provided calling out the maximum size in bytes of the required buffer.
+Wherever possible, native array data from the ExodusII C API is accessed directly without copying through a view on a
+:class:`numpy.ndarray`. This maintains performance by eliminating copying, and it supplies
+the arrays in a convenient form for computations with numpy or scipy functions.
 
-This memory buffer may be required in order to rearrange the strings, integer or floating point
-arrays in the correct order before supplying them or converting them to Python types or :class:`numpy.ndarray`. This
-buffer is allocated on the C/C++ heap using malloc or equivalent function.
+Some methods in this module, however, require allocating a smaller temporary memory buffers for working space.
+These buffers are small and the size is noted in the documentation for each method.
+Typical examples of the temporary memory buffer include functions required to
+translate Exodus C strings to the Python str type, or rearrange integer or floating point arrays in the correct order
+before supplying them or converting them to :class:`numpy.ndarray`. Internal temporary buffers are allocated on the
+C/C++ heap using malloc or equivalent function. The buffer memory is released before the function returns.
+If an exception occurs, we are careful that the buffer is still released.
 
 
 Database Objects
@@ -71,48 +75,34 @@ Database Objects
    :inherited-members:
    :show-inheritance:
 
-   .. autoattribute:: EntityType.NODAL
-      :annotation:
+   .. autoattribute:: NODAL
+   .. autoattribute:: NODE_SET
+   .. autoattribute:: EDGE_BLOCK
+   .. autoattribute:: EDGE_SET
+   .. autoattribute:: FACE_BLOCK
+   .. autoattribute:: FACE_SET
+   .. autoattribute:: ELEM_BLOCK
+   .. autoattribute:: ELEM_SET
+   .. autoattribute:: SIDE_SET
+   .. autoattribute:: ELEM_MAP
+   .. autoattribute:: NODE_MAP
+   .. autoattribute:: EDGE_MAP
+   .. autoattribute:: FACE_MAP
+   .. autoattribute:: GLOBAL
 
-   .. autoattribute:: EntityType.NODE_SET
-      :annotation:
+Entry Types
+-----------
 
-   .. autoattribute:: EntityType.EDGE_BLOCK
-      :annotation:
+.. autoclass:: EntryType
+   :members:
+   :inherited-members:
+   :show-inheritance:
 
-   .. autoattribute:: EntityType.EDGE_SET
-      :annotation:
-
-   .. autoattribute:: EntityType.FACE_BLOCK
-      :annotation:
-
-   .. autoattribute:: EntityType.FACE_SET
-      :annotation:
-
-   .. autoattribute:: EntityType.ELEM_BLOCK
-      :annotation:
-
-   .. autoattribute:: EntityType.ELEM_SET
-      :annotation:
-
-   .. autoattribute:: EntityType.SIDE_SET
-      :annotation:
-
-   .. autoattribute:: EntityType.ELEM_MAP
-      :annotation:
-
-   .. autoattribute:: EntityType.NODE_MAP
-      :annotation:
-
-   .. autoattribute:: EntityType.EDGE_MAP
-      :annotation:
-
-   .. autoattribute:: EntityType.FACE_MAP
-      :annotation:
-
-   .. autoattribute:: EntityType.GLOBAL
-      :annotation:
-
+   .. autoattribute:: COORDINATE
+   .. autoattribute:: ELEMENT
+   .. autoattribute:: NODE
+   .. autoattribute:: FACE
+   .. autoattribute:: EDGE
 
 Exceptions and Debug Messages
 -----------------------------
@@ -123,23 +113,23 @@ raised by this module inherit from it.
 
 .. autosummary::
 
-    Error
-    NoMemory
-    FileError
-    FileExists
-    FileNotFound
-    FileAccess
-    ReadWriteError
-    InternalError
-    InvalidEntityType
-    ArrayTypeError
-    ArgumentTypeError
-    InactiveComponent
-    InactiveEntity
-    InactiveField
-    InvalidSpatialDimension
-    NotYetImplemented
-    RangeError
+   Error
+   NoMemory
+   FileError
+   FileExists
+   FileNotFound
+   FileAccess
+   ReadWriteError
+   InternalError
+   InvalidEntityType
+   ArrayTypeError
+   ArgumentTypeError
+   InactiveComponent
+   InactiveEntity
+   InactiveField
+   InvalidSpatialDimension
+   NotYetImplemented
+   RangeError
 
 .. seealso:: example code in :class:`.Error`
 
@@ -161,6 +151,11 @@ raised by this module inherit from it.
 .. |NotYetImplemented| replace:: :class:`.NotYetImplemented`
 .. |RangeError| replace:: :class:`.RangeError`
 
+.. autoclass:: Messages
+   :members:
+   :inherited-members:
+   :show-inheritance:
+
 .. autofunction:: debug_messages
 
 .. autoclass:: DebugMessages
@@ -168,23 +163,7 @@ raised by this module inherit from it.
    :inherited-members:
    :show-inheritance:
 
-Entry Types
------------
-
-.. autodata:: ELEMENT
-   :annotation:
-
-.. autodata:: NODE
-   :annotation:
-
-.. autodata:: FACE
-   :annotation:
-
-.. autodata:: EDGE
-   :annotation:
-
-
-Global Entitity
+Global Entity
 ---------------
 
 .. autoclass:: Global
@@ -242,6 +221,9 @@ Maps Entities
 Fields
 ------
 
+.. autodata:: Component
+   :annotation: = indicates either a str or int
+
 .. autoclass:: Field
    :members:
    :inherited-members:
@@ -259,53 +241,63 @@ Fields
 Exceptions
 ----------
 
-.. autoclass:: Error
+.. autoexception:: Error
    :show-inheritance:
 
-.. autoclass:: NoMemory
+.. autoexception:: NoMemory
    :show-inheritance:
 
-.. autoclass:: FileError
+.. autoexception:: FileError
    :show-inheritance:
 
-.. autoclass:: FileExists
+.. autoexception:: FileExists
    :show-inheritance:
 
-.. autoclass:: FileNotFound
+.. autoexception:: FileNotFound
    :show-inheritance:
 
-.. autoclass:: FileAccess
+.. autoexception:: FileAccess
    :show-inheritance:
 
-.. autoclass:: ReadWriteError
+.. autoexception:: ReadWriteError
    :show-inheritance:
 
-.. autoclass:: InternalError
+.. autoexception:: InternalError
    :show-inheritance:
 
-.. autoclass:: InvalidEntityType
+.. autoexception:: InvalidEntityType
    :show-inheritance:
 
-.. autoclass:: ArrayTypeError
+.. autoexception:: ArrayTypeError
    :show-inheritance:
 
-.. autoclass:: ArgumentTypeError
+.. autoexception:: ArgumentTypeError
    :show-inheritance:
 
-.. autoclass:: InactiveComponent
+.. autoexception:: InactiveComponent
    :show-inheritance:
 
-.. autoclass:: InactiveEntity
+.. autoexception:: InactiveEntity
    :show-inheritance:
 
-.. autoclass:: InactiveField
+.. autoexception:: InactiveField
    :show-inheritance:
 
-.. autoclass:: InvalidSpatialDimension
+.. autoexception:: InvalidSpatialDimension
    :show-inheritance:
 
-.. autoclass:: NotYetImplemented
+.. autoexception:: NotYetImplemented
    :show-inheritance:
 
-.. autoclass:: RangeError
+.. autoexception:: RangeError
    :show-inheritance:
+
+
+Utility Functions
+-----------------
+
+.. autofunction:: library_version
+
+.. autofunction:: debug_messages
+
+

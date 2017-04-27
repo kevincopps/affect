@@ -65,16 +65,20 @@ import datetime
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 
 extensions = [
-    'sphinx.ext.intersphinx',
     'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',  # should come before sphinx_autodoc_typehints if you use both
+    'sphinx_autodoc_typehints',
     'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'sphinx.ext.inheritance_diagram',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.inheritance_diagram'
 ]
+
+napoleon_numpy_docstring = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -311,10 +315,10 @@ autoclass_content = 'both'
 
 # numpydoc_show_class_members = False
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3.5', None),
-                       'numpy': ('https://docs.scipy.org/doc/numpy', None),
-                       'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
-                       'matplotlib': ('https://matplotlib.org', None)}
+# intersphinx_mapping = {'python': ('https://docs.python.org/3.6', None),
+#                        'numpy': ('https://docs.scipy.org/doc/numpy', None),
+#                        'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
+#                        'matplotlib': ('https://matplotlib.org', None)}
 
 
 #        'http://docs.python.org/dev': None,
