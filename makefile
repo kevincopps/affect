@@ -23,8 +23,8 @@ pip_install =                                  \
 
 build:
 	$(BUILD_PRINT)
-	@python setup.py build_ext -i 2>&1 | python makewarn.py "warning: \"Using deprecated NumPy API" 4 3
-
+	@python setup.py build_ext -i 2>&1 | python makewarn.py "\"Using deprecated NumPy API" 4 3
+	
 test:
 	pytest -v -s affect/tests/test_database.py
 
