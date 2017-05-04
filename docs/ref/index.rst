@@ -8,4 +8,4 @@ functions.
    :maxdepth: 1
 
    exodus
-
+   dynamics

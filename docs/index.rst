@@ -31,6 +31,12 @@ The :mod:`affect.exodus` module maintains compact representation of the array da
 direct access through `Numpy array objects <https://docs.scipy.org/doc/numpy/reference/arrays.html>`_.
 
 
+Analysis Tools
+==============
+
+Tools for analyzing structural dynamics are contained in :mod:`affect.dynamics`.
+
+
 Indices and tables
 ==================
 

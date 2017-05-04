@@ -1891,6 +1891,34 @@ class EntityCollectionWithVariable(BaseEntityCollection):
         variable_name = _to_unicode(&var_name[0])
         return variable_name
 
+    @property
+    def variables(self) -> Dict[str, int]:
+        """
+        A dictionary of scalar variable names and indices associated with this collection of entities.
+         
+        This object is a mapping of scalar variable name -> index, that are active on the collection of entities. 
+
+        Prefer using :meth:`fields` which is usually more convenient unless you only want one component, because 
+        each :term:`variable` is only a scalar, and maybe a component value of a :term:`field` vector or tensor.
+
+        Example:
+            
+            Get the Z component of a force variable at a single node at all times.
+
+            >>> with DatabaseFile('/tmp/myExodusFile.exo') as e:
+            >>>     node_vars = e.nodal.variables 
+            >>>     fz = e.nodal.variable_at_times(node_vars['AForceZ'], 1, 0, e.globals.times().size)
+            >>>     print(fz)
+            
+        Returns:
+            A :class:`collections.OrderedDict`, where `keys` of the dictionary are variable names, and the 
+            `values` of the dictionary are the integer index, or ID of the variable.
+        """
+        variable_dictionary = collections.OrderedDict()
+        for index, name in enumerate(self.variable_names()):
+            variable_dictionary[name] = index
+        return variable_dictionary
+
     def is_variable_active_all(self) -> numpy.ndarray:
         """
         Read a table of indicating whether each of the variables on this type of entities is active on each entity. 

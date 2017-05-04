@@ -36,7 +36,9 @@ clean:
 	$(CLEAN_PRINT)
 	@rm -rf build
 	@rm -rf affect.egg-info
-	@cd affect && rm -rf exodus.cpp connect.cpp *.so __pycache__
+	@find . -type d -name '__pycache__' -exec rm -rf {} +
+	@cd affect && rm -rf exodus.c* connect.cpp *.so
+
 
 docs:
 	@cd docs && rm -rf _build && make html
