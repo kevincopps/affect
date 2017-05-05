@@ -1,0 +1,36 @@
+{% set data = load_setup_py_data() %}
+
+package:
+  name: affect
+  version: {{ data.get('version') }}
+
+source:
+  path: ../affect_parallel
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - numpy
+    - cython
+    - pytest-runner
+  run:
+    - python
+    - hdf4
+    - hdf5
+    - netcdf4
+    - numexpr
+    - numpy
+    - jinja2
+
+build:
+  script: python setup.py install --single-version-externally-managed --record=/tmp/record.txt
+
+about:
+  home: https://github.com/kevincopps/affect
+  license: MIT
+  license_file: LICENSE
+
+extra:
+  maintainers:
+   - Kevin Copps

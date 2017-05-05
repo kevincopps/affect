@@ -95,9 +95,6 @@ elif _platform == 'win32':
     os.environ["CXX"] = 'gcc'
 
 
-with open('requirements.txt') as f:
-    requirements = f.read().splitlines()
-
 extensions = [
     Extension('affect.exodus',
               sources=exodus_source_files,
@@ -144,6 +141,9 @@ def parallel_c_compile(self, sources, output_dir=None, macros=None, include_dirs
 # Monkey patch to allow parallel compile
 distutils.ccompiler.CCompiler.compile = parallel_c_compile
 
+install_requires = ['cython >= 0.24.1', 'hdf4 >= 4.2.12', 'hdf5 >= 1.8.17', 'netcdf4 >= 1.2.4', 'numexpr >= 2.6.1',
+                    'numpy >= 1.11.1']
+
 setup(
     name='affect',
     description='Affect - Processing Computational Simulations',
@@ -158,7 +158,7 @@ setup(
     packages=['affect'],
     classifiers=['Programming Language :: Python :: 3', ],
     setup_requires=['setuptools>=18.0', 'numpy', 'cython', 'pytest-runner'],
-    install_requires=requirements,
+    install_requires=install_requires,
     tests_require=['pytest'],
     zip_safe=False,
     cmdclass={'build_ext': BuildExtensions},
