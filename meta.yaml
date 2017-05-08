@@ -14,6 +14,9 @@ requirements:
     - numpy
     - cython
     - pytest-runner
+    - hdf4
+    - hdf5
+    - netcdf4
   run:
     - python
     - hdf4

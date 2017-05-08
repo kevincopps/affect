@@ -37,13 +37,13 @@ class BuildExtensions(build_ext):
 def get_netcdf_include():
     # setup and distutils compiler does not find the base include path in anaconda installs
     include = 'netcdf.h'
-    start = os.path.abspath(os.path.join(distutils.sysconfig.get_python_inc(), '..'))
+    python_include = distutils.sysconfig.get_python_inc()
+    start = os.path.abspath(os.path.join(python_include, '..'))
     for root, dirs, files in os.walk(start):
         for file in files:
             if file == include:
                 return root
-    print('Could not find {}'.format(include))
-    sys.exit(1)
+    raise RuntimeError('Error: setup.py could not find {}'.format(include))
 
 
 NUMBER_PARALLEL_COMPILES = 8
@@ -157,7 +157,7 @@ setup(
     url='https://github.com/kdcopps/affect',
     packages=['affect'],
     classifiers=['Programming Language :: Python :: 3', ],
-    setup_requires=['setuptools>=18.0', 'numpy', 'cython', 'pytest-runner'],
+    setup_requires=['setuptools>=18.0', 'numpy', 'cython', 'netcdf4', 'pytest-runner'],
     install_requires=install_requires,
     tests_require=['pytest'],
     zip_safe=False,
