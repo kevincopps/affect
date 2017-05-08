@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-rsync --human-readable --progress --recursive --times --compress \
-  ~/Developer/affect_parallel/ blade:/ascldap/users/kdcopps/PycharmProjects/affect_parallel
-
-# rsync -avz -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --progress /root/bigfile.txt 198.211.117.129:/root/
