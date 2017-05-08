@@ -1,3 +1,6 @@
+# Description for Conda package.
+# to use: conda build <project_directory>
+
 {% set data = load_setup_py_data() %}
 
 package:

@@ -1,7 +1,26 @@
 affect
 ======
 
-Read/Write and postprocess results of finite element analysis.
+Tools for processing results of a finite element analysis.
+
+License
+-------
+
+MIT. See [license file](https://github.com/kdcopps/affect/blob/master/LICENSE).
+
+Dependencies
+------------
+
+`affect` requires Python 3.6+ with additional package dependencies. The easiest way to get going
+ is by installing and using the [Anaconda](https://www.continuum.io/downloads) python environment.
+
+* [numpy](htttps://www.numpy.org)
+* [numexpr](https://github.com/pydata/numexpr)
+* [netcdf4](https://pypi.python.org/pypi/netCDF4)
+
+The netcdf4 package has additional dependencies including the hdf4 and hdf5 libraries.
+Other dependencies which may be required for the development of affect are listed below.
+
 
 
 Development
@@ -35,15 +54,29 @@ cc1plus: warning: command line option "-Wstrict-prototypes" is valid for Ada/C/O
 This is normal, and a side effect of using setuptools and distutils with the 
 `Extension(language='c++')` parameter. These warnings may also be hidden during `make build`. 
 
-### Other Dependencies
+### Development Dependencies
 
+`affect` is developed with Cython.
+
+* cython >= 0.24.1
+* pytest >= 3.0.5
+* pytest-cov >= 2.3.1
+* pytest-runner >= 2.11.1
 * sphinx >= 1.5.1
 * sphinx_rtd_theme >= 0.1.9
+* make
 
-### Conda Builds
+For building a conda recipe using `conda build` you may also need:
 
-To build the conda package with Conda build, make sure you install the prerequisites:
+* jinja2
+
+### Conda Recipe
+
+To build the conda recipe, make sure you install the prerequisites:
 
 `conda install conda-build`
 
 The file `meta.yaml` in the root directory controls the building of the conda package.
+Build the recipe using
+
+`conda build <project-directory>`
