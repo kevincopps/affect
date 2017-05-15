@@ -1,7 +1,13 @@
-# import sys
-# if sys.version_info[0] == 3 and sys.version_info[1] > 4:
-#     pass
-# else:
-#     raise ImportError("Python Version 3.5 or above is required for Affect.")
-#
-# del sys
+"""
+Tools for processing results of a finite element analysis.
+"""
+
+import sys
+
+__author__ = 'kevincopps'
+
+if sys.version_info[0] == 3 and sys.version_info[1] >= 6:
+    pass
+else:
+    raise ImportError('Python version 3.6 or above is required for the affect module.')
+del sys

@@ -95,6 +95,14 @@ def test_element_blocks(edb):
     for key, block in edb.element_blocks.items():
         print('    ' + str(block))
 
+# noinspection PyShadowingNames
+def test_element_block_key_error(edb):
+    print_bold('\nelement_block_key_error:')
+    BAD_ID = -9999999
+    element_blocks = edb.element_blocks
+    with pytest.raises(ex.EntityKeyError):
+        block = element_blocks[BAD_ID]
+    print('    no block with id = {}'.format(BAD_ID))
 
 # noinspection PyShadowingNames
 def test_connectivity(edb):
@@ -237,3 +245,22 @@ def test_global(edb):
             pass
         else:
             print('    {}: {}'.format(k, v))
+
+# noinspection PyShadowingNames
+def test_node_map_key_error(edb):
+    print_bold('\nnode_map_key_error:')
+    BAD_ID = -9999999
+    node_maps = edb.node_maps
+    with pytest.raises(ex.EntityKeyError):
+        map = node_maps[BAD_ID]
+    print('    no map with id = {}'.format(BAD_ID))
+
+# noinspection PyShadowingNames
+def test_face_set_key_error(edb):
+    print_bold('\nface_set_key_error:')
+    BAD_ID = -9999999
+    face_sets = edb.face_sets
+    with pytest.raises(ex.EntityKeyError):
+        set = face_sets[BAD_ID]
+    print('    no set with id = {}'.format(BAD_ID))
+

@@ -110,6 +110,9 @@ class NotYetImplemented(Error, NotImplementedError):
 class RangeError(Error, ValueError):
     """Exception raised if given entry indices are out of range of existing data."""
 
+class EntityKeyError(Error, KeyError):
+    """Exception raised if an entity ID does not exist in the dictionary of that type."""
+
 class Mode(IntEnum):
     """
     Database open modes. These cannot be combined.
@@ -562,7 +565,29 @@ ENTITY_TYPES_WITH_ATTRIBUTES = frozenset((EntityType.NODAL, EntityType.NODE_SET,
                                          EntityType.ELEM_BLOCK, EntityType.ELEM_SET, EntityType.SIDE_SET))
 """The set of EntityType with attributes."""
 
+
+def _get_entity_type(value: int) -> str:
+    """
+    Return the name of the EntityType that is mapped to the given integer.
+    
+    Returns:
+        name of the EntityType member.
+    
+    Raises:
+        ValueError: if the value does not correspond to one of the EntityType.
+    """
+    return list(EntityType.__members__.keys())[list(EntityType.__members__.values()).index(value)]
+
 def _raise_invalid_entity_type(string_or_set):
+    """
+    Raise an exception with the message saying the entity type is not a member of 'string_or_set'.
+    
+    Args:
+        string_or_set:
+         
+    Raises:
+        InvalidEntityType: always
+    """
     if isinstance(string_or_set, frozenset):
         message = ', '.join(i.name for i in string_or_set)
     else:
@@ -1637,8 +1662,32 @@ class EntityDictionaryWithProperty(BaseEntityCollection, collections.MutableMapp
             # initialize dictionary with (entity ID, None) key, value pairs
             self._store = collections.OrderedDict.fromkeys(self._entity_ids(), None)
 
-    @abstractmethod
     def __getitem__(self, key):
+        value = self._store.get(key)  # _store has all existing keys obtained at time of constructor
+        if value is None:
+            # this could be either because key does not exist in database, or just that value not created yet
+            if not self._has_entity_id(key):
+                raise EntityKeyError('No {} with the id {} exists in the database.'.format(self.entity_type.name,
+                                                                                           key))
+            # call derived class to create the value since it does not yet exist
+            value = self._getitem_derived(key)
+            # and put the value in the dictionary
+            self._store[key] = value
+        return value
+
+    @abstractmethod
+    def _getitem_derived(self, key):
+        """
+        Return the appropriate Block, Map, or Set object corresponding to the given ID.
+        
+        Derived class must implement.
+        
+        Args:
+            key (int): ID of an entity_type 
+
+        Returns:
+            value - appropriate Block, Map or Set object
+        """
         raise NotYetImplemented
 
     @abstractmethod
@@ -1697,12 +1746,26 @@ class EntityDictionaryWithProperty(BaseEntityCollection, collections.MutableMapp
                     free(entity_ids_ptr32)
         return ids
 
+    def _has_entity_id(self, entity_id: int):
+        """
+        Check if an entity_id is contained in the current array of entity ids inside the Database. 
+        
+        Args:
+            entity_id: id of an entity
+            
+        Returns:
+            True if the id is in the database, else False.
+
+        """
+        # make array of length one out of the entity_id, check if this array is contained in the array of all ids
+        return numpy.in1d(numpy.array([entity_id]), self._entity_ids())[0]
+
     def num_properties(self) -> int:
         """
         The number of properties for this type of collection entity.
         
-        If an optional :term:`properties` is associated with an entity, it is associated with *every* entity pf that type 
-        of collection in the :term:`database`.
+        If an optional :term:`properties` is associated with an entity, it is associated with *every* entity of that 
+        type of collection in the :term:`database`.
         
         Returns:
             number of integer properties
@@ -2536,40 +2599,36 @@ class Blocks(EntityDictionaryWithProperty, EntityCollectionWithVariable):
             _raise_invalid_entity_type(BLOCK_ENTITY_TYPES)
         super(Blocks, self).__init__(database_id=database_id, entity_type=block_type, *args, **kwargs)
 
-    def __getitem__(self, key):
-        value = self._store.get(key)        # throws KeyError if the ID is incorrect
-        if value is None:
-            value = self._get_block(key)    # create the value if it does not yet exist
-            self._store[key] = value        # put the value in the dictionary
-        return value
+    def _getitem_derived(self, key):
+        """
+        Construct a block from the database given the block ID.
+        
+        Args:
+            key: the ID of the block, one of those returned by :meth:`entity_ids`
+
+        Returns:
+            A :class:'Block' initialized with name, topology, sizes of entries and attributes, etc.
+            
+        Raises:
+            EntityKeyError: if the key is not present in the database.
+        """
+        cdef cexodus.ex_block block
+        block.id = key
+        block.type = self.entity_type
+        if 0 != cexodus.ex_get_block_param(self.ex_id, &block):
+            _raise_io_error()
+        ndim = _inquire_value(self.ex_id, cexodus.EX_INQ_DIM)
+        topology_name = _topology_name(_to_unicode(block.topology), block.num_nodes_per_entry, ndim)
+        name = self.name(key)
+        return Block(self.ex_id, self.entity_type, key, name, topology_name, block.num_entry,
+                     block.num_nodes_per_entry, block.num_edges_per_entry, block.num_faces_per_entry,
+                     parent_entity_collection=self)
 
     def __setitem__(self, key, value):
         EntityDictionaryWithProperty.__setitem__(self, key, value)
 
     def __delitem__(self, key):
         EntityDictionaryWithProperty.__delitem__(self, key)
-
-    def _get_block(self, block_id):
-        """
-        Construct a block from the database given the block ID.
-        
-        Args:
-            block_id: the ID of the block, one of those returned by :meth:`entity_ids`
-
-        Returns:
-            A :class:'Block' initialized with name, topology, sizes of entries and attributes, etc.
-        """
-        cdef cexodus.ex_block block
-        block.id = block_id
-        block.type = self.entity_type
-        if 0 != cexodus.ex_get_block_param(self.ex_id, &block):
-            _raise_io_error()
-        ndim = _inquire_value(self.ex_id, cexodus.EX_INQ_DIM)
-        topology_name = _topology_name(_to_unicode(block.topology), block.num_nodes_per_entry, ndim)
-        name = self.name(block_id)
-        return Block(self.ex_id, self.entity_type, block_id, name, topology_name, block.num_entry,
-                     block.num_nodes_per_entry, block.num_edges_per_entry, block.num_faces_per_entry,
-                     parent_entity_collection=self)
 
 
 class Block(EntityWithAttribute, EntityWithProperty):
@@ -2841,12 +2900,8 @@ class Maps(EntityDictionaryWithProperty):
             _raise_invalid_entity_type(MAP_ENTITY_TYPES)
         super(Maps, self).__init__(database_id=database_id, entity_type=map_type, *args, **kwargs)
 
-    def __getitem__(self, key):
-        value = self._store.get(key)                        # throws KeyError if the ID is incorrect
-        if value is None:
-            value = Map(self.ex_id, self.entity_type, key, parent_entity_collection=self)
-            self._store[key] = value                        # put the value in the dictionary
-        return value
+    def _getitem_derived(self, key):
+        return Map(self.ex_id, self.entity_type, key, parent_entity_collection=self)
 
     def __setitem__(self, key, value):
         EntityDictionaryWithProperty.__setitem__(self, key, value)
@@ -2989,32 +3044,25 @@ class Sets(EntityDictionaryWithProperty, EntityCollectionWithVariable):
             _raise_invalid_entity_type(SET_ENTITY_TYPES)
         super(Sets, self).__init__(database_id=database_id, entity_type=set_type, *args, **kwargs)
 
-    def __getitem__(self, key):
-        value = self._store.get(key)    # throws KeyError if the ID is incorrect
-        if value is None:
-            value = self._get_set(key)  # create the value if it does not yet exist
-            self._store[key] = value    # put the value in the dictionary
-        return value
-
     def __setitem__(self, key, value):
         EntityDictionaryWithProperty.__setitem__(self, key, value)
 
     def __delitem__(self, key):
         EntityDictionaryWithProperty.__delitem__(self, key)
 
-    def _get_set(self, set_id: int):
+    def _getitem_derived(self, key):
         """
         Construct a set from the database given the set ID.
         
         Args:
-            set_id: the ID of the block, one of those returned by :meth:`entity_ids`.
+            key: the ID of the Set, one of those returned by :meth:`entity_ids`.
             
         Returns:
             a :class:`Set` initialized with name, sizes of entries and distribution factors, etc.
         """
-        num_entries, num_dist_fact = _set_param(self.ex_id, self.entity_type.value, set_id)
-        name = self.name(set_id)
-        return Set(self.ex_id, self.entity_type, set_id, name, num_entries, num_dist_fact,
+        num_entries, num_dist_fact = _set_param(self.ex_id, self.entity_type.value, key)
+        name = self.name(key)
+        return Set(self.ex_id, self.entity_type, key, name, num_entries, num_dist_fact,
                    parent_entity_collection=self)
 
     def num_distribution_factors_all(self) -> int:

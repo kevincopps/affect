@@ -33,7 +33,7 @@ benchmarks/env
 docs/_build
 
 # examples and notebooks
-demo/.ipynb_checkpoints
+.ipynb_checkpoints
 
 # Translations
 *.mo
