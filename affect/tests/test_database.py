@@ -1,13 +1,9 @@
 # test_database.py
 
-import sys
-import os
 import numpy as np
 import textwrap
 import pytest
 from .. import exodus as ex
-
-executable = sys.executable
 
 
 class ConsoleCode:
@@ -30,30 +26,28 @@ def print_bold(*args):
 def print_blue(*args):
     print(ConsoleCode.BLUE + ' '.join(map(str, args)) + ConsoleCode.END)
 
+
 def test_library_version():
     print_bold('\nlibrary_version:')
     print('    ExodusII library API version: {}'.format(ex.library_version()))
 
 
-def test_non_existent():
+def test_non_existent_file():
     with pytest.raises(ex.FileNotFound):
         ex.Database("nonexistent.e", ex.Mode.READ_ONLY)
 
 
-# noinspection PyShadowingNames
 def test_str_repr(edb):
     print_bold('\nstr_repr:')
     print('    ' + str(edb))
 
 
-# noinspection PyShadowingNames
 def test_coordinates(edb):
     print_bold('\ncoordinates')
     x = edb.nodal.coordinates()
     print('    type {} with shape {}'.format(type(x), x.shape))
     
 
-# noinspection PyShadowingNames
 def test_bounding_box(edb):
     print_bold('\nbounding_box')
     ndim = edb.globals.dimension()
@@ -85,28 +79,38 @@ def test_bounding_box(edb):
     print(bbox)
 
 
-# noinspection PyShadowingNames
 def test_element_blocks(edb):
     print_bold('\nelement_blocks:')
     print('    {} element blocks'.format(len(edb.element_blocks)))
     print('    IDs:')
     for line in textwrap.wrap('{}'.format([k for k in edb.element_blocks.keys()])):
-        print(line)
+        print('        ' + line)
+    print('    blocks:')
     for key, block in edb.element_blocks.items():
-        print('    ' + str(block))
+        print('    {}: {}'.format(key, block))
 
-# noinspection PyShadowingNames
+
+def test_attributes(edb):
+    print_bold('\nblock attributes:')
+    for key, block in edb.element_blocks.items():
+        num_attributes = block.num_attributes()
+        print('    {}: has {} attributes {}'.format(key, num_attributes, block.attribute_names()))
+        if num_attributes:
+            print('        {}'.format([block.attribute(k) for k in range(num_attributes)]))
+
+
 def test_element_block_key_error(edb):
     print_bold('\nelement_block_key_error:')
-    BAD_ID = -9999999
+    bad_id = -9999999
     element_blocks = edb.element_blocks
     with pytest.raises(ex.EntityKeyError):
-        block = element_blocks[BAD_ID]
-    print('    no block with id = {}'.format(BAD_ID))
+        block = element_blocks[bad_id]
+        print(block)
+    print('    no block with id = {}'.format(bad_id))
 
-# noinspection PyShadowingNames
-def test_connectivity(edb):
-    print_bold('\nconnectivity:')
+
+def test_block_connectivity(edb):
+    print_bold('\nblock connectivity:')
     min_entry = np.iinfo(np.int32).max
     max_entry = -1
     for key, block in edb.element_blocks.items():
@@ -120,20 +124,21 @@ def test_connectivity(edb):
         print('    block {:5d} first node {:7d} last node {:7d}'.format(key, block_min_node, block_max_node))
         min_entry = min(min_entry, block_min_node)
         max_entry = max(max_entry, block_max_node)
+        partial_connectivity = block.partial_connectivity(0, 1)  # all nodes of 0th element
+        np.testing.assert_equal(partial_connectivity,connectivity[0:1,:])
+        print('    partial_connectivity(0,1) == connectivity[0:1,:]')
     assert min_entry == 0
     num_nodes = edb.globals.num_nodes()
     assert max_entry == num_nodes - 1
 
 
-# noinspection PyShadowingNames
 def test_side_sets(edb):
     print_bold('\nside sets:')
     for key, side_set in edb.side_sets.items():
         sides = side_set.entries()
         assert isinstance(sides, np.ndarray)
         num_entries = side_set.num_entries()
-        assert sides.shape[0] == num_entries
-        assert sides.shape[1] == 2  # a side is an element and a local side index
+        assert sides.shape == (num_entries, 2)  # a side is an element and a local side index
         print('    side set {:3d} with {:5d} sides'.format(key, num_entries))
 
 
@@ -166,7 +171,6 @@ def print_entity_fields_info(entity_dict):
         print('    ' + str(v))
 
 
-# noinspection PyShadowingNames
 def test_fields(edb):
     print_bold('\ntest_fields:')
     print_entity_fields_info(edb.globals)
@@ -174,7 +178,6 @@ def test_fields(edb):
     print_entity_fields_info(edb.element_blocks)
 
 
-# noinspection PyShadowingNames
 def test_node_variable_at_all_times(edb):
     print_bold('\nnode_variable_at_all_times:')
     num_variables = edb.nodal.num_variables()
@@ -192,7 +195,6 @@ def test_node_variable_at_all_times(edb):
         # print(values)
 
 
-# noinspection PyShadowingNames
 def test_node_field_at_all_times(edb):
     print_bold('\nnode_field_at_all_times:')
     fields = edb.nodal.fields
@@ -205,7 +207,6 @@ def test_node_field_at_all_times(edb):
         print(node_field_at_times)
 
 
-# noinspection PyShadowingNames
 def test_times(edb):
     print_bold('\ntimes:')
     num_times = edb.globals.num_times()
@@ -214,7 +215,6 @@ def test_times(edb):
     print('{}'.format(times))
 
 
-# noinspection PyShadowingNames
 def test_info_records(edb):
     records = edb.info_records
     if len(records):
@@ -222,7 +222,6 @@ def test_info_records(edb):
         print('   length: {}'.format(len(records)))
 
 
-# noinspection PyShadowingNames
 def test_qa_records(edb):
     records = edb.qa_records
     if len(records):
@@ -231,13 +230,11 @@ def test_qa_records(edb):
         print('  {}'.format(record))
 
 
-# noinspection PyShadowingNames
 def test_summary(edb):
     print_bold('\nsummary:')
     print(edb.summary())
 
 
-# noinspection PyShadowingNames
 def test_global(edb):
     print_bold('\nglobal:')
     for k, v in edb.globals.__dict__.items():
@@ -246,21 +243,22 @@ def test_global(edb):
         else:
             print('    {}: {}'.format(k, v))
 
-# noinspection PyShadowingNames
+
 def test_node_map_key_error(edb):
     print_bold('\nnode_map_key_error:')
-    BAD_ID = -9999999
+    bad_id = -9999999
     node_maps = edb.node_maps
     with pytest.raises(ex.EntityKeyError):
-        map = node_maps[BAD_ID]
-    print('    no map with id = {}'.format(BAD_ID))
+        node_map = node_maps[bad_id]
+        print(node_map)
+    print('    no map with id = {}'.format(bad_id))
 
-# noinspection PyShadowingNames
+
 def test_face_set_key_error(edb):
     print_bold('\nface_set_key_error:')
-    BAD_ID = -9999999
+    bad_id = -9999999
     face_sets = edb.face_sets
     with pytest.raises(ex.EntityKeyError):
-        set = face_sets[BAD_ID]
-    print('    no set with id = {}'.format(BAD_ID))
-
+        face_set = face_sets[bad_id]
+        print(face_set)
+    print('    no set with id = {}'.format(bad_id))

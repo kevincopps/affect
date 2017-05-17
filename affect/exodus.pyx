@@ -7,8 +7,8 @@ This module contains the classes for reading/writing an ExodusII format mesh dat
 .. currentmodule:: affect.exodus
 """
 
-import collections
 import os
+import collections
 from abc import abstractmethod
 from enum import IntEnum, IntFlag
 from typing import Dict, Iterable, List, Sequence, TypeVar
@@ -112,6 +112,9 @@ class RangeError(Error, ValueError):
 
 class EntityKeyError(Error, KeyError):
     """Exception raised if an entity ID does not exist in the dictionary of that type."""
+
+class InvalidType(Error, TypeError):
+    """Exception raised if an argument to a function or method is the wrong type."""
 
 class Mode(IntEnum):
     """
@@ -1760,6 +1763,30 @@ class EntityDictionaryWithProperty(BaseEntityCollection, collections.MutableMapp
         # make array of length one out of the entity_id, check if this array is contained in the array of all ids
         return numpy.in1d(numpy.array([entity_id]), self._entity_ids())[0]
 
+    def name_ids(self) -> Dict[str, int]:
+        """
+        A dictionary of the mapping of entity name to entity id for every entity in this group.
+        
+        This method is a convenience for direct lookup and indexing entity ID's only by their name, which is often
+        not needed. Using an iterator through he keys and items of this class is probably more useful.
+        
+        Example:
+
+            >>> with DatabaseFile('myExodusFile.exo') as e:
+            >>>     element_blocks = e.element_blocks
+            >>>     name_ids = element_blocks.name_ids()
+            >>>     block_id = name_ids['block_1']
+            >>>     block = element_blocks[block_id]
+            >>>     print(block)
+
+            One of the element blocks is accessed by string name "block_1", which may be different depending on the
+            individual ExodusII database file.
+        
+        Returns:
+            a dictionary of `name` keys to `entity_id` values
+        """
+        return collections.OrderedDict(zip(self.names(), self._entity_ids()))
+
     def num_properties(self) -> int:
         """
         The number of properties for this type of collection entity.
@@ -2813,9 +2840,9 @@ class Block(EntityWithAttribute, EntityWithProperty):
             RangeError: if the start, stop range is invalid
         """
         cdef int64_t num_entries
-        cdef numpy.ndarray[numpy.int64_t, ndim=1] conn64
+        cdef numpy.ndarray[numpy.int64_t, ndim=2] conn64
         cdef int64_t *conn_ptr64
-        cdef numpy.ndarray[numpy.int32_t, ndim=1] conn32
+        cdef numpy.ndarray[numpy.int32_t, ndim=2] conn32
         cdef int *conn_ptr32
         cdef error = -1
         cdef int64_t index64
