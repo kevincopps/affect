@@ -1,8 +1,10 @@
-.PHONY: build test clean docs
+.PHONY: build build_trace clean coverage test docs test_pip_install
 
 BOLD = `tput bold`
 NORMAL = `tput sgr0`
 BUILD_PRINT = @echo "${BOLD}Building package and Cython extensions.${NORMAL}"
+BUILD_TRACE_PRINT = @echo "${BOLD}Rebuilding with tracing enabled.${NORMAL}"
+COVERAGE_PRINT = @echo "${BOLD}Analyzing coverage from tests.${NORMAL}"
 CLEAN_PRINT = @echo "${BOLD}Removing previous build results.${NORMAL}"
 TEST_PIP_INSTALL_PRINT = @echo "${BOLD}Testing pip install in empty environment.${NORMAL}"
 
@@ -25,12 +27,16 @@ build:
 	$(BUILD_PRINT)
 	@python setup.py build_ext -i 2>&1 | python makewarn.py "\"Using deprecated NumPy API" 4 3
 
+build_trace: clean
+	$(BUILD_TRACE_PRINT)
+	@python setup.py --linetrace build_ext -i 2>&1 | python makewarn.py "\"Using deprecated NumPy API" 4 3
+
+coverage: build_trace
+	$(COVERAGE)
+	@py.test --cov-report term:skip-covered --cov-report annotate:cov_annotate --cov-report html:cov_html --cov=affect affect/tests/
+
 test:
 	pytest -v -s affect/tests/test_database.py
-
-test_pip_install:
-	$(TEST_PIP_INSTALL_PRINT)
-	$(call pip_install,affect_test_pip_install,$(CURDIR))
 
 clean:
 	$(CLEAN_PRINT)
@@ -39,6 +45,9 @@ clean:
 	@find . -type d -name '__pycache__' -exec rm -rf {} +
 	@cd affect && rm -rf exodus.c* connect.cpp *.so
 
-
 docs:
 	@cd docs && rm -rf _build && make html
+
+test_pip_install:
+	$(TEST_PIP_INSTALL_PRINT)
+	$(call pip_install,affect_test_pip_install,$(CURDIR))

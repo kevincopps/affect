@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 from setuptools import setup
-from setuptools.extension import Extension
-from setuptools.command.build_ext import build_ext
+from Cython.Distutils import Extension
+from Cython.Distutils.build_ext import build_ext
+#from setuptools.extension import Extension
+#from setuptools.command.build_ext import build_ext
 import pkg_resources
 import distutils.ccompiler
 import distutils.sysconfig
@@ -10,6 +12,7 @@ import glob
 import os
 import sys
 import multiprocessing.pool
+
 
 long_description = """
 Affect is a library for processing computer simulation data on unstructured grids.
@@ -116,6 +119,14 @@ extensions = [
               ),
 ]
 
+# compile with support for coverage or profiling
+# python setup.py --linetrace build_ext -i
+if '--linetrace' in sys.argv:
+    for e in extensions:
+        e.define_macros = [('CYTHON_TRACE_NOGIL', '1')]
+        e.cython_directives = {'linetrace': True, 'binding': True}
+    sys.argv.remove('--linetrace')
+
 
 def parallel_c_compile(self, sources, output_dir=None, macros=None, include_dirs=None, debug=0, extra_preargs=None,
                        extra_postargs=None, depends=None):
@@ -161,6 +172,9 @@ setup(
     install_requires=install_requires,
     tests_require=['pytest'],
     zip_safe=False,
-    cmdclass={'build_ext': BuildExtensions},
+    cmdclass={'build_ext': BuildExtensions},  # use our own subclass
     ext_modules=extensions
 )
+
+# alternatively
+# cmdclass={'build_ext': Cython.Build.build_ext},

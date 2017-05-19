@@ -1,59 +1,53 @@
+from .. import exodus
 import sys
 import numpy as np
-sys.path.append("../affect")
-import exodus
-from nose.tools import raises, assert_equal
 
-class TestStructuralDynamics():
+
+class TestStructuralDynamics:
 
     e = None  # database for most of the test functions
 
     def setUp(self):
 
-        exodus.debug_messages(exodus.VERBOSE|exodus.DEBUG)
+        exodus.debug_messages(exodus.Messages.VERBOSE | exodus.Messages.DEBUG)
         base = "./SRS-FRF-example/model/1/"
         file = "p1f-out.h"
         path = base + file
         self.e = exodus.Database(path)
-        print str(type(self.e))
+        print(type(self.e))
 
     def tearDown(self):
         pass
 
     def test_frf(self):
-        globals = self.e.globals
-        times = globals.times()
-        print 'number of timesteps {}'.format(len(times))
+        times = self.e.globals.times()
+        print('number of timesteps {}').format(len(times))
         nodal = self.e.nodal
         names = nodal.variable_names()
         acceleration_index = names.index('AccZ')
         force_index = names.index('AForceZ')
 
         a_stack = list()
-        for t in xrange(len(times)):
+        for t in range(len(times)):
             a_stack.append(nodal.variable(acceleration_index, t))
         a_matrix = np.hstack(a_stack)
         a_fft = np.fft.fft(a_matrix)
-        print a_fft
+        print(a_fft)
 
         f_stack = list()
-        for t in xrange(len(times)):
+        for t in range(len(times)):
             f_stack.append(nodal.variable(force_index, t))
         f_matrix = np.hstack(f_stack)
 
-
         # f = fields['AccZ']
         # print f
-        # acceleration = globals.field(f, node, 0, -1) # names.index('AccZ') + 1   #use 3
+        # acceleration = self.e.globals.field(f, node, 0, -1) # names.index('AccZ') + 1   #use 3
         # print acceleration
         #
         # f = fields['AForceZ']
         # print f
-        # force = globals.field(f, node, 0, -1) # names.index('AForceZ')+1  #use 9
+        # force = self.e.globals.field(f, node, 0, -1) # names.index('AForceZ')+1  #use 9
         # print force
-
-
-
 # t=fexo.Time;
 # az=fexo.NodalVars(3).Data(1,:)';
 # fz=fexo.NodalVars(9).Data(2,:)';

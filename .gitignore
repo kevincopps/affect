@@ -28,6 +28,8 @@ pip-log.txt
 benchmarks/env
 .coverage
 .tox
+cov_annotate
+cov_html
 
 # documentation
 docs/_build

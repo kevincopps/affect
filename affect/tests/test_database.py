@@ -1,9 +1,9 @@
 # test_database.py
 
+from .. import exodus as ex
 import numpy as np
 import textwrap
 import pytest
-from .. import exodus as ex
 
 
 class ConsoleCode:
@@ -125,8 +125,8 @@ def test_block_connectivity(edb):
         min_entry = min(min_entry, block_min_node)
         max_entry = max(max_entry, block_max_node)
         partial_connectivity = block.partial_connectivity(0, 1)  # all nodes of 0th element
-        np.testing.assert_equal(partial_connectivity,connectivity[0:1,:])
-        print('    partial_connectivity(0,1) == connectivity[0:1,:]')
+        np.testing.assert_equal(partial_connectivity, connectivity[0:1, :])
+        print('    partial_connectivity(0,1) == connectivity[0:1, :]')
     assert min_entry == 0
     num_nodes = edb.globals.num_nodes()
     assert max_entry == num_nodes - 1
