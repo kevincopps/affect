@@ -2,14 +2,14 @@
 
 
 void create_boundary_faces_wedge(
-  int64_t numElement,
-  const int64_t* elementToVertex,
+  uint32_t numElement,
+  const uint32_t* elementToVertex,
   const int64_t* neighbor,
-  int64_t* boundaryQuadToVertex,
-  int64_t* boundaryTriToVertex) {
+  uint32_t* boundaryQuadToVertex,
+  uint32_t* boundaryTriToVertex) {
 
-  const int64_t WEDGE6_num_vertex = num_vertex[WEDGE6];
-  const int64_t* localVertexLast = elementToVertex + numElement * WEDGE6_num_vertex;
+  const uint32_t WEDGE6_num_vertex = num_vertex[WEDGE6];
+  const uint32_t* localVertexLast = elementToVertex + numElement * WEDGE6_num_vertex;
 
   for ( ; elementToVertex < localVertexLast; elementToVertex += WEDGE6_num_vertex) {
 

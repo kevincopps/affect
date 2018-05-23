@@ -2,14 +2,14 @@
 
 
 void create_boundary_faces_hex(
-  int64_t numElement,
-  const int64_t* elementToVertex,
+  uint32_t numElement,
+  const uint32_t* elementToVertex,
   const int64_t* neighbor,
-  int64_t* boundaryFaceToVertex) {
+  uint32_t* boundaryFaceToVertex) {
 
-  const int64_t HEX8_num_vertex = num_vertex[HEX8];
+  const uint32_t HEX8_num_vertex = num_vertex[HEX8];
 
-  const int64_t* localVertexLast = elementToVertex + numElement * HEX8_num_vertex;
+  const uint32_t* localVertexLast = elementToVertex + numElement * HEX8_num_vertex;
 
   for ( ; elementToVertex < localVertexLast; elementToVertex += HEX8_num_vertex) {
 

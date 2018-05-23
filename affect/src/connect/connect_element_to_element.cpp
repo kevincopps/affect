@@ -1,3 +1,4 @@
+/*
 #include <stdexcept>
 #include <strstream>
 #include <vector>
@@ -10,8 +11,8 @@ using namespace std;
 
 void error_element_to_element(
   const char* elementName,
-  int64_t numElement,
-  int64_t maxElementPerVertex) {
+  uint32_t numElement,
+  uint32_t maxElementPerVertex) {
   
   strstream msg;
   msg << "connect_element_to_element: Unable to handle (" <<
@@ -26,14 +27,14 @@ void error_element_to_element(
 
 void connect_element_to_element(
   const char* elementName,
-  int64_t numElement,
-  int64_t maxElementPerVertex,
-  const int64_t * elementToVertex,
-  const int64_t * vertexToElementBegin,
-  const int64_t * vertexToElement,
+  uint32_t numElement,
+  uint32_t maxElementPerVertex,
+  const uint32_t * elementToVertex,
+  const uint32_t * vertexToElementBegin,
+  const uint32_t * vertexToElement,
   int64_t * neighbor,
-  int64_t * numBoundaryQuadFaces,
-  int64_t * numBoundaryTriFaces)
+  uint32_t * numBoundaryQuadFaces,
+  uint32_t * numBoundaryTriFaces)
 {
   if (numElement < 1) return;
   
@@ -44,7 +45,7 @@ void connect_element_to_element(
       maxElementPerVertex);
   }
 
-  vector<int64_t> elemSet(maxElementPerVertex);
+  vector<uint32_t> elemSet(maxElementPerVertex);
 
   if (is_element_name(elementName,aliases[HEX8])) {
     
@@ -89,3 +90,4 @@ void connect_element_to_element(
   }
 }
 
+*/

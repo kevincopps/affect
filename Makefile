@@ -8,6 +8,8 @@ COVERAGE_PRINT = @echo "${BOLD}Analyzing coverage from tests.${NORMAL}"
 CLEAN_PRINT = @echo "${BOLD}Removing previous build results.${NORMAL}"
 TEST_PIP_INSTALL_PRINT = @echo "${BOLD}Testing pip install in empty environment.${NORMAL}"
 
+PYTEST := $(shell command -v py.test 2> /dev/null)
+
 #
 # A function to create a new environment, activate it, and install our package, uninstall, and remove environment.
 # $(1) is name of new environment
@@ -36,14 +38,14 @@ coverage: build_trace
 	@py.test --cov-report term:skip-covered --cov-report annotate:cov_annotate --cov-report html:cov_html --cov=affect affect/tests/
 
 test:
-	pytest -v -s affect/tests/test_database.py
+	pytest -v -s affect/tests
 
 clean:
 	$(CLEAN_PRINT)
 	@rm -rf build
 	@rm -rf affect.egg-info
 	@find . -type d -name '__pycache__' -exec rm -rf {} +
-	@cd affect && rm -rf exodus.c* connect.cpp *.so
+	@cd affect && rm -rf util.cpp exodus.c* connect.cpp dynamics.c* *.so
 
 docs:
 	@cd docs && rm -rf _build && make html
@@ -51,3 +53,6 @@ docs:
 test_pip_install:
 	$(TEST_PIP_INSTALL_PRINT)
 	$(call pip_install,affect_test_pip_install,$(CURDIR))
+
+profile_test:
+	python -m cProfile -o profile.pstat $(PYTEST) -s affect/tests/test_display.py::test_write_scene

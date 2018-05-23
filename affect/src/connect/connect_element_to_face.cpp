@@ -57,7 +57,7 @@ int64_t connect_element_to_face(
   m_end = neighbor + numElement * numFacePerElement;
 
   for ( ; neighbor < m_end; ++neighbor)
-    if ( *neighbor == -1 ) 
+    if ( *neighbor == -1 )
       *neighbor = numFace++;
 
   return numInternalFace; // this is also the starting ID of boundary faces

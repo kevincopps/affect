@@ -7,5 +7,9 @@ functions.
 .. toctree::
    :maxdepth: 1
 
-   exodus
+   arithmetic
+   connect
    dynamics
+   exodus
+   util
+

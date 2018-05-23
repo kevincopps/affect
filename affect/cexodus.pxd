@@ -1,7 +1,55 @@
 #!/usr/bin/env python
 
+from libc.stddef cimport size_t
 from libc.stdint cimport int64_t
+from libc.stdint cimport int32_t
+from libc.stdint cimport uint32_t
 
+
+cdef extern from "omp.h":
+    int omp_get_num_threads()
+    void omp_set_num_threads(int)
+    void omp_set_dynamic(int)
+
+cdef extern from "array_util.h" nogil:
+    void* ex_aligned_allocate(size_t size)
+    void ex_aligned_copy_stride(double* source, size_t source_length, double* destination, int destination_stride)
+    void ex_aligned_to_zero_based_int32(int32_t* array, size_t n)
+    void ex_aligned_to_zero_based_int64(int64_t* array, size_t n)
+    void ex_aligned_to_one_based_int32(int32_t* array, size_t n)
+    void ex_aligned_to_one_based_int64(int64_t* array, size_t n)
+    void ex_aligned_zero_uint32(uint32_t* a, size_t n)
+    
+cdef extern from "global_to_local.h" nogil:    
+    uint32_t compute_global_to_local64(
+        size_t num_entry,
+        const int64_t * element_to_vertex_global,
+        size_t * max_global_index,
+        size_t * min_global_index,
+        uint32_t * element_to_vertex_local,
+        uint32_t * global_to_local)
+
+    void fill_local_to_global64(
+        size_t max_global_index,
+        size_t min_global_index,
+        const uint32_t * global_to_local,
+        int64_t * local_to_global)
+
+    uint32_t compute_global_to_local32(
+        size_t num_entry,
+        const int32_t * element_to_vertex_global,
+        size_t * max_global_index,
+        size_t * min_global_index,
+        uint32_t * element_to_vertex_local,
+        uint32_t * global_to_local)
+
+    void fill_local_to_global32(
+        size_t max_global_index,
+        size_t min_global_index,
+        const uint32_t * global_to_local,
+        int32_t * local_to_global)
+    
+    
 cdef extern from "exodusII.h":
     
     float API_VERS "EX_API_VERS"

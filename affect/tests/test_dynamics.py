@@ -1,66 +1,46 @@
-from .. import exodus
-import sys
 import numpy as np
+from scipy.signal import argrelmax
+
+from .. import dynamics
+from .. import util
 
 
-class TestStructuralDynamics:
+def test_frf(frf_data_dict):
+    # e = edb_frf
+    # times = e.globals.times()
+    # print('    number of timesteps {}'.format(len(times)))
+    # nodal = e.nodal
+    # names = nodal.variable_names()
+    # acceleration_index = names.index('AccZ')
+    # force_index = names.index('AForceZ')
 
-    e = None  # database for most of the test functions
+    util.print_function_starting()
 
-    def setUp(self):
+    times = frf_data_dict['times']
+    print(f'num_times = {times.size}')
+    print(f'times = {times}')
 
-        exodus.debug_messages(exodus.Messages.VERBOSE | exodus.Messages.DEBUG)
-        base = "./SRS-FRF-example/model/1/"
-        file = "p1f-out.h"
-        path = base + file
-        self.e = exodus.Database(path)
-        print(type(self.e))
+    fz = frf_data_dict['force_z']
+    print(f'force = {fz}')
 
-    def tearDown(self):
-        pass
+    az = frf_data_dict['acceleration_z']
+    print(f'acceleration = {az}')
 
-    def test_frf(self):
-        times = self.e.globals.times()
-        print('number of timesteps {}').format(len(times))
-        nodal = self.e.nodal
-        names = nodal.variable_names()
-        acceleration_index = names.index('AccZ')
-        force_index = names.index('AForceZ')
+    frequency, h_transfer = dynamics.frf(fz, az, times)  # get values of the frequency and FRF
 
-        a_stack = list()
-        for t in range(len(times)):
-            a_stack.append(nodal.variable(acceleration_index, t))
-        a_matrix = np.hstack(a_stack)
-        a_fft = np.fft.fft(a_matrix)
-        print(a_fft)
+    indices = argrelmax(h_transfer, order=2)  # get indices at the relative peaks of the FRF
 
-        f_stack = list()
-        for t in range(len(times)):
-            f_stack.append(nodal.variable(force_index, t))
-        f_matrix = np.hstack(f_stack)
+    # Note that the return value 'indices' of argrelmax is a tuple even when data is 1 - dimensional.
+    # Use the 0-th entry of the tuple.
+    frequency_peaks = np.take(frequency, indices[0])
+    frf_peaks = np.take(h_transfer, indices[0])
 
-        # f = fields['AccZ']
-        # print f
-        # acceleration = self.e.globals.field(f, node, 0, -1) # names.index('AccZ') + 1   #use 3
-        # print acceleration
-        #
-        # f = fields['AForceZ']
-        # print f
-        # force = self.e.globals.field(f, node, 0, -1) # names.index('AForceZ')+1  #use 9
-        # print force
-# t=fexo.Time;
-# az=fexo.NodalVars(3).Data(1,:)';
-# fz=fexo.NodalVars(9).Data(2,:)';
-# [freq,H]=find_frf(t,az,fz);
-# figure,semilogy(freq,abs(H)), title('FRF')
+    # check if the first handful of peaks of frequency are close to what we expect
+    util.print_array_info('frequency_peaks', frequency_peaks[:9])
+    desired_frequency_peaks = np.array([451.0, 702.5, 1000.0, 1157.0, 1815.5, 1817.5, 2737.5, 2739.5, 3671.5])
+    np.testing.assert_allclose(frequency_peaks[:9], desired_frequency_peaks, rtol=1e-3, atol=0.5, verbose=True)
 
-# % To run the shock response spectra code do:
-# fexo=exo_get('../model/1/p1f-out.h')
-# t=fexo.Time;
-# az=fexo.NodalVars(3).Data(1,:)';
-# fz=fexo.NodalVars(9).Data(2,:)';
-# sr=1/diff(t(1:2))
-# itype=9
-# fn=1:1:2000;  %logspace(log10(sr/1e4),log10(sr/4),50);
-# [s,fn]=shspec(az(1:4096),fn,0.05,sr,itype);
-# figure, plot(fn,s), title('SRS')
+    # and the peaks of the frf transfer function
+    util.print_array_info('frf_peaks', frf_peaks[:6])
+    desired_frf_peaks = np.array([1543.897, 3036.994, 2024.438, 481.288, 2.302227, 2.302244])
+    np.testing.assert_allclose(frf_peaks[:6], desired_frf_peaks, rtol=1.5e-7, verbose=True)

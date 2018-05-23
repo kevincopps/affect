@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "connect_util.hpp"
 #include "intersect_sets.hpp"
@@ -8,40 +9,43 @@
 
 using namespace std;
 
-#define SET_ELEM_VARS()                                             \
-  nbr0 = -1, nbr1 = -1, nbr2 = -1, nbr3 = -1;                       \
-  const int64_t * localVertex = elementToVertex + elmt*TET4_num_vertex; \
-  vertex0 = *localVertex++,                                         \
-  vertex1 = *localVertex++,                                         \
-  vertex2 = *localVertex++,                                         \
+#define SET_ELEM_VARS()                                   \
+  nbr0 = -1, nbr1 = -1, nbr2 = -1, nbr3 = -1;             \
+  localVertex = &elementToVertex[elmt * TET4_num_vertex]; \
+  vertex0 = *localVertex++,                               \
+  vertex1 = *localVertex++,                               \
+  vertex2 = *localVertex++,                               \
   vertex3 = *localVertex
 
 
-int64_t neighbor_tet(
-  int64_t numElement,
-  int64_t * elemSet,
-  const int64_t * elementToVertex,
-  const int64_t * vertexToElementBegin,  
-  const int64_t * vertexToElement,
+uint32_t neighbor_tet(
+  size_t numElement,
+  uint32_t maxElementsPerVertex,
+  uint32_t * elemSet, // working space length 2 * max_elements_per_vertex
+  const uint32_t * elementToVertex,
+  const uint32_t * vertexToElementBegin,  
+  const uint32_t * vertexToElement,
   int64_t * neighbor)
 {
-    const int64_t TET4_max_vertex_per_face = max_vertex_per_face[TET4];
-    const int64_t TET4_num_face = num_face[TET4];
-    const int64_t TET4_num_vertex = num_vertex[TET4];
-    const int64_t * TET4_num_vertex_per_face = vertex_per_face[TET4];
-    const int64_t * TET4_face_vertex_order = face_vertex_order[TET4];
+  int64_t nbr0, nbr1, nbr2, nbr3;
+  size_t localFaces, idx, ndx, m, n, elmt;
+  uint32_t * nbrSet = &elemSet[maxElementsPerVertex]; // second half of partition of working space
+  const uint32_t * localVertex;
+  const uint32_t * TET4_num_vertex_per_face = vertex_per_face[TET4];
+  const uint32_t * TET4_face_vertex_order = face_vertex_order[TET4];
+  const uint32_t TET4_max_vertex_per_face = max_vertex_per_face[TET4];
+  const uint32_t TET4_num_face = num_face[TET4];
+  const uint32_t TET4_num_vertex = num_vertex[TET4];
+
+  uint32_t vertex0, vertex1, vertex2, vertex3;
+  uint32_t nbrFace0, nbrFace1, nbrFace2, nbrFace3;
+  uint32_t numBoundaryFaces = 0;
 
   std::fill(&neighbor[0], &neighbor[numElement * TET4_num_face], -2);
 
-  int64_t numBoundaryFaces = 0;
-  int64_t nbr0, nbr1, nbr2, nbr3; 
-  int64_t vertex0, vertex1, vertex2, vertex3;
-  int64_t nbrFace0, nbrFace1, nbrFace2, nbrFace3;
-  int64_t idx, ndx, m, n, nbrSet[2];
+  for (elmt = 0; elmt < numElement; elmt++) {
 
-  for (int64_t elmt = 0; elmt < numElement; elmt++) {
-
-    int64_t localFaces = elmt * TET4_num_face;
+    localFaces = elmt * TET4_num_face;
     
     bool doFace0 = -2 == neighbor[ localFaces+0 ],
          doFace1 = -2 == neighbor[ localFaces+1 ],
@@ -73,6 +77,8 @@ int64_t neighbor_tet(
     FILL_NEIGHBOR(TET4, 3);
 
   } // loop over elements
+
+  // std::cerr << "neighbor_tet: numBoundaryFaces = " << numBoundaryFaces << std::endl;
 
   return numBoundaryFaces;
 }

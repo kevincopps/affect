@@ -3,6 +3,10 @@
 # C extensions
 *.so
 
+# generated C/C++ source, from Cython
+affect/*.cpp
+affect/*.c
+
 # Packages
 __pycache__
 .cache
@@ -30,6 +34,7 @@ benchmarks/env
 .tox
 cov_annotate
 cov_html
+*.pstat
 
 # documentation
 docs/_build
@@ -51,5 +56,5 @@ docs/_build
 
 # Other
 .DS_Store
-*_dropbox
-*_blade
+*_dropbox.sh
+*_blade.sh

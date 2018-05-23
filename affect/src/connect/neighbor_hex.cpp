@@ -1,5 +1,7 @@
-#include <algorithm>
 #include <cassert>
+#include <omp.h>
+#include <stdio.h>
+#include <algorithm>
 
 #include "connect_util.hpp"
 #include "intersect_sets.hpp"
@@ -8,47 +10,56 @@
 
 using namespace std;
 
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+
 #define SET_ELEM_VARS()                                             \
   nbr0 = -1, nbr1 = -1, nbr2 = -1, nbr3 = -1, nbr4 = -1, nbr5 = -1; \
-  const int64_t * localVertex = elementToVertex + elmt*HEX8_num_vertex; \
+  localVertex = &elementToVertex[elmt * HEX8_num_vertex];           \
   vertex0 = *localVertex++, vertex1 = *localVertex++,               \
   vertex2 = *localVertex++, vertex3 = *localVertex++,               \
   vertex4 = *localVertex++, vertex5 = *localVertex++,               \
   vertex6 = *localVertex++, vertex7 = *localVertex
 
 
-int64_t neighbor_hex(
-  int64_t numElement,
-  int64_t * elemSet, // working space
-  const int64_t * elementToVertex,
-  const int64_t * vertexToElementBegin,  
-  const int64_t * vertexToElement,
+uint32_t neighbor_hex(
+  size_t numElement,
+  uint32_t maxElementsPerVertex,
+  uint32_t * elemSet, // working space length 2 * max_elements_per_vertex
+  const uint32_t * elementToVertex,
+  const uint32_t * vertexToElementBegin,  
+  const uint32_t * vertexToElement,
   int64_t * neighbor)
 {
-    const int64_t HEX8_max_vertex_per_face = max_vertex_per_face[HEX8];
-    const int64_t HEX8_num_face = num_face[HEX8];
-    const int64_t HEX8_num_vertex = num_vertex[HEX8];
-    const int64_t * HEX8_num_vertex_per_face = vertex_per_face[HEX8];
-    const int64_t * HEX8_face_vertex_order = face_vertex_order[HEX8];
+  int64_t nbr0, nbr1, nbr2, nbr3, nbr4, nbr5;
+  size_t localFaces, idx, ndx, m, n, elmt;
+  uint32_t * nbrSet = &elemSet[maxElementsPerVertex]; // second half of partition of working space
+  const uint32_t * localVertex;
+  const uint32_t * HEX8_num_vertex_per_face = vertex_per_face[HEX8];
+  const uint32_t * HEX8_face_vertex_order = face_vertex_order[HEX8];
+  const uint32_t HEX8_max_vertex_per_face = max_vertex_per_face[HEX8];
+  const uint32_t HEX8_num_face = num_face[HEX8];
+  const uint32_t HEX8_num_vertex = num_vertex[HEX8];
+
+  uint32_t vertex0, vertex1, vertex2, vertex3, vertex4, vertex5, vertex6, vertex7;
+  uint32_t nbrFace0 = 0, nbrFace1 = 0, nbrFace2 = 0, nbrFace3 = 0, nbrFace4 = 0, nbrFace5 = 0;
+  uint32_t numBoundaryFaces = 0;
+
+  bool doFace0, doFace1, doFace2, doFace3, doFace4, doFace5;
 
   std::fill(&neighbor[0], &neighbor[numElement * HEX8_num_face], -2);
 
-  int64_t numBoundaryFaces = 0;
-  int64_t nbr0, nbr1, nbr2, nbr3, nbr4, nbr5; 
-  int64_t vertex0, vertex1, vertex2, vertex3, vertex4, vertex5, vertex6, vertex7;
-  int64_t nbrFace0, nbrFace1, nbrFace2, nbrFace3, nbrFace4, nbrFace5;
-  int64_t idx, ndx, m, n, nbrSet[2];
+  for (elmt = 0; elmt < numElement; elmt++) {
 
-  for (int64_t elmt = 0; elmt < numElement; elmt++) {
+    //printf("neighbor_hex %d.\n", elmt);
 
-    int64_t localFaces = elmt * HEX8_num_face;
-    
-    bool doFace0 = -2 == neighbor[ localFaces+0 ],
-         doFace1 = -2 == neighbor[ localFaces+1 ],
-         doFace2 = -2 == neighbor[ localFaces+2 ],
-         doFace3 = -2 == neighbor[ localFaces+3 ],
-         doFace4 = -2 == neighbor[ localFaces+4 ],
-         doFace5 = -2 == neighbor[ localFaces+5 ];
+    localFaces = elmt * HEX8_num_face;
+
+    doFace0 = -2 == neighbor[ localFaces+0 ];
+    doFace1 = -2 == neighbor[ localFaces+1 ];
+    doFace2 = -2 == neighbor[ localFaces+2 ];
+    doFace3 = -2 == neighbor[ localFaces+3 ];
+    doFace4 = -2 == neighbor[ localFaces+4 ];
+    doFace5 = -2 == neighbor[ localFaces+5 ];
 
   //unsigned char doEdge0  = doFace0 && doFace4,
   //     doEdge5  = doFace1 && doFace5,
@@ -84,7 +95,16 @@ int64_t neighbor_hex(
     //  if (doFace1 && doFace4 || doFace2 && doFace5 || doFace0 && doFace3) {
   //    if (doEdge1 + doEdge6 + doEdge8 > 1) {
 
-        SET_ELEM_VARS();
+
+        nbr0 = -1, nbr1 = -1, nbr2 = -1, nbr3 = -1, nbr4 = -1, nbr5 = -1;
+        localVertex = &elementToVertex[elmt * HEX8_num_vertex];
+        vertex0 = *localVertex++, vertex1 = *localVertex++,
+        vertex2 = *localVertex++, vertex3 = *localVertex++,
+        vertex4 = *localVertex++, vertex5 = *localVertex++,
+        vertex6 = *localVertex++, vertex7 = *localVertex;
+
+        //SET_ELEM_VARS();
+
         DO_FACE_PAIR(HEX8, 1, 4, 1, 2, 5, 0, 2, 1, 5, 0, 1, 2);
         DO_FACE_PAIR(HEX8, 2, 5, 6, 7, 2, 4, 3, 2, 6, 4, 7, 6);
         DO_FACE_PAIR(HEX8, 0, 3, 0, 4, 1, 3, 1, 0, 4, 0, 3, 7);
@@ -168,6 +188,10 @@ int64_t neighbor_hex(
 
   } // loop over elements
 
+  //printf("neighbor_hex: %lu elements, %d numBoundaryFaces\n", elmt, numBoundaryFaces);
+
   return numBoundaryFaces;
+
 }
 
+#pragma GCC diagnostic pop

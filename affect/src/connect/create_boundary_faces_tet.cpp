@@ -2,13 +2,13 @@
 
 
 void create_boundary_faces_tet(
-  int64_t numElement,
-  const int64_t* elementToVertex,
+  uint32_t numElement,
+  const uint32_t* elementToVertex,
   const int64_t* neighbor,
-  int64_t* boundaryFaceToVertex) {
+  uint32_t* boundaryFaceToVertex) {
 
-  const int64_t TET4_num_vertex = num_vertex[TET4];
-  const int64_t* localVertexLast = elementToVertex + numElement * TET4_num_vertex;
+  const uint32_t TET4_num_vertex = num_vertex[TET4];
+  const uint32_t* localVertexLast = elementToVertex + numElement * TET4_num_vertex;
 
   for ( ; elementToVertex < localVertexLast; elementToVertex += TET4_num_vertex) {
 

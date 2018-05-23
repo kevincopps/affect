@@ -3,14 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+###########################
 The Affect software package
-===========================
+###########################
 
 .. toctree::
    :hidden:
    :glob:
    :maxdepth: 4
 
+   exodus/index
    ref/index
 
 Exodus databases
@@ -30,11 +32,17 @@ Analysis data from unstructured finite element or finite volume models are acces
 The :mod:`affect.exodus` module maintains compact representation of the array data accessed by
 direct access through `Numpy array objects <https://docs.scipy.org/doc/numpy/reference/arrays.html>`_.
 
+See the overview and examples in the guide to Exodus to get started calling the API.
 
 Analysis Tools
 ==============
 
 Tools for analyzing structural dynamics are contained in :mod:`affect.dynamics`.
+
+Connectivity Tools
+==================
+
+Procedures for constructing neighbor, and boundary entries for a mesh are in :mod:`affect.connect`.
 
 
 Indices and tables

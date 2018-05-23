@@ -1,41 +1,50 @@
-#include <algorithm>
-#include <vector>
+#include <util/aligned_array.hpp>
 
-#ifdef AFFECT_DEBUG_CONNECT_VERTEX_TO_ELEMENT
-#include <iostream>
-#include <iomanip>
-#endif
+//#define TIMERS_ACTIVE
+#include <util/timer.hpp>
 
-using namespace std;
-
-int64_t count_vertex_to_element(
-  int64_t numVertex,
-  int64_t numVertexPerElement,
-  int64_t numElement,
-  const int64_t * elementToVertex,
-  int64_t * vertexToElementCount)
+uint32_t count_vertex_to_element(
+    uint32_t numVertex,
+    uint32_t numVertexPerElement,
+    uint32_t numElement,
+    const aligned::uint32_ptr __restrict elementToVertex,
+    aligned::uint32_ptr __restrict vertexToElementCount)
 {
-  for (int64_t i = 0; i < numVertex + 1; ++i)
-    vertexToElementCount[i] = 0;
+START_TIMER(count_vertex_to_element);
 
-  // Count number of elements sharing each vertex.
-  int64_t elementToVertexLength = numElement * numVertexPerElement;
-  for (int64_t i = 0; i < elementToVertexLength; ++i)
-    vertexToElementCount[ elementToVertex[i] ]++;
+    size_t elementToVertexLength = numElement * numVertexPerElement;
+    uint32_t maxElementPerVertex;
 
-  // Now for each vertex, replace the count of elements sharing it
-  // with its beginning index to the lists of its elements.
-  int64_t maxElementPerVertex = 0;
-  int64_t length = 0, elementsPerNode;
-  for (int64_t i = 0; i < numVertex; ++i) {
-    elementsPerNode = vertexToElementCount[i];
-    if (elementsPerNode > maxElementPerVertex)
-      maxElementPerVertex = elementsPerNode;
-    vertexToElementCount[i] = length;
-    length += elementsPerNode;
-  }
-  vertexToElementCount[numVertex] = length;
+    aligned::zero(vertexToElementCount, numVertex + 1);
 
-  return maxElementPerVertex;
+    // Count number of elements sharing each vertex.
+    #pragma omp parallel for schedule(static) shared(vertexToElementCount)
+    for (size_t k = 0; k < elementToVertexLength; ++k) {
+        #pragma omp atomic update
+        vertexToElementCount[ elementToVertex[k] ]++;
+    }
+
+    // calculate the maximum count of element sharing a vertex
+    maxElementPerVertex = aligned::max(vertexToElementCount, numVertex);
+
+    // Now for each vertex, replace the count of elements sharing it
+    // with its beginning index to the lists of its elements.
+
+    uint32_t length = 0, elementsPerNode;
+
+    for (uint32_t i = 0; i < numVertex; ++i) {
+        /*
+        elementsPerNode = vertexToElementCount[i];
+        vertexToElementCount[i] = length;
+        length += elementsPerNode;
+        */
+        length += vertexToElementCount[i];
+        vertexToElementCount[i] = length - vertexToElementCount[i];
+    }
+    vertexToElementCount[numVertex] = length;
+
+END_TIMER(count_vertex_to_element);
+
+    return maxElementPerVertex;
 }
 

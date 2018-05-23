@@ -1,6 +1,7 @@
 import numpy as np
 import timeit
 from .. import exodus as ex
+from .. import util
 
 
 BASE_PATH = '../../../meshes/'
@@ -21,6 +22,7 @@ def side_set_entries():
     # keys = side_sets.keys()
     side_set = side_sets[4]
     entries = side_set.entries()
+    assert entries is not None
 
 
 def block_connectivity():
@@ -28,8 +30,9 @@ def block_connectivity():
     block_id = 17
     block = e.element_blocks[block_id]
     # num_elem = block.num_entries()
-    # print 'block_{} with {}'.format(block_id, num_elem)
+    # print(f'block_{block_id} with {num_elem}')
     connectivity = block.connectivity
+    assert connectivity is not None
     
 
 def bounding_box():
@@ -56,13 +59,15 @@ def bounding_box():
         min_x, min_y = np.min(coordinates, axis=0)
         max_x, max_y = np.max(coordinates, axis=0)
         bbox = np.array([(min_x, min_y), (max_x, max_y)])
+        util.print_array_info('    bounding_box', bbox)
     elif ndim == 3:
         min_x, min_y, min_z = np.min(coordinates, axis=0)
         max_x, max_y, max_z = np.max(coordinates, axis=0)
         bbox = np.array([(min_x, min_y, min_z), (max_x, max_y, max_z)])
+        util.print_array_info('    bounding_box', bbox)
 
 
 if __name__ == '__main__':
 
-    t = timeit.timeit("block_connectivity()", setup="from __main__ import block_connectivity",number=1000)
-    print('block_connectivity() time = {}'.format(t))
+    t = timeit.timeit("block_connectivity()", setup="from __main__ import block_connectivity", number=1000)
+    print(f'block_connectivity() time = {t}')

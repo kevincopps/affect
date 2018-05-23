@@ -3,8 +3,8 @@
 from setuptools import setup
 from Cython.Distutils import Extension
 from Cython.Distutils.build_ext import build_ext
-#from setuptools.extension import Extension
-#from setuptools.command.build_ext import build_ext
+# from setuptools.extension import Extension
+# from setuptools.command.build_ext import build_ext
 import pkg_resources
 import distutils.ccompiler
 import distutils.sysconfig
@@ -18,6 +18,14 @@ long_description = """
 Affect is a library for processing computer simulation data on unstructured grids.
 """
 
+
+# Remove the "-Wstrict-prototypes" compiler option, which isn't valid for C++.
+cfg_vars = distutils.sysconfig.get_config_vars()
+for key, value in cfg_vars.items():
+    if type(value) == str:
+        cfg_vars[key] = value.replace('-Wstrict-prototypes', '')
+
+
 class BuildExtensions(build_ext):
     """
     Subclass setuptools build_ext command. Does the following
@@ -27,15 +35,18 @@ class BuildExtensions(build_ext):
     """
 
     def run(self):
-        # According to
-        # https://pip.pypa.io/en/stable/reference/pip_install.html#installation-order
+        # According to https://pip.pypa.io/en/stable/reference/pip_install.html#installation-order
         # at this point we can be sure pip has already installed numpy
-        numpy_includes = pkg_resources.resource_filename('numpy', 'core/include')
+        from numpy import get_include
+        numpy_includes = get_include()
+        # Alternatively
+        # numpy_includes = pkg_resources.resource_filename('numpy', 'core/include')
         for ext in self.extensions:
             if hasattr(ext, 'include_dirs'):
                 if numpy_includes not in ext.include_dirs:
                     ext.include_dirs.append(numpy_includes)
         build_ext.run(self)
+
 
 def get_netcdf_include():
     # setup and distutils compiler does not find the base include path in anaconda installs
@@ -48,18 +59,63 @@ def get_netcdf_include():
                 return root
     raise RuntimeError('Error: setup.py could not find {}'.format(include))
 
+def get_cpu_options(platform):
+    # return a clang/gcc compile flag with the highest level of sse, avx instructions supported on the compile CPU
+    flag = ['']
+    if platform == 'darwin':
+        found_flags = True
+        return ['-march=corei7-avx', '-mavx2']
+    elif platform.startswith('linux'):
+        # gcc options: -msse  -msse2  -msse3  -mssse3  -msse4.1  -msse4.2  -msse4  -mavx
+        # -mavx2  -mavx512f  -mavx512pf  -mavx512er  -mavx512cd  -mavx512vl
+        # -mavx512bw  -mavx512dq  -mavx512ifma  -mavx512vbmi
+        with open('/proc/cpuinfo', 'r') as search:
+            for line in search:
+                if line.startswith('flags'):
+                    # look for highest level vector extensions
+                    if 'avx2' in line:
+                        return ['-mavx2']
+                    elif 'avx' in line:
+                        return ['-mavx']
+                    elif 'sse4_2' in line:
+                        return ['-msse4_2']
+                    elif 'sse4_1' in line:
+                        return ['-msse4_1']
+                    elif 'ssse3' in line:
+                        return ['-mssse3']
+                    elif 'sse2' in line:
+                        return ['-msse2']
+                    else:
+                        return ['']
+    else:
+        raise Exception(f'Unknown platform ({platform}')
+    return flag
 
-NUMBER_PARALLEL_COMPILES = 8
 
 # platform specific header and library directories
+other_include = ''
 other_library = ''
 other_link_args = ''
 other_compile_args = ''
+
+util_compile_args = ''
 exodus_compile_args = ''
+connect_compile_args = ''
+arithmetic_compile_args = ''
+
+util_source_files = ['affect/util.pyx']
+util_source_files += glob.glob('affect/src/util/*.cpp')
+util_include = ['affect/src/util', 'affect/src']
+
+arithmetic_source_files = ['affect/arithmetic.pyx']
+arithmetic_source_files += glob.glob('affect/src/arithmetic/*.cpp')
+arithmetic_include = ['affect/src/arithmetic', 'affect/src']
 
 connect_source_files = ['affect/connect.pyx']
 connect_source_files += glob.glob('affect/src/connect/*.cpp')
-connect_include = ['affect/src/connect']
+connect_include = ['affect/src/connect', 'affect/src']
+
+dynamics_source_files = ['affect/dynamics.pyx']
 
 exodus_source_files = ['affect/exodus.pyx']
 exodus_source_files += glob.glob('affect/src/exodus/*.c')
@@ -69,64 +125,135 @@ python_base = sys.prefix
 _platform = sys.platform
 
 if _platform == 'linux' or _platform == 'linux2':
-    os.environ["CC"] = 'gcc'
-    os.environ["CXX"] = 'g++'
-    other_library = []  #['/usr/local/opt/llvm/lib']  # location of libiomp5 (however, it may be in anaconda)
-    other_link_args = []  #['-mmacosx-version-min=10.11']
+    os.environ['CC'] = 'gcc'
+    os.environ['CXX'] = 'g++'
+    other_include = []
+    other_library = []  # ['/usr/local/opt/llvm/lib']  # location of libiomp5 (however, it may be in anaconda)
+    other_link_args = ['-fopenmp']  # ['-mmacosx-version-min=10.11']
     exodus_include.append(get_netcdf_include())
+
     other_compile_args = ['-fopenmp']
-    exodus_compile_args = ['-Dexodus_EXPORTS', '-Wno-sign-compare', '-Wno-uninitialized']
-    connect_compile_args = ['-std=c++0x', '-Wno-deprecated', '-Wno-unused-variable',
-                            '-Wno-uninitialized']
+    other_compile_args += get_cpu_options(_platform)
+    exodus_compile_args = ['-Dexodus_EXPORTS', '-std=c11', '-Wno-sign-compare', '-Wno-uninitialized']
+    connect_compile_args = ['-std=c++14', '-Wno-deprecated', '-Wno-unused-variable', '-Wno-uninitialized']
+    arithmetic_compile_args = ['-std=c++14', '-Wno-deprecated', '-Wno-unused-variable', '-Wno-uninitialized']
+    util_compile_args = ['-std=c++14', '-Wno-unused-function']
 
 elif _platform == 'darwin':
-    # Prerequisites:
-    #   brew install llvm (until Apple "clang -fopenmp" will be supported)
-    #   export PATH="/usr/local/opt/llvm/bin:${PATH}"
-    #   may also have to "export DYLD_LIBRARY_PATH=/usr/local/lib"?
-    os.environ["CC"] = 'clang'
-    os.environ["CXX"] = 'clang'
+
     other_library = ['/usr/local/opt/llvm/lib']  # location of libiomp5 (however, it may be in anaconda)
     other_link_args = ['-mmacosx-version-min=10.11']
     other_include = []
-    other_compile_args = ['-stdlib=libc++', '-mmacosx-version-min=10.11', '-fopenmp']
+
+    # -fslp-vectorize-aggressive
+    # is a relatively minor performance improvement for long compile/link times
+    # other_compile_args = ['-stdlib=libc++', '-mmacosx-version-min=10.11', '-fopenmp', '-march=corei7-avx', 
+    #                       '-mavx2', '-fslp-vectorize-aggressive']
+    other_compile_args = ['-mmacosx-version-min=10.11', '-fopenmp']
+    other_compile_args += get_cpu_options(_platform)
     exodus_compile_args = ['-Dexodus_EXPORTS', '-Wno-unused-function', '-Wno-sometimes-uninitialized',
                            '-Wno-unreachable-code', '-Wno-sign-compare']
-    connect_compile_args = ['-Wno-unused-function', '-Wno-unneeded-internal-declaration', '-Wno-unused-variable']
+    connect_compile_args = ['-std=c++14', '-Wno-unused-function', '-Wno-unused-variable', '-Wno-deprecated']
+    arithmetic_compile_args = ['-std=c++14', '-Wno-unused-function', '-Wno-unused-variable', '-Wno-deprecated']
+    util_compile_args = ['-std=c++14', '-Wno-unused-function']
+
+    os.environ['CC'] = 'gcc-7'
+    os.environ['CXX'] = 'g++-7'
+
+    # Clang Prerequisites:
+    #   install the Xcode and command line tools:
+    #       xcode-select --install
+    #   brew install llvm (until Apple "clang -fopenmp" is supported)
+    #   export PATH="/usr/local/opt/llvm/bin:${PATH}"
+    #   in the past we have had to also "export DYLD_LIBRARY_PATH=/usr/local/lib"?
+    # To use the bundled libc++ please add the following LDFLAGS:
+    #   LDFLAGS = "-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib"
+    # For compilers to find this software you may need to set:
+    #   LDFLAGS: -L/usr/local/opt/llvm/lib
+    #   CPPFLAGS: -I/usr/local/opt/llvm/include
+    #
+    # What target flags does a machine support? Try the following:
+    #    'echo | clang -E - -march=native -###'
+    #
+    # os.environ["CC"] = 'clang'
+    # os.environ["CXX"] = 'clang'
+    # # OpenMP with offloading to Nvidia GPU
+    # # -fopenmp -fopenmp-targets=nvptx64-nvidia-cuda --cuda-path=$CUDA_HOME
+    # other_compile_args += '-stdlib=libc++'
+    # connect_compile_args += ['-Wno-unneeded-internal-declaration', '-Wshorten-64-to-32',
+    #                          '-Rpass-analysis=loop-vectorize']
+    # util_compile_args += ['-Wshorten-64-to-32']
+
+
 elif _platform == 'win32':
-    os.environ["CC"] = 'gcc'
-    os.environ["CXX"] = 'gcc'
+    os.environ['CC'] = 'gcc'
+    os.environ['CXX'] = 'gcc'
 
 
 extensions = [
     Extension('affect.exodus',
               sources=exodus_source_files,
-              include_dirs=exodus_include,
+              include_dirs=other_include + exodus_include,
               libraries=['iomp5', 'netcdf'],
               library_dirs=other_library,
-              extra_compile_args=other_compile_args+exodus_compile_args,
+              extra_compile_args=other_compile_args + exodus_compile_args,
               extra_link_args=other_link_args,
               language='c',
               ),
     Extension('affect.connect',
-              include_dirs=connect_include,
+              include_dirs=other_include + connect_include,
               sources=connect_source_files,
               libraries=['iomp5'],
               library_dirs=other_library,
-              extra_compile_args=other_compile_args+connect_compile_args,
+              extra_compile_args=other_compile_args + connect_compile_args,
               extra_link_args=other_link_args,
               language='c++',
+              # undef_macros=['NDEBUG']  # enable assert(), etc.
+              ),
+    Extension('affect.arithmetic',
+              include_dirs=other_include + arithmetic_include,
+              sources=arithmetic_source_files,
+              libraries=['iomp5'],  # 'tbb'],
+              library_dirs=other_library,
+              extra_compile_args=other_compile_args + arithmetic_compile_args,
+              extra_link_args=other_link_args,
+              language='c++',
+              # undef_macros=['NDEBUG']  # enable assert(), etc.
+              ),
+    Extension('affect.dynamics',
+              sources=dynamics_source_files,
+              library_dirs=other_library,
+              extra_compile_args=other_compile_args,
+              extra_link_args=other_link_args,
+              language='c',
+              ),
+    Extension('affect.util',
+              include_dirs=other_include + util_include,
+              sources=util_source_files,
+              library_dirs=other_library,
+              extra_compile_args=other_compile_args+util_compile_args,
+              extra_link_args=other_link_args,
+              language='c++',
+              # undef_macros=['NDEBUG']  # enable assert(), etc.
               ),
 ]
 
-# compile with support for coverage or profiling
-# python setup.py --linetrace build_ext -i
-if '--linetrace' in sys.argv:
-    for e in extensions:
+#
+# global cython directives
+#
+for e in extensions:
+    e.cython_directives = {'embedsignature': True}
+
+    # build with support coverage or profiling using
+    # "python setup.py --linetrace build_ext -i"
+    if '--linetrace' in sys.argv:
         e.define_macros = [('CYTHON_TRACE_NOGIL', '1')]
-        e.cython_directives = {'linetrace': True, 'binding': True}
+        e.cython_directives = {'linetrace': True, 'binding': True, 'profile': True, 'embedsignature': True}
+
+if '--linetrace' in sys.argv:
     sys.argv.remove('--linetrace')
 
+NUMBER_PARALLEL_COMPILES = 16
 
 def parallel_c_compile(self, sources, output_dir=None, macros=None, include_dirs=None, debug=0, extra_preargs=None,
                        extra_postargs=None, depends=None):
@@ -149,7 +276,8 @@ def parallel_c_compile(self, sources, output_dir=None, macros=None, include_dirs
     list(multiprocessing.pool.ThreadPool(NUMBER_PARALLEL_COMPILES).imap(_single_compile, objects))
     return objects
 
-# Monkey patch to allow parallel compile
+
+# monkey patch compile to enable parallel compile
 distutils.ccompiler.CCompiler.compile = parallel_c_compile
 
 install_requires = ['cython >= 0.24.1', 'hdf4 >= 4.2.12', 'hdf5 >= 1.8.17', 'netcdf4 >= 1.2.4', 'numexpr >= 2.6.1',

@@ -53,7 +53,7 @@ extern const char *aliases[];
  * Returns the number of spatial dimensions for a
  * given element topology.
  */
-extern const int64_t num_spatial_dim[];
+extern const uint32_t num_spatial_dim[];
 
 /**
  * Returns the number of vertices in a single element
@@ -61,7 +61,7 @@ extern const int64_t num_spatial_dim[];
  * Vertices are end points of edges, and all vertices
  * have an associated node.
  */
-extern const int64_t num_vertex[];
+extern const uint32_t num_vertex[];
 
 /**
  * Returns the number nodes in a single element
@@ -71,44 +71,44 @@ extern const int64_t num_vertex[];
  * associated with a vertex, i.e., there can exist
  * mid-face or mid-edge nodes.
  */
-extern const int64_t num_node[];
+extern const uint32_t num_node[];
   
 /**
  * Returns the number of edges of a single element
  * of the given topology.
  */
-extern const int64_t num_edge[];
+extern const uint32_t num_edge[];
 
 /** 
  * Returns the number of faces of a single element
  * of the given topology. If the topology is 1D
  * or 2D, returns zero.
  */
-extern const int64_t num_face[];
+extern const uint32_t num_face[];
 
 /**
  * Returns the number of nodes per each edge
  * of a single element of the given topology.
  */
-extern const int64_t num_node_per_edge[];
+extern const uint32_t num_node_per_edge[];
 
 /**
  * Returns the maximum number of vertices per face of
  * an element of the given topology.
  */
-extern const int64_t max_vertex_per_face[];
+extern const uint32_t max_vertex_per_face[];
 
 /**
  * Returns the maximum number of nodes per face of
  * an element of the given topology.
  */
-extern const int64_t max_node_per_face[];
+extern const uint32_t max_node_per_face[];
 
 /** 
  * Returns the maximum number of edges per face of
  * an element with the given topology.
  */
-extern const int64_t* const max_edge_per_face;
+extern const uint32_t* const max_edge_per_face;
 
 /**
  * Returns the enumeration of the edge vertices, for all edges
@@ -116,7 +116,7 @@ extern const int64_t* const max_edge_per_face;
  *
  * length 2 * num_edge
  */
-extern const int64_t* const edge_vertex_order[];
+extern const uint32_t* const edge_vertex_order[];
 
 /**
  * Returns the enumeration of the edge nodes, for all edges
@@ -125,29 +125,43 @@ extern const int64_t* const edge_vertex_order[];
  *
  * length num_node_per_edge * num_edge
  */
-extern const int64_t* const edge_node_order[];
+extern const uint32_t* const edge_node_order[];
 
 /**
  * Return the enumeration of the face vertices, for all faces
  * in the given element topology.
  *
  * length num_vertex_per_face * num_face
+ *
+ * May hold values of UINT32_MAX for non-meaningful entries.
  */
-extern const int64_t* const face_vertex_order[];
+extern const uint32_t* const face_vertex_order[];
 
 /**
  * Return the enumeration of the face nodes, for all faces
  * in the given element topology.
  *
+ * May hold values of UINT32_MAX for non-meaningful entries.
+ *
  * length num_vertex_per_face * num_face
  */
-extern const int64_t* const face_node_order[];
+extern const uint32_t* const face_node_order[];
 
 /**
  * Return the enumeration of the face edges, for all 
  * faces in the given element topology.
+ *
+ * May hold values of UINT32_MAX for non-meaningful entries.
  */
-extern const int64_t* const face_edge_order[];
+extern const uint32_t* const face_edge_order[];
+
+/**
+ * Return a list of the last numbered local face that is incident on each local vertex
+ * in the given element topology.
+ *
+ * length num_vertex
+ */
+extern const uint32_t* const vertex_last_face[];
 
 /**
  * Return the number of vertices per face, for all
@@ -155,7 +169,7 @@ extern const int64_t* const face_edge_order[];
  *
  * length num_face
  */
-extern const int64_t* const vertex_per_face[];
+extern const uint32_t* const vertex_per_face[];
 
 /**
  * Return the number of nodes per face, for all
@@ -163,7 +177,7 @@ extern const int64_t* const vertex_per_face[];
  *
  * length num_face
  */
-extern const int64_t* const node_per_face[];
+extern const uint32_t* const node_per_face[];
 
 /**
  * Return the number of edge per face, for all
@@ -171,7 +185,7 @@ extern const int64_t* const node_per_face[];
  *
  * length num_face
  */
-extern const int64_t* const * const edge_per_face;
+extern const uint32_t* const * const edge_per_face;
 
 /**
  *----------------------------------------------------------

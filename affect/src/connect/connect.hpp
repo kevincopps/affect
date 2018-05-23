@@ -3,26 +3,9 @@
 
 #include <cstdint>
 #include <vector>
+#include <iostream>
 
-/**
- * Convert a one-based connectivity array (Fortran style)
- * to zero-based (C style), that is, 
- * subtract one from every entry in the given array.
- *
- * @param n     (IN) length of array
- * @param array (INOUT) the one-based integer array to convert
- */
-void to_zero_based(int64_t n, int64_t* array);
-
-/**
- * Convert a zero-based connectivity array (C style)
- * to one-based (Fortran style), that is, 
- * subtract add one to every entry in the given array.
- *
- * @param n     (IN) length of array
- * @param array (INOUT) a zero-based integer array to convert
- */
-void to_one_based(int64_t n, int64_t* array);
+#include <util/aligned_array.hpp>
 
 /**
  * Fill an array with the boundary-face-to-vertex connectivity, given
@@ -53,12 +36,12 @@ void to_one_based(int64_t n, int64_t* array);
  */
 void connect_boundary_face_to_vertex(
     char* elementName,
-    int64_t numElement,
-    int64_t numBoundaryQuadFace,
-    int64_t numBoundaryTriFace,
-    const int64_t * elementToVertex,
+    uint32_t numElement,
+    int32_t numBoundaryQuadFace,
+    int32_t numBoundaryTriFace,
+    const uint32_t * elementToVertex,
     const int64_t * neighbor,
-    int64_t * boundaryFaceToVertex);
+    uint32_t * boundaryFaceToVertex);
 
 /**
  * Fill a vector with the element-to-edge connectivity, and
@@ -82,16 +65,16 @@ void connect_boundary_face_to_vertex(
  * @param numExternalEdge      (OUT) number of edges used by only one element
  */  
 void connect_element_to_edge(
-    int64_t numElement,
-    int64_t numEdgePerElement,
-    int64_t numVertexPerElement,
-    const int64_t * edgeVertexOrder,
-    const int64_t * elementToVertex,
-    const int64_t * vertexToElementBegin,
-    const int64_t * vertexToElement,
+    uint32_t numElement,
+    uint32_t numEdgePerElement,
+    uint32_t numVertexPerElement,
+    const uint32_t * edgeVertexOrder,
+    const uint32_t * elementToVertex,
+    const uint32_t * vertexToElementBegin,
+    const uint32_t * vertexToElement,
     int64_t * elementToEdge,
-    int64_t * numInternalEdge,
-    int64_t * numExternalEdge);
+    uint32_t * numInternalEdge,
+    uint32_t * numExternalEdge);
 
 /**
  * For a single block of elements with 3D topology, return an array of 
@@ -118,17 +101,17 @@ void connect_element_to_edge(
  *                                   without a neighbor
  * @param numBoundaryTriFace   (OUT) the number of triangular element faces
  *                                   without a neighbor
- */
 void connect_element_to_element(
     const char* elementName,
-    int64_t numElement,
-    int64_t maxElementPerVertex,
-    const int64_t * elementToVertex,
-    const int64_t * vertexToElementBegin,
-    const int64_t * vertexToElement,
+    uint32_t numElement,
+    uint32_t maxElementPerVertex,
+    const uint32_t * elementToVertex,
+    const uint32_t * vertexToElementBegin,
+    const uint32_t * vertexToElement,
     int64_t * neighbor,
-    int64_t * numBoundaryQuadFace,
-    int64_t * numBoundaryTriFace);
+    uint32_t * numBoundaryQuadFace,
+    uint32_t * numBoundaryTriFace);
+*/
   
 /**
  * Replace the array of element-to-element connectivity with the array of
@@ -153,8 +136,8 @@ void connect_element_to_element(
  * @see connect_element_to_element
  */
 int64_t connect_element_to_face(
-    int64_t numElement,
-    int64_t numFacePerElement,
+    uint32_t numElement,
+    uint32_t numFacePerElement,
     int64_t * neighbor);
 
 /**
@@ -183,12 +166,12 @@ int64_t connect_element_to_face(
  * @return maximum number of elements connected to a single vertex in this block
  */
 
-int64_t count_vertex_to_element(
-    int64_t numNode,
-    int64_t numVertexPerElement,
-    int64_t numElement,
-    const int64_t * elementToVertex,
-    int64_t * vertexToElementCount);
+uint32_t count_vertex_to_element(
+    uint32_t numVertex,
+    uint32_t numVertexPerElement,
+    uint32_t numElement,
+    const aligned::uint32_ptr __restrict elementToVertex,
+    aligned::uint32_ptr __restrict vertexToElementCount);
 
 /**
  * For a uniform block of elements, construct a packed array of the 
@@ -209,12 +192,56 @@ int64_t count_vertex_to_element(
  *                                   length (vertexToElementCount[numVertex+1])
  */
 void connect_vertex_to_element(
-    int64_t numVertex,
-    int64_t numVertexPerElement,
-    int64_t numElement,
-    const int64_t * elementToVertex,
-    int64_t * vertexToElementCount,
-    int64_t * vertexToElement );
+    uint32_t numVertex,
+    uint32_t numVertexPerElement,
+    uint32_t numElement,
+    const aligned::uint32_ptr __restrict elementToVertex,
+    aligned::uint32_ptr __restrict vertexToElementCount,
+    aligned::uint32_ptr __restrict vertexToElement );
 
+/**
+ *   For a uniform block of elements, construct array of neighbor element IDs and array of local neighbor face IDs
+ *   for each element face using the sibling half-facet algorithm.*
+ *
+ *    Input Args:
+ *        topology: type of cells in this block
+ *        element_to_vertex(|uint32_2d|): array of shape(num_elements, num_vertex_per_element)
+ *
+ *    Output Args:
+ *        neighbor_elements: array of neighbor element ID for each element face
+ *        neighbor_faces: array of neighbor local face ID for each element face
+ *
+ *    Returns:
+ *        num_boundary_faces: number of element faces on the boundary
+ */
+void connect_element_neighbors(
+    int topology,
+    const uint32_t num_elements,
+    const uint32_t num_vertices,
+    const uint32_t * element_to_vertex,
+    uint32_t * neighbor_elements,
+    int8_t * neighbor_faces);
+
+/**
+ * For a uniform block of elements, construct two arrays, storing the last element connected to each vertex and
+ * a corresponding local face id.
+ *
+ * @param num_vertices          (IN) number of vertices
+ * @param num_elements          (IN) number of elements
+ * @param element_to_vertex     (IN) the element to vertex connectivity, length (numElement*numVertexPerElement)
+ * @param neighbor_faces        (IN) array of neighbor local face ID for each element face, as returned by
+ *                                   connect_element_neighbors function
+ * @param vertex_facet_element (OUT) the vertex-to-last-element containing the vertex connectivity
+ *                                   length (num_vertices)
+ * @param vertex_facet_face    (OUT) one local face ID of the last element containing the vertex
+ */
+ void connect_vertex_to_element_face(
+    int topology,
+    const uint32_t num_elements,
+    const uint32_t num_vertices,
+    const aligned::uint32_ptr __restrict element_to_vertex,
+    const aligned::int8_ptr __restrict neighbor_faces,
+    aligned::uint32_ptr __restrict vertex_facet_element,
+    aligned::int8_ptr __restrict vertex_facet_face);
 
 #endif

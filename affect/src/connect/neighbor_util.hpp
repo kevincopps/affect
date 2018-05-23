@@ -55,21 +55,23 @@
     }                                        \
   }
 
-#define FILL_NEIGHBOR_INCREMENT(E, N, I)         \
-  if (doFace##I) {                               \
-    idx = localFaces + I;                        \
-    if (nbr##I > -1) {                           \
-      ndx = nbr##I * E##_num_face + nbrFace##I;  \
-      neighbor[idx] = nbr##I ;                   \
-      neighbor[ndx] = elmt;                      \
-	  }                                          \
-    else {                                       \
-      ++N;                                       \
-      neighbor[idx] = -1;                        \
-    }                                            \
+#define FILL_NEIGHBOR_INCREMENT(E, N, I)          \
+  if (doFace##I) {                                \
+    idx = localFaces + I;                         \
+    if (nbr##I > -1) {                            \
+      ndx = nbr##I * E##_num_face + nbrFace##I;   \
+      neighbor[idx] = nbr##I ;                    \
+      neighbor[ndx] = static_cast<int64_t>(elmt); \
+	  }                                           \
+    else {                                        \
+      ++N;                                        \
+      neighbor[idx] = -1;                         \
+    }                                             \
   }
 
 #define FILL_NEIGHBOR(E, I)                      \
   FILL_NEIGHBOR_INCREMENT(E, numBoundaryFaces, I)
+
+
 
 #endif

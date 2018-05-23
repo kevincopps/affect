@@ -1,7 +1,7 @@
-#include <algorithm>
 #include <vector>
 #include <cassert>
 #include <cstdint>
+#include <algorithm>
 
 #ifdef AFFECT_VERBOSE
 #include <iostream>
@@ -21,6 +21,7 @@ void connect_edge_to_vertex(
 {
   assert( numVertexPerFace > 2);
 
+  //std::memset( edgeBegin, 0, (numVertex + 1) * sizeof(int64_t) );
   std::fill(edgeBegin, edgeBegin + numVertex + 1, 0);
 
   // for each edge in a face,
@@ -76,7 +77,7 @@ void connect_edge_to_vertex(
   
   vector<int64_t> vertexToVertexCount(numVertex,0);
 
-  // for each vertex, sort the list of vertexs connected to it
+  // for each vertex, sort the list of vertices connected to it
   // most, if not all entries are repeated once
   for (int64_t iNode = 0; iNode < numVertex; ++iNode) {
   

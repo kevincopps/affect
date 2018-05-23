@@ -238,6 +238,14 @@ Fields
    :members:
    :show-inheritance:
 
+Local Block Connectivity
+------------------------
+
+.. autoclass:: LocalConnectivity
+   :members:
+   :inherited-members:
+   :show-inheritance:
+
 Exceptions
 ----------
 

@@ -42,9 +42,9 @@ def test_str_repr(edb):
     print('    ' + str(edb))
 
 
-def test_coordinates(edb):
+def test_coordinates(edb_huge_one_block):
     print_bold('\ncoordinates')
-    x = edb.nodal.coordinates()
+    x = edb_huge_one_block.nodal.coordinates()
     print('    type {} with shape {}'.format(type(x), x.shape))
     
 
@@ -124,7 +124,7 @@ def test_block_connectivity(edb):
         print('    block {:5d} first node {:7d} last node {:7d}'.format(key, block_min_node, block_max_node))
         min_entry = min(min_entry, block_min_node)
         max_entry = max(max_entry, block_max_node)
-        partial_connectivity = block.partial_connectivity(0, 1)  # all nodes of 0th element
+        partial_connectivity = block.connectivity_partial(0, 1)  # all nodes of 0th element
         np.testing.assert_equal(partial_connectivity, connectivity[0:1, :])
         print('    partial_connectivity(0,1) == connectivity[0:1, :]')
     assert min_entry == 0
@@ -132,13 +132,49 @@ def test_block_connectivity(edb):
     assert max_entry == num_nodes - 1
 
 
+def test_block_connectivity_compression(edb):
+    print_bold('\nblock connectivity compression:')
+    for key, block in edb.element_blocks.items():
+        x = block.connectivity()
+        y_buffer = block.connectivity(compress=True)
+        print('    compressed connectivity ({}) buffer'.format(type(y_buffer)))
+        y = y_buffer.unpack()
+        np.testing.assert_array_equal(x, y)
+        print('    block {} connectivity ({} bytes) equal to buffer ({} bytes)'.format(key, x.nbytes, len(y_buffer)))
+
+
+def test_block_local_connectivity(edb):
+
+    print_bold('\nblock local_connectivity:')
+    for key, block in edb.element_blocks.items():
+        local_connectivity = block.connectivity_local()  # the LocalConnectivity object
+        print_blue('    block {} {} local_connectivity = '.format(key, block.topology_name))
+        print(type(local_connectivity))
+        print(type(local_connectivity.local_nodes))
+        print('    local_connectivity.local_nodes.shape = {}'.format(local_connectivity.local_nodes.shape))
+        # print(local_connectivity.local_nodes)
+        block_min_node = np.amin(local_connectivity.local_nodes)
+        block_max_node = np.amax(local_connectivity.local_nodes)
+        print('    block {:5d} first node {:7d} last node {:7d}'.format(key, block_min_node, block_max_node))
+        assert block_min_node == 0
+        assert block_max_node == local_connectivity.global_nodes.size - 1
+        print(type(local_connectivity.global_nodes))
+        print('    local_connectivity.global_nodes.shape = {}'.format(local_connectivity.global_nodes.shape))
+        # print(local_connectivity.global_nodes)
+        global_min_node = np.amin(local_connectivity.global_nodes)
+        global_max_node = np.amax(local_connectivity.global_nodes)
+        assert global_min_node == local_connectivity.min_global
+        assert global_max_node == local_connectivity.max_global
+        assert global_max_node <= (edb.globals.num_nodes() - 1)
+
+
 def test_side_sets(edb):
     print_bold('\nside sets:')
     for key, side_set in edb.side_sets.items():
-        sides = side_set.entries()
+        elements, sides = side_set.entries()
+        assert isinstance(elements, np.ndarray)
         assert isinstance(sides, np.ndarray)
         num_entries = side_set.num_entries()
-        assert sides.shape == (num_entries, 2)  # a side is an element and a local side index
         print('    side set {:3d} with {:5d} sides'.format(key, num_entries))
 
 
