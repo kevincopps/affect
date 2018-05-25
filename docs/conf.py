@@ -21,28 +21,29 @@ import os
 # (such as matplotlib.pyplot) as well as the main modules. After committing your changes and pushing to GitHub, you
 # should find that your docs compile properly.
 #
-# import mock
+#import mock
 
 # prerequisites:
 # graphviz (dot command for inheritance diagrams)
 
 # possibly need mock modules for github to see docs
 # MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot']
-# for mod_name in MOCK_MODULES:
+#MOCK_MODULES = ['scipy', 'scipy.signal', 'cython', 'hdf4', 'hdf5', 'netcdf4', 'numexpr', 'pytest',
+#                'pytest-cov', 'pytest-runner', 'python-blosc']
+
+#for mod_name in MOCK_MODULES:
 #     sys.modules[mod_name] = mock.Mock()
 
-from unittest.mock import MagicMock
-
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
-
-
-MOCK_MODULES = ['scipy', 'scipy.signal', 'cython', 'hdf4', 'hdf5', 'netcdf4', 'numexpr', 'pytest',
-                'pytest-cov', 'pytest-runner', 'python-blosc']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+# from unittest.mock import MagicMock
+#
+#
+# class Mock(MagicMock):
+#     @classmethod
+#     def __getattr__(cls, name):
+#         return MagicMock()
+#
+#
+# sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
