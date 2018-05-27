@@ -15,7 +15,7 @@ import logging
 import sys
 from abc import abstractmethod
 from enum import IntEnum, IntFlag
-from typing import Dict, Iterable, Iterator, List, Sequence, Tuple, TypeVar
+from typing import Dict, Iterable, Iterator, List, Sequence, Tuple, TypeVar, Union
 
 cimport cython
 cimport numpy
@@ -558,7 +558,7 @@ def library_version() -> str:
     Returns:
         Version string of the Exodus API library
     """
-    return f'{cexodus.API_VERS:.6g}'
+    return str(f'{cexodus.API_VERS:.6g}')
 
 
 class Messages(IntFlag):
@@ -2389,7 +2389,7 @@ class EntityCollectionWithVariable(BaseEntityCollection):
         cdef char var_name[cexodus.MAX_STR_LENGTH+1]
         if 0 != cexodus.ex_get_variable_name(self.ex_id, self.entity_type.value, variable_index+1, &var_name[0]):
             _raise_io_error()
-        variable_name = _to_unicode(&var_name[0])
+        variable_name = str(_to_unicode(&var_name[0]))
         return variable_name
 
     @property
@@ -3394,7 +3394,7 @@ class Block(EntityWithAttribute, EntityWithProperty):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    def connectivity(self, entry_type=EntryType.NODE, zero_based=True, compress=False) -> numpy.ndarray:
+    def connectivity(self, entry_type=EntryType.NODE, zero_based=True, compress=False) -> Union[numpy.ndarray, util.CompressedArray]:
         """
         Read an array of the entries-to-node connectivity for a given block.
 
@@ -4181,7 +4181,7 @@ cdef class Database:
         cdef cexodus.ex_init_params param
         if 0 != cexodus.ex_get_init_ext(self.ex_id, &param):
             _raise_io_error()
-        return (f'{{title:         {_to_unicode(param.title)},\n' 
+        return str(f'{{title:         {_to_unicode(param.title)},\n' 
                 f' num_dim:       {param.num_dim},\n'
                 f' num_node:      {param.num_nodes},\n'
                 f' num_elem:      {param.num_elem},\n'

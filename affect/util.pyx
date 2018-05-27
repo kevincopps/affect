@@ -182,7 +182,8 @@ def print_array_info(name: str, x: numpy.ndarray):
         name (str): short name for the array parameter
         x (numpy.ndarray): the array
     """
-    print(f'    {name} array {type(x)} of {x.dtype} with shape {x.shape}:')
+    shape = (<object> x).shape
+    print(f'    {name} array {type(x)} of {x.dtype} with shape {shape}:')
     print(f'{x}')
 
 
@@ -247,7 +248,8 @@ cpdef byte_align(a: numpy.ndarray, n=None, dtype=None):
     offset = <intptr_t>numpy.PyArray_DATA(a) %n
 
     if offset is not 0 or update_dtype:
-        _array_aligned = empty_aligned(a.shape, dtype, n=n)
+        shape = (<object> a).shape
+        _array_aligned = empty_aligned(shape, dtype, n=n)
         _array_aligned[:] = a
         a = _array_aligned.view(type=a.__class__)
 
@@ -281,7 +283,7 @@ cpdef is_byte_aligned(a: numpy.ndarray, n=None):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef empty_aligned(shape: Union[int,Iterable[int]], dtype: numpy.dtype, order='C', n=None):
+cpdef empty_aligned(shape: Union[int,Iterable[int]], dtype, order='C', n=None):
     """
     Create an empty numpy array that is n-byte aligned.
     
@@ -408,7 +410,7 @@ cpdef take(field: numpy.ndarray, indices: numpy.ndarray, shift = 0, boundscheck=
     cdef int out_of_bounds
 
     # shape of local values is same as the global one, but first dimension is the number of local nodes
-    array_shape = list(field.shape)
+    array_shape = list((<object> field).shape)
     array_shape[0] = indices.size
 
     # get space for the result, making sure it is aligned
