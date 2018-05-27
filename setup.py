@@ -63,30 +63,9 @@ def get_cpu_options(platform):
     # return a clang/gcc compile flag with the highest level of sse, avx instructions supported on the compile CPU
     flag = ['']
     if platform == 'darwin':
-        found_flags = True
-        return ['-march=corei7-avx', '-mavx2']
+        return ['-march=native']
     elif platform.startswith('linux'):
-        # gcc options: -msse  -msse2  -msse3  -mssse3  -msse4.1  -msse4.2  -msse4  -mavx
-        # -mavx2  -mavx512f  -mavx512pf  -mavx512er  -mavx512cd  -mavx512vl
-        # -mavx512bw  -mavx512dq  -mavx512ifma  -mavx512vbmi
-        with open('/proc/cpuinfo', 'r') as search:
-            for line in search:
-                if line.startswith('flags'):
-                    # look for highest level vector extensions
-                    if 'avx2' in line:
-                        return ['-mavx2']
-                    elif 'avx' in line:
-                        return ['-mavx']
-                    elif 'sse4_2' in line:
-                        return ['-msse4_2']
-                    elif 'sse4_1' in line:
-                        return ['-msse4_1']
-                    elif 'ssse3' in line:
-                        return ['-mssse3']
-                    elif 'sse2' in line:
-                        return ['-msse2']
-                    else:
-                        return ['']
+        return ['-march=native']
     else:
         raise Exception(f'Unknown platform ({platform}')
     return flag
