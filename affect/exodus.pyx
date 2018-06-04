@@ -27,12 +27,12 @@ from libc.limits cimport LLONG_MIN
 from libc.stdint cimport uintptr_t, int64_t, int32_t, int8_t, uint32_t, INT64_MAX, INT64_MIN
 from libc.stdio cimport fflush, stderr
 from libc.stdlib cimport malloc, free
+#cdef extern from "unistd.h":
+#    enum: STDERR_FILENO
+from posix.unistd cimport STDERR_FILENO, close, dup, dup2, pipe
 
 from .cimport cexodus
 from . import util
-
-cdef extern from "unistd.h":
-    enum: STDERR_FILENO
 
 
 cexodus.omp_set_dynamic(0)      # Explicitly disable dynamic teams
@@ -678,11 +678,11 @@ cdef class DebugMessages(object):
         return False
 
     def _redirect_stderr(self):
-        cdef extern from "unistd.h":
-            int close(int fildes)
-            int dup(int fildes)
-            int dup2(int fildes, int fildes2)
-            int pipe(int fildes[2])
+        # cdef extern from "unistd.h":
+        #     int close(int fildes)
+        #     int dup(int fildes)
+        #     int dup2(int fildes, int fildes2)
+        #     int pipe(int fildes[2])
         self.saved_stderr = dup(STDERR_FILENO) # save stderr for later
         if pipe(self.err_pipe) != 0:
             raise InternalError('unable to pipe error messages from ExodusII Library on stderr')
