@@ -10,6 +10,11 @@ License
 BSD. Specifically the "new/modified BSD" license, also called the "BSD three clause license".
 See [license file](https://github.com/kdcopps/affect/blob/master/LICENSE).
 
+Documentation
+-------------
+
+See the [affect documentation here](https://kevincopps.github.io/affect).
+
 Basic Goals and Capabilities
 ----------------------------
 
