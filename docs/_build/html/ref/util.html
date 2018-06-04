@@ -1,0 +1,945 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>util — Utilities &mdash; affect 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="affect 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API Reference" href="index.html"/>
+        <link rel="next" title="Glossary" href="glossary.html"/>
+        <link rel="prev" title="exodus — I/O of ExodusII Databases" href="exodus.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> affect
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../exodus/index.html">Guide to using Exodus</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="arithmetic.html"><code class="docutils literal"><span class="pre">math</span></code> — Calculations on grid and mesh fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="connect.html"><code class="docutils literal"><span class="pre">connect</span></code> — Connectivity Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamics.html"><code class="docutils literal"><span class="pre">dynamics</span></code> — Structural Dynamics Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exodus.html"><code class="docutils literal"><span class="pre">exodus</span></code> — I/O of ExodusII Databases</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">util</span></code> — Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-affect.util"><code class="docutils literal"><span class="pre">affect.util</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data-alignment">Data alignment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#aligned-arrays">Aligned arrays</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#array-compression">Array compression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#printing-debugging-testing">Printing, Debugging, Testing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">affect</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">API Reference</a> &raquo;</li>
+        
+      <li><code class="docutils literal"><span class="pre">util</span></code> — Utilities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/ref/util.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="util-utilities">
+<h1><code class="docutils literal"><span class="pre">util</span></code> — Utilities<a class="headerlink" href="#util-utilities" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-affect.util">
+<span id="affect-util"></span><h2><a class="reference internal" href="#module-affect.util" title="affect.util"><code class="xref py py-mod docutils literal"><span class="pre">affect.util</span></code></a><a class="headerlink" href="#module-affect.util" title="Permalink to this headline">¶</a></h2>
+<p>This module contains the functions and classes for basic operations.</p>
+<div class="section" id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<p>This module provides for creating and performing operations with aligned and
+compressed arrays.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#affect.util.CompressedArray" title="affect.util.CompressedArray"><code class="xref py py-obj docutils literal"><span class="pre">CompressedArray</span></code></a>([array,&nbsp;shape,&nbsp;dtype,&nbsp;…])</td>
+<td>A buffer storing compressed array data that can be later unpacked into a numpy array with aligned data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.util.empty_aligned" title="affect.util.empty_aligned"><code class="xref py py-obj docutils literal"><span class="pre">empty_aligned</span></code></a>(shape,&nbsp;dtype[,&nbsp;order,&nbsp;n])</td>
+<td>Create an empty numpy array that is n-byte aligned.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#affect.util.zeros_aligned" title="affect.util.zeros_aligned"><code class="xref py py-obj docutils literal"><span class="pre">zeros_aligned</span></code></a>(shape[,&nbsp;dtype,&nbsp;order,&nbsp;n])</td>
+<td>Create a numpy array filled with zeros that is n-byte aligned.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.util.byte_align" title="affect.util.byte_align"><code class="xref py py-obj docutils literal"><span class="pre">byte_align</span></code></a>(a[,&nbsp;n,&nbsp;dtype])</td>
+<td>If given numpy array is not aligned, return a copy that is.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#affect.util.is_byte_aligned" title="affect.util.is_byte_aligned"><code class="xref py py-obj docutils literal"><span class="pre">is_byte_aligned</span></code></a>(a[,&nbsp;n])</td>
+<td>Check if a numpy array is aligned on an n-byte boundary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.util.take" title="affect.util.take"><code class="xref py py-obj docutils literal"><span class="pre">take</span></code></a>(field,&nbsp;indices[,&nbsp;shift,&nbsp;boundscheck])</td>
+<td>Copy selected values of a field at the given indices to a new byte aligned array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#affect.util.compress" title="affect.util.compress"><code class="xref py py-obj docutils literal"><span class="pre">compress</span></code></a>(a)</td>
+<td>Compress a numpy array returning a bytes object that can later be decompressed using <a class="reference internal" href="#affect.util.decompress" title="affect.util.decompress"><code class="xref py py-func docutils literal"><span class="pre">decompress()</span></code></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.util.decompress" title="affect.util.decompress"><code class="xref py py-obj docutils literal"><span class="pre">decompress</span></code></a>(buffer,&nbsp;shape,&nbsp;dtype[,&nbsp;order])</td>
+<td>Create a numpy array of the given shape and dtype by decompressing a buffer.</td>
+</tr>
+</tbody>
+</table>
+<p>It also provides some basic functions for debugging and testing.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#affect.util.arrays_share_data" title="affect.util.arrays_share_data"><code class="xref py py-obj docutils literal"><span class="pre">arrays_share_data</span></code></a>(x,&nbsp;y)</td>
+<td>Determine if arrays share the same underlying data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.util.get_array_base" title="affect.util.get_array_base"><code class="xref py py-obj docutils literal"><span class="pre">get_array_base</span></code></a>(array)</td>
+<td>For a given Numpy array, finds the base array that ‘owns’ the actual data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#affect.util.ConsoleCode" title="affect.util.ConsoleCode"><code class="xref py py-obj docutils literal"><span class="pre">ConsoleCode</span></code></a></td>
+<td>Colors, bold, and underline codes for wrapping around printed strings to the terminal.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.util.print_blue" title="affect.util.print_blue"><code class="xref py py-obj docutils literal"><span class="pre">print_blue</span></code></a>(*args)</td>
+<td>Print object strings to console with a blue color.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#affect.util.print_bold" title="affect.util.print_bold"><code class="xref py py-obj docutils literal"><span class="pre">print_bold</span></code></a>(*args)</td>
+<td>Print object strings to console with the console’s representation of bold.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.util.print_green" title="affect.util.print_green"><code class="xref py py-obj docutils literal"><span class="pre">print_green</span></code></a>(*args)</td>
+<td>Print object strings to console with a blue color.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#affect.util.print_yellow" title="affect.util.print_yellow"><code class="xref py py-obj docutils literal"><span class="pre">print_yellow</span></code></a>(*args)</td>
+<td>Print object strings to console with a blue color.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.util.print_function_starting" title="affect.util.print_function_starting"><code class="xref py py-obj docutils literal"><span class="pre">print_function_starting</span></code></a>()</td>
+<td>Print a newline and then the current function name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#affect.util.print_array_info" title="affect.util.print_array_info"><code class="xref py py-obj docutils literal"><span class="pre">print_array_info</span></code></a>(name,&nbsp;x)</td>
+<td>Print an indented formatted summary of a numpy array to stdout.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data-alignment">
+<h3>Data alignment<a class="headerlink" href="#data-alignment" title="Permalink to this headline">¶</a></h3>
+<p>Data alignment for arrays means putting the data at a memory address equal to
+some multiple of the word size. This is done to increase efficiency of data
+loads and stores to and from the processor. Processors are designed to
+efficiently move data to and from memory addresses that are on specific byte
+boundaries.</p>
+<p>In addition to creating the data on aligned boundaries (that
+aligns the base pointer), the compiler is able to make optimizations when
+the data access (including base-pointer plus index) is known to be aligned
+by 64 bytes. Special <a class="reference external" href="https://en.wikipedia.org/wiki/SIMD">SIMD</a>
+instructions can be utilized by the compiler for
+certain platforms. For example, the compiler/platform may support the special
+instructions on processors such as the Intel®
+<a class="reference external" href="https://en.wikipedia.org/wiki/AVX-512">AVX-512</a> instructions, which
+enables processing of twice the number of data elements that
+<a class="reference external" href="https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#Advanced_Vector_Extensions_2">AVX/AVX2</a>
+can process with a single instruction and four times that of
+<a class="reference external" href="https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions">SSE</a>.</p>
+<p>By default, the compiler cannot know nor assume data is aligned
+inside loops without some help from the programmer. Thus, you must also inform
+the compiler of this alignment via a combination of pragmas (C/C++) or
+keywords, clauses, or attributes so that compilers can generate optimal code.</p>
+<p>For the
+Intel® Many Integrated Core Architecture such (<a class="reference external" href="https://en.wikipedia.org/wiki/Xeon_Phi">Intel® Xeon Phi™ Coprocessor</a>), memory movement is optimal when
+the data starting address lies on 64 byte boundaries. Thus, by default, at
+least at the time of this writing it is optimal to create data objects with
+starting addresses that are modulo 64 bytes. For slightly less ambitious
+modern architectures, such as Intel® Skylake, 32 byte aligned addresses may be
+recommended.</p>
+</div>
+<div class="section" id="aligned-arrays">
+<h3>Aligned arrays<a class="headerlink" href="#aligned-arrays" title="Permalink to this headline">¶</a></h3>
+<p>These functions create and perform other operations on
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a> objects. All arrays created by calls to <cite>affect</cite>,
+and those used internally in <cite>affect</cite>, are aligned. The two main
+functions used to created aligned arrays are <a class="reference internal" href="#affect.util.empty_aligned" title="affect.util.empty_aligned"><code class="xref py py-func docutils literal"><span class="pre">empty_aligned()</span></code></a> and
+<a class="reference internal" href="#affect.util.zeros_aligned" title="affect.util.zeros_aligned"><code class="xref py py-func docutils literal"><span class="pre">zeros_aligned()</span></code></a> that behave similarly to <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.empty.html#numpy.empty" title="(in NumPy v1.14)"><code class="xref py py-func docutils literal"><span class="pre">numpy.empty()</span></code></a> and
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.zeros.html#numpy.zeros" title="(in NumPy v1.14)"><code class="xref py py-func docutils literal"><span class="pre">numpy.zeros()</span></code></a>, respectively.</p>
+<p>For now this module defaults to using a 64 byte boundary. To align the data
+of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a> to the word boundaries, during allocation it may
+be necessary to insert some unused bytes at the start of the block, this is
+data padding.</p>
+<dl class="function">
+<dt id="affect.util.empty_aligned">
+<code class="descclassname">affect.util.</code><code class="descname">empty_aligned</code><span class="sig-paren">(</span><em>shape</em>, <em>dtype</em>, <em>order='C'</em>, <em>n=None</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.empty_aligned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an empty numpy array that is n-byte aligned.</p>
+<p>Uses same arguments as per <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.empty.html#numpy.empty" title="(in NumPy v1.14)"><code class="xref py py-func docutils literal"><span class="pre">numpy.empty()</span></code></a> with an additional argument for alignment boundary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>,</em><em>Iterable</em><em>[</em><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>]</em><em>]</em>) – shape of the array</li>
+<li><strong>dtype</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.14)"><em>numpy.dtype</em></a>) – dtype of the array</li>
+<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – specify C or Fortran order</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – byte alignment, (default=None which will use 32 or 64 dependent if CPU supports AVX512)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a new ndarray with data aligned on the n-byte boundary.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)">numpy.ndarray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.zeros_aligned">
+<code class="descclassname">affect.util.</code><code class="descname">zeros_aligned</code><span class="sig-paren">(</span><em>shape</em>, <em>dtype='float64'</em>, <em>order='C'</em>, <em>n=None</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.zeros_aligned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a numpy array filled with zeros that is n-byte aligned.</p>
+<p>Uses same arguments as per <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.zeros.html#numpy.zeros" title="(in NumPy v1.14)"><code class="xref py py-func docutils literal"><span class="pre">numpy.zeros()</span></code></a> with an additional argument for alignment boundary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>Iterable</em><em>[</em><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>]</em>) – shape of the array</li>
+<li><strong>dtype</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.14)"><em>numpy.dtype</em></a>) – dtype of the array</li>
+<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – specify C or Fortran order</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – byte alignment, (default=None which will use 32 or 64 dependent if CPU supports AVX512)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a new ndarray with data aligned on the n-byte boundary filled with zero values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)">numpy.ndarray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.byte_align">
+<code class="descclassname">affect.util.</code><code class="descname">byte_align</code><span class="sig-paren">(</span><em>a</em>, <em>n=None</em>, <em>dtype=None</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.byte_align" title="Permalink to this definition">¶</a></dt>
+<dd><p>If given numpy array is not aligned, return a copy that is.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a>) – </li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – alignment one of (16, 32, 64, 128)</li>
+<li><strong>dtype</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.14)"><em>numpy.dtype</em></a>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Original array if already aligned, or a new copy of the data.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)">numpy.ndarray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.is_byte_aligned">
+<code class="descclassname">affect.util.</code><code class="descname">is_byte_aligned</code><span class="sig-paren">(</span><em>a</em>, <em>n=None</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.is_byte_aligned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a numpy array is aligned on an n-byte boundary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a>) – any array</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – byte alignment, (default=None which uses 64)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if array is aligned, False if not.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#bool" title="(in Python v3.6)">bool</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.take">
+<code class="descclassname">affect.util.</code><code class="descname">take</code><span class="sig-paren">(</span><em>field</em>, <em>indices</em>, <em>shift=0</em>, <em>boundscheck=False</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.take" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy selected values of a field at the given indices to a new byte aligned array.</p>
+<p>The index (indices[:] - shift) select values of the field along axis 0. Entries in indices array may be repeated.
+Avoid setting boundscheck=True except when you are debugging.</p>
+<p>This function is similar to <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.take.html#numpy.take" title="(in NumPy v1.14)"><code class="xref py py-func docutils literal"><span class="pre">numpy.take()</span></code></a> except:</p>
+<ul class="simple">
+<li>the return value is an array with byte aligned data,</li>
+<li>performance is optimized, boundscheck is not performed by default and it uses threads and/or SIMD instructions</li>
+<li>there is no axis argument, the axis=0 always,</li>
+<li>the field array is restricted to type of float32 or float64,</li>
+<li>the indices array is restricted to type int32, int64, uint32, uint64</li>
+<li>optionally allows a shift of the values in the indices array</li>
+</ul>
+<p class="rubric">Example</p>
+<p>Similar results could be obtained with either the numpy fancy indexing or the take function, as shown.
+For large array sizes this function may be up to twice as fast, for relatively smaller arrays it will be
+slower because of thread setup and thread switching time.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">local_coordinates</span> <span class="o">=</span> <span class="n">global_coordinates</span><span class="p">[</span><span class="n">local_connectivity</span><span class="o">.</span><span class="n">global_nodes</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">local_coordinates</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">global_coordinates</span><span class="p">,</span> <span class="n">local_connectivity</span><span class="o">.</span><span class="n">global_nodes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">local_coordinates</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">global_coordinates</span><span class="p">,</span> <span class="n">local_connectivity</span><span class="o">.</span><span class="n">global_nodes</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>field</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a><em>[</em><em>order=&quot;C&quot;</em><em>]</em>) – array of any shape, with dtype in (numpy.float32, numpy.float64)</li>
+<li><strong>indices</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a><em>[</em><em>shape=N</em><em>]</em>) – 1D array of indices, with dtype in (int32, int64, uint32, uint64)</li>
+<li><strong>shift</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – number to be subtracted from each entry of indices before being used as index into field</li>
+<li><strong>boundscheck</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – default is False, if any (indices[i] - shift) is outside the range (0, field.shape[0])
+and boundscheck is True an exception is raised, otherwise behavior is undefined and a segfault may
+occur</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>out - array of byte aligned data having the same dtype and order as <cite>field</cite>,</p>
+<p>and having the same shape as <cite>field</cite> except the dimension of the first axis is replaced by the size of
+<cite>indices</cite>, i.e., <code class="docutils literal"><span class="pre">out.shape</span> <span class="pre">=</span> <span class="pre">(indices.size,)</span> <span class="pre">+</span> <span class="pre">field.shape[1:]</span></code></p>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)">numpy.ndarray</a>[order=”C”]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#IndexError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code></a> – if an (indices - shift) value is less than zero or greater than global_field.shape[0]</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">UnsupportedArrayType</span></code> – if field or indices do not meet requirements on dtype</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="array-compression">
+<h3>Array compression<a class="headerlink" href="#array-compression" title="Permalink to this headline">¶</a></h3>
+<p>The method of array compression is multithreaded and fast and can usually
+compress an array of integers to around a fourth of the original size. It does
+not compress arrays of floating point values as efficiently.</p>
+<dl class="class">
+<dt id="affect.util.CompressedArray">
+<em class="property">class </em><code class="descclassname">affect.util.</code><code class="descname">CompressedArray</code><span class="sig-paren">(</span><em>array=None</em>, <em>shape=None</em>, <em>dtype=None</em>, <em>order=None</em>, <em>pointer=None</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.CompressedArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A buffer storing compressed array data that can be later unpacked into a numpy array with aligned data.</p>
+<p>There are two ways to create the object: either by passing a numpy array as the array data; or
+by passing a shape, dtype, and pointer to the array data.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># create a buffer from an existing array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">CompressedArray</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">unpack</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># create a buffer from a shape, dtype, and a pointer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">CompressedArray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">pointer</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">unpack</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>array</strong> (<em>ndarray</em>) – (optional) a numpy array (shape and dtype determined from the array)</li>
+<li><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – (optional) shape for the uncompressed numpy array</li>
+<li><strong>dtype</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.14)"><em>numpy.dtype</em></a>) – (optional) type of the elements for the uncompressed numpy array</li>
+<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – (optional, default=’C’) order of the array elements ‘C’ or ‘F’</li>
+<li><strong>pointer</strong> (<em>uintptr_t</em>) – (optional) value of a void*, pointer to the data to be compressed and stored</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">IllegalArgumentError</span></code> – if one or more optional arguments are missing or the wrong type</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="affect.util.CompressedArray.dtype">
+<code class="descname">dtype</code><a class="headerlink" href="#affect.util.CompressedArray.dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>The scalar type of the stored array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">type of the scalar entries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.14)">numpy.dtype</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.CompressedArray.itemsize">
+<code class="descname">itemsize</code><a class="headerlink" href="#affect.util.CompressedArray.itemsize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Length of one array element in bytes of the stored array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of bytes</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.CompressedArray.nbytes">
+<code class="descname">nbytes</code><a class="headerlink" href="#affect.util.CompressedArray.nbytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total bytes consumed by the elements of the uncompressed array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of total bytes of the entries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.CompressedArray.shape">
+<code class="descname">shape</code><a class="headerlink" href="#affect.util.CompressedArray.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>The shape of the stored array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">shape - an <cite>int</cite> or Iterable[int]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.CompressedArray.size">
+<code class="descname">size</code><a class="headerlink" href="#affect.util.CompressedArray.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of elements in the stored array.</p>
+<p>Equivalent to np.prod(a.shape), i.e., the product of the array’s dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">total number of entries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="affect.util.CompressedArray.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.CompressedArray.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpack (decompress) the compressed ArrayBuffer into an aligned NumPy array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array with aligned data and original shape, dtype, order</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)">numpy.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.compress">
+<code class="descclassname">affect.util.</code><code class="descname">compress</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.compress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compress a numpy array returning a bytes object that can later be decompressed using <a class="reference internal" href="#affect.util.decompress" title="affect.util.decompress"><code class="xref py py-func docutils literal"><span class="pre">decompress()</span></code></a>.</p>
+<p>The CompressedArray class is more convenient and does not require saving the shape and dtype.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>a</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a>) – an array of any size, dtype, and order</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">buffer - a Python bytes object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#bytes" title="(in Python v3.6)">bytes</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.decompress">
+<code class="descclassname">affect.util.</code><code class="descname">decompress</code><span class="sig-paren">(</span><em>buffer</em>, <em>shape</em>, <em>dtype</em>, <em>order='C'</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.decompress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a numpy array of the given shape and dtype by decompressing a buffer.</p>
+<p>The CompressedArray class is more convenient and does not require saving the shape and dtype.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>buffer</strong> – the bytes object (created from a previous call to <a class="reference internal" href="#affect.util.compress" title="affect.util.compress"><code class="xref py py-func docutils literal"><span class="pre">compress()</span></code></a>)</li>
+<li><strong>shape</strong> (<em>Iterable</em><em>[</em><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>]</em>) – shape of the array</li>
+<li><strong>dtype</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.14)"><em>numpy.dtype</em></a>) – dtype of the array</li>
+<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – specify C or Fortran order</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an uncompressed aligned numpy array.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)">numpy.ndarray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="printing-debugging-testing">
+<h3>Printing, Debugging, Testing<a class="headerlink" href="#printing-debugging-testing" title="Permalink to this headline">¶</a></h3>
+<p>Most of these functions are used internally for testing, but you may find them
+of value for regular use.</p>
+<dl class="class">
+<dt id="affect.util.ConsoleCode">
+<em class="property">class </em><code class="descclassname">affect.util.</code><code class="descname">ConsoleCode</code><a class="headerlink" href="#affect.util.ConsoleCode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Colors, bold, and underline codes for wrapping around printed strings to the terminal.</p>
+<p>Also, see the convenience functions <a class="reference internal" href="#affect.util.print_blue" title="affect.util.print_blue"><code class="xref py py-func docutils literal"><span class="pre">print_blue()</span></code></a> <a class="reference internal" href="#affect.util.print_bold" title="affect.util.print_bold"><code class="xref py py-func docutils literal"><span class="pre">print_bold()</span></code></a> etc.</p>
+<p class="rubric">Example</p>
+<p>Print bold and yellow text to stdout for display on the terminal.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ConsoleCode</span><span class="o">.</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s1">&#39;Hello, I and displayed in bold text&#39;</span> <span class="o">+</span> <span class="n">ConsoleCode</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ConsoleCode</span><span class="o">.</span><span class="n">YELLOW</span> <span class="o">+</span> <span class="s1">&#39;Hello, I and displayed in yellow text&#39;</span> <span class="o">+</span> <span class="n">ConsoleCode</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="affect.util.ConsoleCode.PURPLE">
+<code class="descname">PURPLE</code><em class="property"> = '\x1b[95m'</em><a class="headerlink" href="#affect.util.ConsoleCode.PURPLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.ConsoleCode.CYAN">
+<code class="descname">CYAN</code><em class="property"> = '\x1b[96m'</em><a class="headerlink" href="#affect.util.ConsoleCode.CYAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.ConsoleCode.DARK_CYAN">
+<code class="descname">DARK_CYAN</code><em class="property"> = '\x1b[36m'</em><a class="headerlink" href="#affect.util.ConsoleCode.DARK_CYAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.ConsoleCode.BLUE">
+<code class="descname">BLUE</code><em class="property"> = '\x1b[94m'</em><a class="headerlink" href="#affect.util.ConsoleCode.BLUE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.ConsoleCode.GREEN">
+<code class="descname">GREEN</code><em class="property"> = '\x1b[92m'</em><a class="headerlink" href="#affect.util.ConsoleCode.GREEN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.ConsoleCode.YELLOW">
+<code class="descname">YELLOW</code><em class="property"> = '\x1b[93m'</em><a class="headerlink" href="#affect.util.ConsoleCode.YELLOW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.ConsoleCode.RED">
+<code class="descname">RED</code><em class="property"> = '\x1b[91m'</em><a class="headerlink" href="#affect.util.ConsoleCode.RED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.ConsoleCode.UNDERLINE">
+<code class="descname">UNDERLINE</code><em class="property"> = '\x1b[4m'</em><a class="headerlink" href="#affect.util.ConsoleCode.UNDERLINE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.util.ConsoleCode.END">
+<code class="descname">END</code><em class="property"> = '\x1b[0m'</em><a class="headerlink" href="#affect.util.ConsoleCode.END" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.arrays_share_data">
+<code class="descclassname">affect.util.</code><code class="descname">arrays_share_data</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.arrays_share_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if arrays share the same underlying data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a>) – first array</li>
+<li><strong>y</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a>) – second array</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if the two arrays share the same data, otherwise False.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#bool" title="(in Python v3.6)">bool</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.get_array_base">
+<code class="descclassname">affect.util.</code><code class="descname">get_array_base</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.get_array_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given Numpy array, finds the base array that ‘owns’ the actual data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a>) – any array</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">base - the underlying array holding the data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)">numpy.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.print_blue">
+<code class="descclassname">affect.util.</code><code class="descname">print_blue</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.print_blue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print object strings to console with a blue color.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> – iterable sequence of any objects with a string representation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.print_bold">
+<code class="descclassname">affect.util.</code><code class="descname">print_bold</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.print_bold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print object strings to console with the console’s representation of bold.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> – iterable sequence of any objects with a string representation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.print_green">
+<code class="descclassname">affect.util.</code><code class="descname">print_green</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.print_green" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print object strings to console with a blue color.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> – iterable sequence of any objects with a string representation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.print_yellow">
+<code class="descclassname">affect.util.</code><code class="descname">print_yellow</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.print_yellow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print object strings to console with a blue color.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> – iterable sequence of any objects with a string representation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.print_function_starting">
+<code class="descclassname">affect.util.</code><code class="descname">print_function_starting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.print_function_starting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a newline and then the current function name.</p>
+<p>Any underscore in the name is replaced with a space, and the prefix ‘test’ is removed if it exists.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.util.print_array_info">
+<code class="descclassname">affect.util.</code><code class="descname">print_array_info</code><span class="sig-paren">(</span><em>name</em>, <em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.util.print_array_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print an indented formatted summary of a numpy array to stdout.</p>
+<p class="rubric">Example</p>
+<p>Print a summary of a double precision array.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ConsoleCode</span><span class="o">.</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s1">&#39;Hello, I and displayed in bold text&#39;</span> <span class="o">+</span> <span class="n">ConsoleCode</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ConsoleCode</span><span class="o">.</span><span class="n">YELLOW</span> <span class="o">+</span> <span class="s1">&#39;Hello, I and displayed in yellow text&#39;</span> <span class="o">+</span> <span class="n">ConsoleCode</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – short name for the array parameter</li>
+<li><strong>x</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a>) – the array</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="exceptions">
+<h3>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h3>
+<p>The exceptions thrown from this module are a part of the interface just as
+much as the functions and classes. We define an Error root exception to allow
+you to insulate yourself from this API. All the exceptions raised by this
+module inherit from it.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">Error</span></code></td>
+<td>Base class for all exceptions raised by this module.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">IllegalArgumentError</span></code></td>
+<td>Exception raised if argument does not make sense for the current operation.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">UnsupportedArrayType</span></code></td>
+<td>Exception raised if dtype of numpy array argument is not supported.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="glossary.html" class="btn btn-neutral float-right" title="Glossary" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="exodus.html" class="btn btn-neutral" title="exodus — I/O of ExodusII Databases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017–2018, Sandia Corporation.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

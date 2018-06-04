@@ -37,7 +37,8 @@ cov_html
 *.pstat
 
 # documentation
-docs/_build
+# leave this commented out so github pages can host our documentation
+# docs/_build
 
 # examples and notebooks
 .ipynb_checkpoints

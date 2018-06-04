@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Calculation on all timesteps by block &mdash; affect 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="affect 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="Guide to using Exodus" href="index.html"/>
+        <link rel="next" title="API Reference" href="../ref/index.html"/>
+        <link rel="prev" title="Guide to using Exodus" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> affect
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Guide to using Exodus</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Calculation on all timesteps by block</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#outline">Outline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#keeping-local-connectivities">Keeping local connectivities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#copying-fields-from-global-to-local">Copying fields from global to local</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/index.html">API Reference</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ref/glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">affect</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Guide to using Exodus</a> &raquo;</li>
+        
+      <li>Calculation on all timesteps by block</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/exodus/block_calculation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="calculation-on-all-timesteps-by-block">
+<h1>Calculation on all timesteps by block<a class="headerlink" href="#calculation-on-all-timesteps-by-block" title="Permalink to this headline">¶</a></h1>
+<p>Here is a relatively larger example where you want to perform a operation on
+every time step, on all element blocks, involving all the nodal fields in the
+database. Suppose your calculation is performed in the function
+<code class="docutils literal"><span class="pre">my_block_calculation</span></code>. Just for the sake of this example, we suppose that
+the result of the block calculation is a scalar, and that these are summed into
+a global result, which is further summed over time steps.</p>
+<div class="section" id="outline">
+<h2>Outline<a class="headerlink" href="#outline" title="Permalink to this headline">¶</a></h2>
+<p>The general idea of the procedure is,</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>open the database</dt>
+<dd><ul class="first last">
+<li>get the node coordinates</li>
+<li><dl class="first docutils">
+<dt>for each block</dt>
+<dd><ul class="first last">
+<li>get the element-to-node connectivity and keep in memory</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>for each time step</dt>
+<dd><ul class="first last">
+<li>get global field values</li>
+<li><dl class="first docutils">
+<dt>for each block</dt>
+<dd><ul class="first last">
+<li>gather the field values to local values on the block</li>
+<li>perform your calculation</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Here since we want to operate on all the nodal fields block-by-block, for each
+time step first read in all the nodal field arrays. Following that, as we loop
+over blocks, we create an indexed local field array for a block.</p>
+<p>Our strategy uses extra memory for local copies of the field values as we
+operate on a block, but makes the calculation efficient in terms of speed. The
+memory for the arrays storing the local copies of field values for one block
+can be garbage collected as you proceed to work on the next block.</p>
+</div>
+<div class="section" id="keeping-local-connectivities">
+<h2>Keeping local connectivities<a class="headerlink" href="#keeping-local-connectivities" title="Permalink to this headline">¶</a></h2>
+<p>The local connectivities (element-to-node ID connectivity for a block) are
+kept in compressed form in memory until the point at which they are needed.
+This is handled transparently by the
+<a class="reference internal" href="../ref/exodus.html#affect.exodus.LocalConnectivity" title="affect.exodus.LocalConnectivity"><code class="xref py py-class docutils literal"><span class="pre">affect.exodus.LocalConnectivity</span></code></a> and using the <code class="docutils literal"><span class="pre">compress=True</span></code>
+option passed to <a class="reference internal" href="../ref/exodus.html#affect.exodus.Blocks.connectivity_local_all" title="affect.exodus.Blocks.connectivity_local_all"><code class="xref py py-meth docutils literal"><span class="pre">affect.exodus.Blocks.connectivity_local_all()</span></code></a>,
+emphasized below. After the connectivity is used in uncompressed form, the
+uncompressed copy can be garbage collected.</p>
+</div>
+<div class="section" id="copying-fields-from-global-to-local">
+<h2>Copying fields from global to local<a class="headerlink" href="#copying-fields-from-global-to-local" title="Permalink to this headline">¶</a></h2>
+<p>The local indexed copying of the nodal coordinates and other nodal field arrays
+are created by using the <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.take.html#numpy.ndarray.take" title="(in NumPy v1.14)"><code class="xref py py-meth docutils literal"><span class="pre">numpy.ndarray.take()</span></code></a>, emphasized below.</p>
+<div class="literal-block-wrapper docutils container" id="block-by-block-calculation-example">
+<div class="code-block-caption"><span class="caption-text">block_by_block_calculation_example.py</span><a class="headerlink" href="#block-by-block-calculation-example" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">exodus</span><span class="o">.</span><span class="n">DatabaseFile</span><span class="p">(</span><span class="s1">&#39;/tmp/myExodusFile.exo&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+
+    <span class="n">num_times</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">num_times</span><span class="p">()</span>  <span class="c1"># read number of time steps</span>
+
+    <span class="n">nodal</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">nodal</span>                    <span class="c1"># get the nodal object</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="n">exodus</span><span class="o">.</span><span class="n">Fields</span><span class="p">(</span><span class="n">nodal</span><span class="p">)</span>      <span class="c1"># ordered dictionary of field info</span>
+    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">nodal</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>  <span class="c1"># read array for all nodes</span>
+
+    <span class="c1"># Read the block local connectivities and store in a dictionary.</span>
+    <span class="c1"># And the same for node coordinates, since they don&#39;t change with</span>
+    <span class="c1"># time step.</span>
+    <span class="n">local_connectivities</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>  <span class="c1"># maintain block order</span>
+    <span class="n">local_coordinates</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="hll">    <span class="n">local_iterator</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">element_blocks</span><span class="o">.</span><span class="n">connectivity_local_all</span><span class="p">(</span><span class="n">compress</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span>    <span class="k">for</span> <span class="n">block_id</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">local</span> <span class="ow">in</span> <span class="n">local_iterator</span><span class="p">:</span>
+        <span class="n">local_connectivities</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">local</span>
+        <span class="c1"># We use the take function to select the</span>
+        <span class="c1"># global nodes to copy into our local array</span>
+<span class="hll">        <span class="n">local_coordinates</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">local</span><span class="o">.</span><span class="n">global_nodes</span><span class="p">,</span>
+</span><span class="hll">                                                        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span>
+    <span class="n">all_times_result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">time_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_times</span><span class="p">):</span>  <span class="c1"># loop over time steps</span>
+
+        <span class="c1"># Read the value of all nodal field arrays on global nodes at this</span>
+        <span class="c1"># time step. Here you may decide to select only the subset of</span>
+        <span class="c1"># fields you need for your calculation by name.</span>
+        <span class="n">global_arrays</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># to hold the field arrays</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="n">global_arrays</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodal</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span>  <span class="c1"># read</span>
+
+        <span class="n">all_blocks_result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">for</span> <span class="n">block_id</span><span class="p">,</span> <span class="n">local</span> <span class="ow">in</span> <span class="n">local_connectivities</span><span class="p">:</span>  <span class="c1"># each block</span>
+
+            <span class="k">if</span> <span class="n">local</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># skip blocks without any nodes</span>
+
+            <span class="c1"># Copy relevant node field values from global to</span>
+            <span class="c1"># local arrays for this block.</span>
+            <span class="n">local_fields</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="c1"># Add the local coordinates first, which we already have.</span>
+            <span class="n">local_fields</span><span class="p">[</span><span class="s1">&#39;coordinate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">local_coordinates</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">array</span> <span class="ow">in</span> <span class="n">global_arrays</span><span class="p">:</span>
+<span class="hll">                <span class="n">local_fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">local</span><span class="o">.</span><span class="n">global_nodes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span>
+            <span class="c1"># Perform our calculation on local_fields arrays on this block.</span>
+            <span class="n">block_result</span> <span class="o">=</span> <span class="n">my_block_calculation</span><span class="p">(</span><span class="n">block_id</span><span class="p">,</span>
+                <span class="n">local</span><span class="o">.</span><span class="n">local_nodes</span><span class="p">,</span> <span class="n">local_fields</span><span class="p">)</span>
+
+            <span class="n">all_blocks_result</span> <span class="o">+=</span> <span class="n">block_result</span>
+
+        <span class="n">all_times_result</span> <span class="o">+=</span> <span class="n">all_blocks_result</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>So all the arrays passed to <code class="docutils literal"><span class="pre">my_block_calculation</span></code> are in local form
+specific to a single block at a time.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../ref/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Guide to using Exodus" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017–2018, Sandia Corporation.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

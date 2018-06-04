@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>math — Calculations on grid and mesh fields &mdash; affect 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="affect 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API Reference" href="index.html"/>
+        <link rel="next" title="connect — Connectivity Utilities" href="connect.html"/>
+        <link rel="prev" title="API Reference" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> affect
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../exodus/index.html">Guide to using Exodus</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">math</span></code> — Calculations on grid and mesh fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-affect.arithmetic"><code class="docutils literal"><span class="pre">affect.arithmetic</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="connect.html"><code class="docutils literal"><span class="pre">connect</span></code> — Connectivity Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamics.html"><code class="docutils literal"><span class="pre">dynamics</span></code> — Structural Dynamics Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exodus.html"><code class="docutils literal"><span class="pre">exodus</span></code> — I/O of ExodusII Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util.html"><code class="docutils literal"><span class="pre">util</span></code> — Utilities</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">affect</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">API Reference</a> &raquo;</li>
+        
+      <li><code class="docutils literal"><span class="pre">math</span></code> — Calculations on grid and mesh fields</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/ref/arithmetic.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="math-calculations-on-grid-and-mesh-fields">
+<h1><code class="docutils literal"><span class="pre">math</span></code> — Calculations on grid and mesh fields<a class="headerlink" href="#math-calculations-on-grid-and-mesh-fields" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-affect.arithmetic">
+<span id="affect-arithmetic"></span><h2><a class="reference internal" href="#module-affect.arithmetic" title="affect.arithmetic"><code class="xref py py-mod docutils literal"><span class="pre">affect.arithmetic</span></code></a><a class="headerlink" href="#module-affect.arithmetic" title="Permalink to this headline">¶</a></h2>
+<p>This module contains classes and methods for computing geometry calculations on meshes.</p>
+<div class="section" id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<p>This module contains functions for making basic calculations on field values
+associated with the nodes and cells of a mesh. For example, you may
+want to compute the average of a node field in every cell.</p>
+<p>It is not meant to contain every possible calculation that one would need in
+practice. What distinguishes this module is that it includes highly optimized
+and threaded functions for a few common operations.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#affect.arithmetic.average_element_node_values" title="affect.arithmetic.average_element_node_values"><code class="xref py py-obj docutils literal"><span class="pre">average_element_node_values</span></code></a>(element_to_node,&nbsp;…)</td>
+<td>Compute average value of nodal vector field for each element in a block of elements.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="affect.arithmetic.average_element_node_values">
+<code class="descclassname">affect.arithmetic.</code><code class="descname">average_element_node_values</code><span class="sig-paren">(</span><em>element_to_node</em>, <em>node_values</em>, <em>vertices=None</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.arithmetic.average_element_node_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute average value of nodal vector field for each element in a block of elements.
+Alternatively, for higher order elements, average the nodal field only from the <em>vertices</em> of the element.</p>
+<p>Some relevant sizes and dimensions are determined from the shapes of the array arguments, these include:</p>
+<ul class="simple">
+<li>num_elements, the number of elements in the block, <code class="docutils literal"><span class="pre">element_to_nodes.shape[0]</span></code></li>
+<li>nodes_per_element, number of nodes used by each element, <code class="docutils literal"><span class="pre">element_to_nodes.shape[1]</span></code></li>
+<li>num_components, length of the vector values at nodes, <code class="docutils literal"><span class="pre">node_values.shape[1]</span></code></li>
+</ul>
+<p>If vertices is not None, it must be an integer <cite>N</cite> &lt;= <cite>nodes_per_element</cite>, and the average on each element
+will be computed from the first <cite>N</cite> nodal values of the field components.</p>
+<p class="rubric">Example</p>
+<p>Compute the geometric centroid of the elements by passing in the node coordinates. The centroid in
+n-dimensional space is the arithmetic mean (“average”) position of all the points in the shape.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">affect.exodus</span> <span class="k">as</span> <span class="nn">exodus</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">affect.arithmetic</span> <span class="k">as</span> <span class="nn">arithmetic</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">exodus</span><span class="o">.</span><span class="n">DatabaseFile</span><span class="p">(</span><span class="s1">&#39;/tmp/myExodusFile.exo&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">nodal</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">element_blocks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">num_vertices</span> <span class="o">=</span> <span class="n">connect</span><span class="o">.</span><span class="n">CellTopology</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">topology_name</span><span class="p">]</span><span class="o">.</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">connectivity</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">connectivity</span><span class="p">()</span>  <span class="c1"># element to global node connectivity</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="c1"># compute the centroid (average of node values) restricted to vertices</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">centroids</span> <span class="o">=</span> <span class="n">arithmetic</span><span class="o">.</span><span class="n">average_element_node_values</span><span class="p">(</span><span class="n">connectivity</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">vertices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>element_to_node</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a>) – array of dtype=integer, shape(num_elements, num_nodes_per_element)</li>
+<li><strong>node_values</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><em>numpy.ndarray</em></a>) – array of dtype=float64, with shape(num_vertex_local, num_components)</li>
+<li><strong>vertices</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – if value is not None (default), compute using only the values at this number of nodes,
+This ignores any higher order edge, face, interior nodes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">element_average - array of <code class="xref py py-obj docutils literal"><span class="pre">ndarray[double,</span> <span class="pre">ndim=2,</span> <span class="pre">mode=&quot;c&quot;]</span></code> with shape(num_elements, num_components).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#affect.arithmetic.MismatchedArrayShape" title="affect.arithmetic.MismatchedArrayShape"><code class="xref py py-exc docutils literal"><span class="pre">MismatchedArrayShape</span></code></a> – if <code class="docutils literal"><span class="pre">element_to_node[1]</span></code> is not equal to the number of nodes in the cell topology.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="exceptions">
+<h3>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h3>
+<p>The exceptions thrown from this module are a part of the interface just as much as the functions and classes.
+We define an Error root exception to allow you to insulate yourself from this API. All the exceptions
+raised by this module inherit from it.</p>
+<dl class="exception">
+<dt id="affect.arithmetic.Error">
+<em class="property">exception </em><code class="descclassname">affect.arithmetic.</code><code class="descname">Error</code><a class="headerlink" href="#affect.arithmetic.Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#Exception" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></a></p>
+<p>Base class for all exceptions raised by this module.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="affect.arithmetic.MismatchedArrayShape">
+<em class="property">exception </em><code class="descclassname">affect.arithmetic.</code><code class="descname">MismatchedArrayShape</code><a class="headerlink" href="#affect.arithmetic.MismatchedArrayShape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#affect.arithmetic.Error" title="affect.arithmetic.Error"><code class="xref py py-class docutils literal"><span class="pre">affect.arithmetic.Error</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">ValueError</span></code></a></p>
+<p>Exception raised if number of array is wrong shape or length to support the operation.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="affect.arithmetic.IllegalArgumentError">
+<em class="property">exception </em><code class="descclassname">affect.arithmetic.</code><code class="descname">IllegalArgumentError</code><a class="headerlink" href="#affect.arithmetic.IllegalArgumentError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#affect.arithmetic.Error" title="affect.arithmetic.Error"><code class="xref py py-class docutils literal"><span class="pre">affect.arithmetic.Error</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">ValueError</span></code></a></p>
+<p>Exception raised if argument does not make sense for the current operation.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="affect.arithmetic.UnalignedArray">
+<em class="property">exception </em><code class="descclassname">affect.arithmetic.</code><code class="descname">UnalignedArray</code><a class="headerlink" href="#affect.arithmetic.UnalignedArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#affect.arithmetic.Error" title="affect.arithmetic.Error"><code class="xref py py-class docutils literal"><span class="pre">affect.arithmetic.Error</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">ValueError</span></code></a></p>
+<p>Exception raised if an array argument is not aligned on a (64) byte boundary</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="affect.arithmetic.UnsupportedArrayType">
+<em class="property">exception </em><code class="descclassname">affect.arithmetic.</code><code class="descname">UnsupportedArrayType</code><a class="headerlink" href="#affect.arithmetic.UnsupportedArrayType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#affect.arithmetic.Error" title="affect.arithmetic.Error"><code class="xref py py-class docutils literal"><span class="pre">affect.arithmetic.Error</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#TypeError" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">TypeError</span></code></a></p>
+<p>Exception raised if dtype of numpy array argument is not supported.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="connect.html" class="btn btn-neutral float-right" title="connect — Connectivity Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017–2018, Sandia Corporation.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

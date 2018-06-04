@@ -1,0 +1,425 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>dynamics — Structural Dynamics Analysis &mdash; affect 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="affect 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API Reference" href="index.html"/>
+        <link rel="next" title="exodus — I/O of ExodusII Databases" href="exodus.html"/>
+        <link rel="prev" title="connect — Connectivity Utilities" href="connect.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> affect
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../exodus/index.html">Guide to using Exodus</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="arithmetic.html"><code class="docutils literal"><span class="pre">math</span></code> — Calculations on grid and mesh fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="connect.html"><code class="docutils literal"><span class="pre">connect</span></code> — Connectivity Utilities</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">dynamics</span></code> — Structural Dynamics Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-affect.dynamics"><code class="docutils literal"><span class="pre">affect.dynamics</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#summary">Summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frequency-response-function">Frequency Response Function</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="exodus.html"><code class="docutils literal"><span class="pre">exodus</span></code> — I/O of ExodusII Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util.html"><code class="docutils literal"><span class="pre">util</span></code> — Utilities</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">affect</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">API Reference</a> &raquo;</li>
+        
+      <li><code class="docutils literal"><span class="pre">dynamics</span></code> — Structural Dynamics Analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/ref/dynamics.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dynamics-structural-dynamics-analysis">
+<h1><code class="docutils literal"><span class="pre">dynamics</span></code> — Structural Dynamics Analysis<a class="headerlink" href="#dynamics-structural-dynamics-analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-affect.dynamics">
+<span id="affect-dynamics"></span><h2><a class="reference internal" href="#module-affect.dynamics" title="affect.dynamics"><code class="xref py py-mod docutils literal"><span class="pre">affect.dynamics</span></code></a><a class="headerlink" href="#module-affect.dynamics" title="Permalink to this headline">¶</a></h2>
+<p>This module contains algorithms for analyzing structural dynamics.</p>
+<div class="section" id="summary">
+<h3>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h3>
+<p>This module contains useful functions and postprocessors concerned with analyzing the behavior of physical structures
+when subjected to dynamic forces. This module is useful when the applied dynamic forces result in accelerations
+high enough to excite the structure’s natural frequency.</p>
+<p>Dynamic analysis can be used to find dynamic displacements, time history, and modal analysis.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#affect.dynamics.frf" title="affect.dynamics.frf"><code class="xref py py-obj docutils literal"><span class="pre">frf</span></code></a>(ndarray&nbsp;f_in,&nbsp;ndarray&nbsp;x_response,&nbsp;…)</td>
+<td>Return the magnitude (real part) of the frequency response function of a single input/output system using fast Fourier transforms.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="frequency-response-function">
+<h3>Frequency Response Function<a class="headerlink" href="#frequency-response-function" title="Permalink to this headline">¶</a></h3>
+<p>Frequency response is the quantitative measure of the output spectrum of a system or device in response to a stimulus,
+and is used to characterize the dynamics of the system. It is a measure of magnitude and phase of the output as a
+function of frequency, in comparison to the input. The frequency response function is a transfer function used to
+identify the resonant frequencies, damping and mode shapes of a physical structure.</p>
+<div class="math">
+\begin{gather*}
+   \begin{split}
+      &amp; \text{Input Force}  \\
+      &amp; \quad F(ω)
+   \end{split} &amp; \longrightarrow &amp;
+   \begin{split}
+      &amp; \text{Transfer Function}\\
+      &amp; \qquad H(ω)
+   \end{split} &amp; \longrightarrow &amp;
+   \begin{split}
+      &amp; \text{Displacement Response}\\
+      &amp; \qquad\quad X(ω)
+   \end{split}
+\end{gather*}</div><p>Here, <span class="math">\(F\)</span> is the input force as a function of the frequency <span class="math">\(\omega\)</span>, and <span class="math">\(H\)</span> is the transfer
+function, while <span class="math">\(X\)</span> is the displacement (or velocity or acceleration) response function.
+Each function is a complex function, with real and imaginary components, which may also be represented in terms of
+magnitude and phase, and thus the functions are spectral functions. For sake of computation and simplicity, we consider
+each to be a Fourier transform.</p>
+<p>Thus, in the frequency domain, the structural response X(ω) is usually expressed as the product of the frequency
+response function H(ω) and the input or applied force F(ω). Usually the response X(ω) may be in terms of displacement,
+velocity, or acceleration.</p>
+<div class="math">
+\[X(ω) = H(ω)⋅F(ω)\]</div>
+<div class="math">
+\[H(ω) = \frac{X(ω)}{F(ω)}\]</div>
+<p>Using a frequency response function, the following can be observed:</p>
+<ul class="simple">
+<li>Resonances - Peaks indicate the presence of the natural frequencies of the structure under test</li>
+<li>Damping - Damping is proportional to the width of the peaks. The wider the peak, the heavier the damping</li>
+<li>Mode Shape – The amplitude and phase of multiple FRFs acquired to a common reference on a structure are used to
+determine the mode shape</li>
+</ul>
+<div class="section" id="nomenclature">
+<h4>Nomenclature:<a class="headerlink" href="#nomenclature" title="Permalink to this headline">¶</a></h4>
+<p>Various transfer functions are useful for measuring system response and these have common names:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Quantity</th>
+<th class="head">Name of Frequency Response Function</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>displacement / force</td>
+<td>admittance, compliance, receptance</td>
+</tr>
+<tr class="row-odd"><td>velocity / force</td>
+<td>mobility</td>
+</tr>
+<tr class="row-even"><td>acceleration / force</td>
+<td>accelerance, inertance</td>
+</tr>
+<tr class="row-odd"><td>force / displacement</td>
+<td>dynamic stiffness</td>
+</tr>
+<tr class="row-even"><td>force / velocity</td>
+<td>mechanical impedance</td>
+</tr>
+<tr class="row-odd"><td>force / acceleration</td>
+<td>apparent mass, dynamic mass</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="example">
+<h4>Example:<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
+<p>Examine the natural frequencies in the computational results of a structural model. Find the peak values of the
+<cite>accelerance</cite> frequency response function, where the response is acceleration in the z-direction given an input
+stimulus of force in the z-direction.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">affect.exodus</span> <span class="kn">import</span> <span class="n">DatabaseFile</span>
+<span class="kn">from</span> <span class="nn">affect.dynamics</span> <span class="kn">import</span> <span class="n">frf</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">argrelmax</span>
+
+<span class="k">with</span> <span class="n">DatabaseFile</span><span class="p">(</span><span class="s1">&#39;./SRS-FRF-example/model/1/p1f-out.h&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">num_times</span> <span class="o">=</span> <span class="n">times</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">node_vars</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">nodal</span><span class="o">.</span><span class="n">variables</span>
+    <span class="n">az</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">nodal</span><span class="o">.</span><span class="n">variable_at_times</span><span class="p">(</span><span class="n">node_vars</span><span class="p">[</span><span class="s1">&#39;AccZ&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">num_times</span><span class="p">)</span>
+    <span class="n">fz</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">nodal</span><span class="o">.</span><span class="n">variable_at_times</span><span class="p">(</span><span class="n">node_vars</span><span class="p">[</span><span class="s1">&#39;AForceZ&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">num_times</span><span class="p">)</span>
+
+<span class="hll"><span class="n">frequency</span><span class="p">,</span> <span class="n">h_transfer</span> <span class="o">=</span> <span class="n">frf</span><span class="p">(</span><span class="n">fz</span><span class="p">,</span> <span class="n">az</span><span class="p">,</span> <span class="n">times</span><span class="p">)</span>
+</span><span class="n">peaks</span> <span class="o">=</span> <span class="n">argrelmax</span><span class="p">(</span><span class="n">h_transfer</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">peaks</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">frequency</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">h_transfer</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+<dl class="function">
+<dt id="affect.dynamics.frf">
+<code class="descclassname">affect.dynamics.</code><code class="descname">frf</code><span class="sig-paren">(</span><em>ndarray f_in</em>, <em>ndarray x_response</em>, <em>ndarray times</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.dynamics.frf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the magnitude (real part) of the frequency response function of a single input/output system using
+fast Fourier transforms.</p>
+<p>The frequency response function is a transfer function often used to express
+the structural response to an applied force as a function of frequency. Frequency response functions are complex
+functions, with real and imaginary components, magnitude and phase angle, respectively.</p>
+<p>In the frequency domain, the structural response X(ω) is expressed as the product of the frequency response
+function H(ω) and the input or applied force F(ω). The response X(ω) may be in terms of displacement, velocity, or
+acceleration.</p>
+<div class="math">
+\[X(ω) = H(ω)⋅F(ω)\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>f_in</strong> – input force values at the time values, with size equal to time.size</li>
+<li><strong>x_response</strong> – response function values at the time values, with size equal to time.size</li>
+<li><strong>times</strong> – time values</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">frequencies, magnitudes - arrays of frequencies <span class="math">\(ω\)</span>, and magnitudes (real values) of the transfer
+function <span class="math">\(H(ω)\)</span>, with sizes equal to <code class="docutils literal"><span class="pre">times.size/2</span> <span class="pre">+</span> <span class="pre">1</span></code></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> – if <code class="docutils literal"><span class="pre">x_response.size</span> <span class="pre">!=</span> <span class="pre">num_times</span></code> or <code class="docutils literal"><span class="pre">f_in.size</span> <span class="pre">!=</span> <span class="pre">num_times</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="exodus.html" class="btn btn-neutral float-right" title="exodus — I/O of ExodusII Databases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="connect.html" class="btn btn-neutral" title="connect — Connectivity Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017–2018, Sandia Corporation.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

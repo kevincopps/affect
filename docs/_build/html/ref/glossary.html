@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Glossary &mdash; affect 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="affect 0.1 documentation" href="../index.html"/>
+        <link rel="prev" title="util — Utilities" href="util.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> affect
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../exodus/index.html">Guide to using Exodus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Glossary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#exodus-database">Exodus Database</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">affect</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Glossary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/ref/glossary.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="glossary">
+<h1>Glossary<a class="headerlink" href="#glossary" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="exodus-database">
+<h2>Exodus Database<a class="headerlink" href="#exodus-database" title="Permalink to this headline">¶</a></h2>
+<p>Conceptual data model of the ExodusII database and <a class="reference internal" href="exodus.html#module-affect.exodus" title="affect.exodus"><code class="xref py py-mod docutils literal"><span class="pre">affect.exodus</span></code></a> module.</p>
+<dl class="glossary docutils">
+<dt id="term-attributes">attributes</dt>
+<dd>Optional floating point numbers that can be assigned to each and every entry in a <a class="reference internal" href="exodus.html#affect.exodus.Nodal" title="affect.exodus.Nodal"><code class="xref py py-class docutils literal"><span class="pre">Nodal</span></code></a>, <a class="reference internal" href="exodus.html#affect.exodus.Set" title="affect.exodus.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a>,
+or <a class="reference internal" href="exodus.html#affect.exodus.Block" title="affect.exodus.Block"><code class="xref py py-class docutils literal"><span class="pre">Block</span></code></a> entity. Every entry in an entity must have the same number of attributes, but the attribute
+values vary among the entries. Attributes are accessed through the member functions of an entity, for example,
+<a class="reference internal" href="exodus.html#affect.exodus.Set.num_attributes" title="affect.exodus.Set.num_attributes"><code class="xref py py-meth docutils literal"><span class="pre">Set.num_attributes()</span></code></a>, <a class="reference internal" href="exodus.html#affect.exodus.Set.attribute_names" title="affect.exodus.Set.attribute_names"><code class="xref py py-meth docutils literal"><span class="pre">Set.attribute_names()</span></code></a>, <a class="reference internal" href="exodus.html#affect.exodus.Set.attribute" title="affect.exodus.Set.attribute"><code class="xref py py-meth docutils literal"><span class="pre">Set.attribute()</span></code></a>, and <a class="reference internal" href="exodus.html#affect.exodus.Set.attributes" title="affect.exodus.Set.attributes"><code class="xref py py-meth docutils literal"><span class="pre">Set.attributes()</span></code></a>.</dd>
+<dt id="term-block">block</dt>
+<dd>A association of entries with the same topology containing node connectivity information. For example, an
+element <a class="reference internal" href="exodus.html#affect.exodus.Block" title="affect.exodus.Block"><code class="xref py py-class docutils literal"><span class="pre">Block</span></code></a> is an association of element entries and the nodes connected to each element.</dd>
+<dt id="term-blocks">blocks</dt>
+<dd>A dictionary-like container of the <a class="reference internal" href="exodus.html#affect.exodus.Block" title="affect.exodus.Block"><code class="xref py py-class docutils literal"><span class="pre">Block</span></code></a> instances of a certain <a class="reference internal" href="exodus.html#affect.exodus.EntityType" title="affect.exodus.EntityType"><code class="xref py py-class docutils literal"><span class="pre">EntityType</span></code></a> in a
+<a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>. The dictionaries of different types of blocks are accessible through the following attributes:
+<a class="reference internal" href="exodus.html#affect.exodus.Database.edge_blocks" title="affect.exodus.Database.edge_blocks"><code class="xref py py-attr docutils literal"><span class="pre">Database.edge_blocks</span></code></a>,
+<a class="reference internal" href="exodus.html#affect.exodus.Database.face_blocks" title="affect.exodus.Database.face_blocks"><code class="xref py py-attr docutils literal"><span class="pre">Database.face_blocks</span></code></a>, or
+<a class="reference internal" href="exodus.html#affect.exodus.Database.element_blocks" title="affect.exodus.Database.element_blocks"><code class="xref py py-attr docutils literal"><span class="pre">Database.element_blocks</span></code></a>.</dd>
+<dt id="term-coordinates">coordinates</dt>
+<dd>A special field associated with the <a class="reference internal" href="exodus.html#affect.exodus.Nodal" title="affect.exodus.Nodal"><code class="xref py py-class docutils literal"><span class="pre">Nodal</span></code></a> entity storing the spatial coordinates of every node entry in
+the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>.</dd>
+<dt id="term-database">database</dt>
+<dd>File storage for a mesh data model, a <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a> contains all the mesh entities and their corresponding
+entries, and the temporal <a class="reference internal" href="exodus.html#affect.exodus.Field" title="affect.exodus.Field"><code class="xref py py-class docutils literal"><span class="pre">Field</span></code></a> variables.</dd>
+<dt id="term-distribution-factors">distribution factors</dt>
+<dd>Optional floating point values associated with every entry and every <a class="reference internal" href="exodus.html#affect.exodus.Set" title="affect.exodus.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> of a certain type, if they
+exist. Distribution factors are typically used in the simulation as a multiplier on an external load.
+Distribution factors are accessed through
+<a class="reference internal" href="exodus.html#affect.exodus.Sets.num_distribution_factors_all" title="affect.exodus.Sets.num_distribution_factors_all"><code class="xref py py-meth docutils literal"><span class="pre">Sets.num_distribution_factors_all()</span></code></a>,
+<a class="reference internal" href="exodus.html#affect.exodus.Set.num_distribution_factors" title="affect.exodus.Set.num_distribution_factors"><code class="xref py py-meth docutils literal"><span class="pre">Set.num_distribution_factors()</span></code></a>, and
+<a class="reference internal" href="exodus.html#affect.exodus.Set.distribution_factors" title="affect.exodus.Set.distribution_factors"><code class="xref py py-meth docutils literal"><span class="pre">Set.distribution_factors()</span></code></a>.</dd>
+<dt id="term-entity">entity</dt>
+<dd>An association of a subset of entries of a certain type (elements, faces, sides, edges, nodes). An entity is
+either the single <a class="reference internal" href="exodus.html#affect.exodus.Global" title="affect.exodus.Global"><code class="xref py py-class docutils literal"><span class="pre">Global</span></code></a> or <a class="reference internal" href="exodus.html#affect.exodus.Nodal" title="affect.exodus.Nodal"><code class="xref py py-class docutils literal"><span class="pre">Nodal</span></code></a> entity of the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>, or one of the possible
+multiple members of the <a class="reference internal" href="exodus.html#affect.exodus.Blocks" title="affect.exodus.Blocks"><code class="xref py py-class docutils literal"><span class="pre">Blocks</span></code></a>, <a class="reference internal" href="exodus.html#affect.exodus.Sets" title="affect.exodus.Sets"><code class="xref py py-class docutils literal"><span class="pre">Sets</span></code></a>, or <a class="reference internal" href="exodus.html#affect.exodus.Maps" title="affect.exodus.Maps"><code class="xref py py-class docutils literal"><span class="pre">Maps</span></code></a> entities of the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>.</dd>
+<dt id="term-entity-id">entity ID</dt>
+<dd>An integer associated with each existing entity in the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>, the integer is unique to each entity
+of the same <a class="reference internal" href="exodus.html#affect.exodus.EntityType" title="affect.exodus.EntityType"><code class="xref py py-class docutils literal"><span class="pre">EntityType</span></code></a>. The entity ID’s are used as the keys used to access the dictionary-like
+containers <a class="reference internal" href="exodus.html#affect.exodus.Blocks" title="affect.exodus.Blocks"><code class="xref py py-class docutils literal"><span class="pre">Blocks</span></code></a>, <code class="xref py py-class docutils literal"><span class="pre">Sets</span></code>, and <code class="xref py py-class docutils literal"><span class="pre">Maps</span></code>.</dd>
+<dt id="term-entity-type">entity Type</dt>
+<dd>One of the values of the enum <a class="reference internal" href="exodus.html#affect.exodus.EntityType" title="affect.exodus.EntityType"><code class="xref py py-class docutils literal"><span class="pre">EntityType</span></code></a>, including
+<code class="xref py py-data docutils literal"><span class="pre">NODAL</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">NODE_SET</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">EDGE_BLOCK</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">EDGE_SET</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">FACE_BLOCK</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">FACE_SET</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">ELEM_BLOCK</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">ELEM_SET</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">SIDE_SET</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">ELEM_MAP</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">NODE_MAP</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">EDGE_MAP</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">FACE_MAP</span></code>,
+<code class="xref py py-data docutils literal"><span class="pre">GLOBAL</span></code>, and
+<code class="xref py py-data docutils literal"><span class="pre">COORDINATE</span></code>.</dd>
+<dt id="term-entry">entry</dt>
+<dd>Entries are the fundamental building blocks of the grid or mesh of a database. Entries refer to nodes, edges,
+faces, and elements of the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a> mesh. Entries are not represented by their own Python objects,
+entry IDs, but they correspond to the first index of the <code class="xref py py-class docutils literal"><span class="pre">FieldArrays</span></code>.</dd>
+<dt id="term-field">field</dt>
+<dd>A name for an array of values and the name of components associated with entries. The <a class="reference internal" href="exodus.html#affect.exodus.Field" title="affect.exodus.Field"><code class="xref py py-class docutils literal"><span class="pre">Field</span></code></a> names are
+used to access the <a class="reference internal" href="exodus.html#affect.exodus.FieldArray" title="affect.exodus.FieldArray"><code class="xref py py-class docutils literal"><span class="pre">FieldArray</span></code></a> values stored in the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>. Each of the named components of a
+<a class="reference internal" href="exodus.html#affect.exodus.Field" title="affect.exodus.Field"><code class="xref py py-class docutils literal"><span class="pre">Field</span></code></a> with values in a <a class="reference internal" href="exodus.html#affect.exodus.FieldArray" title="affect.exodus.FieldArray"><code class="xref py py-class docutils literal"><span class="pre">FieldArray</span></code></a> are a scalar <a class="reference internal" href="#term-variable"><span class="xref std std-term">variable</span></a> in the <code class="xref py py-class docutils literal"><span class="pre">Database</span></code>.
+A <a class="reference internal" href="#term-field"><span class="xref std std-term">field</span></a> is a grouping of ExodusII <a class="reference internal" href="#term-variable"><span class="xref std std-term">variable</span></a> by common name prefix;
+the suffix of the <a class="reference internal" href="#term-variable"><span class="xref std std-term">variable</span></a> name (whatever follows the last underscore ‘_’ in the name) becomes a
+component name of the field. See also <a class="reference internal" href="#term-field-array"><span class="xref std std-term">field array</span></a>.</dd>
+<dt id="term-field-array">field array</dt>
+<dd>The actual scalar, vector and tensor values accessed in the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a> by using a <a class="reference internal" href="exodus.html#affect.exodus.Field" title="affect.exodus.Field"><code class="xref py py-class docutils literal"><span class="pre">Field</span></code></a> name and
+components. The <a class="reference internal" href="exodus.html#affect.exodus.FieldArray" title="affect.exodus.FieldArray"><code class="xref py py-class docutils literal"><span class="pre">FieldArray</span></code></a> is a multidimensional array, with the first index corresponding to entries.
+It contains floating point values that vary in space (by <a class="reference internal" href="#term-entry"><span class="xref std std-term">entry</span></a> index) and time (<a class="reference internal" href="#term-time-step"><span class="xref std std-term">time step</span></a>).
+Entities that may have field array values: global, nodal, blocks, and sets. For fields on blocks or sets, the
+field may or may not be active on all entities of that type; to find out use <a class="reference internal" href="exodus.html#affect.exodus.Block.is_field_active" title="affect.exodus.Block.is_field_active"><code class="xref py py-meth docutils literal"><span class="pre">Block.is_field_active()</span></code></a> or
+<a class="reference internal" href="exodus.html#affect.exodus.Set.is_field_active" title="affect.exodus.Set.is_field_active"><code class="xref py py-meth docutils literal"><span class="pre">Set.is_field_active()</span></code></a>. The values of the field array may be accessed on all entries at a single time step,
+for example see <a class="reference internal" href="exodus.html#affect.exodus.Nodal.field" title="affect.exodus.Nodal.field"><code class="xref py py-meth docutils literal"><span class="pre">Nodal.field()</span></code></a>; or on a range of entries at a time step, for example,
+<code class="xref py py-meth docutils literal"><span class="pre">Nodal.partial_field()</span></code>; or on a single entry at all existing time steps, for example,
+<a class="reference internal" href="exodus.html#affect.exodus.Nodal.field_at_times" title="affect.exodus.Nodal.field_at_times"><code class="xref py py-meth docutils literal"><span class="pre">Nodal.field_at_times()</span></code></a>.</dd>
+<dt id="term-global">global</dt>
+<dd>A <a class="reference internal" href="exodus.html#affect.exodus.Global" title="affect.exodus.Global"><code class="xref py py-class docutils literal"><span class="pre">Global</span></code></a> is a single top level <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a> entity maintaining the spatial dimension,
+the number of time steps, the sums of all the entries of various types in the mesh (elements, faces, nodes)
+referenced in other <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a> entities. It is accessed from the attribute <code class="xref py py-attr docutils literal"><span class="pre">Database.global</span></code>.</dd>
+<dt id="term-information-data">information data</dt>
+<dd>Info data is a list of optional supplementary text strings associated with a database. Typically this might be
+the input file from the simulation run that was executed to create the database results. Information data is
+accessed through <code class="xref py py-attr docutils literal"><span class="pre">Database.info</span></code></dd>
+<dt id="term-internal-numbering">internal numbering</dt>
+<dd>The internal numbering of node entries is in the range [0, <a class="reference internal" href="exodus.html#affect.exodus.Global.num_nodes" title="affect.exodus.Global.num_nodes"><code class="xref py py-meth docutils literal"><span class="pre">Global.num_nodes()</span></code></a>]. The internal numbering of
+elements is by total subsequent entries in the <a class="reference internal" href="exodus.html#affect.exodus.Block" title="affect.exodus.Block"><code class="xref py py-class docutils literal"><span class="pre">Block</span></code></a> in <code class="xref py py-meth docutils literal"><span class="pre">Database.blocks()</span></code> (of
+type <code class="xref py py-data docutils literal"><span class="pre">EntityType.ELEMENT_BLOCK</span></code>) and these are in the range [0, <a class="reference internal" href="exodus.html#affect.exodus.Global.num_elements" title="affect.exodus.Global.num_elements"><code class="xref py py-meth docutils literal"><span class="pre">Global.num_elements()</span></code></a>].</dd>
+<dt id="term-map">map</dt>
+<dd>A <a class="reference internal" href="exodus.html#affect.exodus.Map" title="affect.exodus.Map"><code class="xref py py-class docutils literal"><span class="pre">Map</span></code></a> is a container of entries with new integers representing a number other than that of the
+default internal numbering for that type of entry.</dd>
+<dt id="term-maps">maps</dt>
+<dd>A dictionary-like container of the <a class="reference internal" href="exodus.html#affect.exodus.Map" title="affect.exodus.Map"><code class="xref py py-class docutils literal"><span class="pre">Map</span></code></a> instances of a certain <a class="reference internal" href="exodus.html#affect.exodus.EntityType" title="affect.exodus.EntityType"><code class="xref py py-class docutils literal"><span class="pre">EntityType</span></code></a> in a
+<a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>.
+The dictionaries of different types of maps are accessible through the following attributes:
+<a class="reference internal" href="exodus.html#affect.exodus.Database.element_maps" title="affect.exodus.Database.element_maps"><code class="xref py py-attr docutils literal"><span class="pre">Database.element_maps</span></code></a>,
+<a class="reference internal" href="exodus.html#affect.exodus.Database.node_maps" title="affect.exodus.Database.node_maps"><code class="xref py py-attr docutils literal"><span class="pre">Database.node_maps</span></code></a>,
+<a class="reference internal" href="exodus.html#affect.exodus.Database.edge_maps" title="affect.exodus.Database.edge_maps"><code class="xref py py-attr docutils literal"><span class="pre">Database.edge_maps</span></code></a>, or
+<a class="reference internal" href="exodus.html#affect.exodus.Database.face_maps" title="affect.exodus.Database.face_maps"><code class="xref py py-attr docutils literal"><span class="pre">Database.face_maps</span></code></a>.</dd>
+<dt id="term-quality-assurance-records">quality assurance records</dt>
+<dd>QA data are optional text strings in the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>, storing a history of application codes that modified
+the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a> file, including the application name, description, date and time. Quality assurance data
+is accessed through <a class="reference internal" href="exodus.html#affect.exodus.Database.qa_records" title="affect.exodus.Database.qa_records"><code class="xref py py-attr docutils literal"><span class="pre">Database.qa_records</span></code></a></dd>
+<dt id="term-nodal">nodal</dt>
+<dd>The single entity of a <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a> that stores nodal coordinates, nodal fields, and nodal attributes.
+The <a class="reference internal" href="exodus.html#affect.exodus.Nodal" title="affect.exodus.Nodal"><code class="xref py py-class docutils literal"><span class="pre">Nodal</span></code></a> object is accessed from <a class="reference internal" href="exodus.html#affect.exodus.Database.nodal" title="affect.exodus.Database.nodal"><code class="xref py py-attr docutils literal"><span class="pre">Database.nodal</span></code></a>.</dd>
+<dt id="term-properties">properties</dt>
+<dd>Optional named integer variables associated with every entity of a certain type in the database. The types of
+entities that may have properties are: <a class="reference internal" href="exodus.html#affect.exodus.Block" title="affect.exodus.Block"><code class="xref py py-class docutils literal"><span class="pre">Block</span></code></a>, <a class="reference internal" href="exodus.html#affect.exodus.Map" title="affect.exodus.Map"><code class="xref py py-class docutils literal"><span class="pre">Map</span></code></a>, and <a class="reference internal" href="exodus.html#affect.exodus.Set" title="affect.exodus.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> entities.
+Property names are accessed through the member function of the collection of entities, for example,
+<a class="reference internal" href="exodus.html#affect.exodus.Blocks.property_names" title="affect.exodus.Blocks.property_names"><code class="xref py py-meth docutils literal"><span class="pre">Blocks.property_names()</span></code></a>.
+Property values are accessed through the member functions of an entity, for example,
+<a class="reference internal" href="exodus.html#affect.exodus.Block.property" title="affect.exodus.Block.property"><code class="xref py py-meth docutils literal"><span class="pre">Block.property()</span></code></a>.</dd>
+<dt id="term-set">set</dt>
+<dd>A <a class="reference internal" href="exodus.html#affect.exodus.Set" title="affect.exodus.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> entity is a container of a subset of the entries of a certain type (nodes, edges, faces, sides,
+elements) in the <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>. There may be multiple sets of a certain type and they may intersect. Sets
+are usually used to apply boundary conditions to portions of the mesh, and sets may contain
+<a class="reference internal" href="#term-attributes"><span class="xref std std-term">attributes</span></a>, <a class="reference internal" href="#term-properties"><span class="xref std std-term">properties</span></a> and <a class="reference internal" href="#term-distribution-factors"><span class="xref std std-term">distribution factors</span></a>, and multiple <a class="reference internal" href="#term-variable"><span class="xref std std-term">variable</span></a>.</dd>
+<dt id="term-sets">sets</dt>
+<dd>A dictionary-like container of the <a class="reference internal" href="exodus.html#affect.exodus.Set" title="affect.exodus.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> instances of a certain <a class="reference internal" href="exodus.html#affect.exodus.EntityType" title="affect.exodus.EntityType"><code class="xref py py-class docutils literal"><span class="pre">EntityType</span></code></a> in a
+<a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a>. The dictionaries of different types of sets are accessible through the following attributes:
+<a class="reference internal" href="exodus.html#affect.exodus.Database.node_sets" title="affect.exodus.Database.node_sets"><code class="xref py py-attr docutils literal"><span class="pre">Database.node_sets</span></code></a>,
+<a class="reference internal" href="exodus.html#affect.exodus.Database.edge_sets" title="affect.exodus.Database.edge_sets"><code class="xref py py-attr docutils literal"><span class="pre">Database.edge_sets</span></code></a>,
+<a class="reference internal" href="exodus.html#affect.exodus.Database.face_sets" title="affect.exodus.Database.face_sets"><code class="xref py py-attr docutils literal"><span class="pre">Database.face_sets</span></code></a>, or
+<a class="reference internal" href="exodus.html#affect.exodus.Database.side_sets" title="affect.exodus.Database.side_sets"><code class="xref py py-attr docutils literal"><span class="pre">Database.side_sets</span></code></a>. Entries of side sets are actually the pairing of an element and a local side number.</dd>
+<dt id="term-variable">variable</dt>
+<dd>Variables, in a <a class="reference internal" href="exodus.html#affect.exodus.Database" title="affect.exodus.Database"><code class="xref py py-class docutils literal"><span class="pre">Database</span></code></a> are named scalar floating point arrays. The values of variables vary in time
+and are associated with entries in the database. A single variable is one component of a
+more useful multi-dimensional <code class="xref py py-class docutils literal"><span class="pre">FieldArray</span></code>, there is often no need to refer to variables
+separately from a <code class="xref py py-class docutils literal"><span class="pre">FieldArray</span></code>. The suffix of a name of a Exodus variable is also the name of a
+<code class="xref py py-class docutils literal"><span class="pre">Field</span></code> component. The underlying scalar variable values making up <a class="reference internal" href="#term-field-array"><span class="xref std std-term">field array</span></a> may be accessed
+in the database in a similar way to their <code class="xref py py-class docutils literal"><span class="pre">FieldArray</span></code> counterpart.</dd>
+<dt id="term-time-step">time step</dt>
+<dd>The discrete values of time at which the values of fields (variables) are stored in the database. The values of
+time steps are accessible through the attribute <code class="xref py py-attr docutils literal"><span class="pre">Database.globals.num_times</span></code> and
+<code class="xref py py-attr docutils literal"><span class="pre">Database.globals.times</span></code>.</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="util.html" class="btn btn-neutral" title="util — Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017–2018, Sandia Corporation.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

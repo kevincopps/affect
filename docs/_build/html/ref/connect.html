@@ -1,0 +1,1008 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>connect — Connectivity Utilities &mdash; affect 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="affect 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API Reference" href="index.html"/>
+        <link rel="next" title="dynamics — Structural Dynamics Analysis" href="dynamics.html"/>
+        <link rel="prev" title="math — Calculations on grid and mesh fields" href="arithmetic.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> affect
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../exodus/index.html">Guide to using Exodus</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="arithmetic.html"><code class="docutils literal"><span class="pre">math</span></code> — Calculations on grid and mesh fields</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">connect</span></code> — Connectivity Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-affect.connect"><code class="docutils literal"><span class="pre">affect.connect</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell-and-element-topology">Cell and Element Topology</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dynamics.html"><code class="docutils literal"><span class="pre">dynamics</span></code> — Structural Dynamics Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exodus.html"><code class="docutils literal"><span class="pre">exodus</span></code> — I/O of ExodusII Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util.html"><code class="docutils literal"><span class="pre">util</span></code> — Utilities</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">affect</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">API Reference</a> &raquo;</li>
+        
+      <li><code class="docutils literal"><span class="pre">connect</span></code> — Connectivity Utilities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/ref/connect.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="connect-connectivity-utilities">
+<h1><code class="docutils literal"><span class="pre">connect</span></code> — Connectivity Utilities<a class="headerlink" href="#connect-connectivity-utilities" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-affect.connect">
+<span id="affect-connect"></span><h2><a class="reference internal" href="#module-affect.connect" title="affect.connect"><code class="xref py py-mod docutils literal"><span class="pre">affect.connect</span></code></a><a class="headerlink" href="#module-affect.connect" title="Permalink to this headline">¶</a></h2>
+<p>This module contains methods for operations on the connectivity of unstructured meshes.</p>
+<p>We assume local enumerations for element-to-node, element-to-face, face-to-node, etc.</p>
+<div class="section" id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<p>Utilities for processing connectivity information. Often the only connectivity stored on disk is the element (cell) to
+vertex, or element to node connectivity. The functions in this module determine element neighbor information and
+the vertex to element connectivity.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#affect.connect.element_to_element" title="affect.connect.element_to_element"><code class="xref py py-obj docutils literal"><span class="pre">element_to_element</span></code></a>(topology,&nbsp;…)</td>
+<td>For a single block of elements with 3D topology, return an array of the element-to-element connectivity.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.connect.vertex_to_element" title="affect.connect.vertex_to_element"><code class="xref py py-obj docutils literal"><span class="pre">vertex_to_element</span></code></a>(upper_bound_vertex,&nbsp;…)</td>
+<td>For a uniform block of elements construct the vertex to element connectivity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#affect.connect.boundary_face_to_vertex" title="affect.connect.boundary_face_to_vertex"><code class="xref py py-obj docutils literal"><span class="pre">boundary_face_to_vertex</span></code></a>(topology,&nbsp;…)</td>
+<td>For a uniform block of elements construct the boundary face to vertex connectivity.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#affect.connect.convert_to_local_connectivity" title="affect.connect.convert_to_local_connectivity"><code class="xref py py-obj docutils literal"><span class="pre">convert_to_local_connectivity</span></code></a>(…)</td>
+<td>Convert array of element to global vertex to array of element to local vertex.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="affect.connect.element_to_element">
+<code class="descclassname">affect.connect.</code><code class="descname">element_to_element</code><span class="sig-paren">(</span><em>topology</em>, <em>max_elements_per_vertex</em>, <em>ndarray element_to_vertex</em>, <em>ndarray vertex_to_element_begin</em>, <em>ndarray vertex_to_element</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.element_to_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a single block of elements with 3D topology, return an array of
+the element-to-element connectivity.</p>
+<p>Uses temporary space of <code class="docutils literal"><span class="pre">sizeof(uint32_t)</span> <span class="pre">*</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">max_elements_per_vertex</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>topology</strong> (<a class="reference internal" href="#affect.connect.CellTopology" title="affect.connect.CellTopology"><em>CellTopology</em></a>) – type of cells in this block</li>
+<li><strong>max_elements_per_vertex</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – maximum count of number of cells connected to a single vertex</li>
+<li><strong>element_to_vertex</strong> (<code class="xref py py-obj docutils literal"><span class="pre">ndarray[uint32_t,</span> <span class="pre">ndim=2,</span> <span class="pre">mode=&quot;c&quot;]</span></code>) – array of shape(num_elements, num_vertex_per_element)</li>
+<li><strong>vertex_to_element_begin</strong> (<code class="xref py py-obj docutils literal"><span class="pre">ndarray[uint32_t,</span> <span class="pre">ndim=1,</span> <span class="pre">mode=&quot;c&quot;]</span></code>) – array with length (num_vertices+1), where the ith
+entry is the starting index into the vertex_to_element array for the ith element</li>
+<li><strong>vertex_to_element</strong> (<code class="xref py py-obj docutils literal"><span class="pre">ndarray[uint32_t,</span> <span class="pre">ndim=1,</span> <span class="pre">mode=&quot;c&quot;]</span></code>) – array of vertex-to-element connectivity</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>(neighbor, num_boundary_quad_face, num_boundary_tri_face) -</p>
+<ul class="simple">
+<li>the array with an entry for each element side, containing either the ID of the element neighbor or
+-1 if no neighbor exists, shape(num_face_per_element * num_element),</li>
+<li>the number of quadrilateral element faces without a neighbor</li>
+<li>the number of triangular element faces without a neighbor</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-obj docutils literal"><span class="pre">Tuple[ndarray[numpy.int64_t,</span> <span class="pre">ndim=1],</span> <span class="pre">int,</span> <span class="pre">int]</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.connect.vertex_to_element">
+<code class="descclassname">affect.connect.</code><code class="descname">vertex_to_element</code><span class="sig-paren">(</span><em>upper_bound_vertex</em>, <em>ndarray element_to_vertex</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.vertex_to_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a uniform block of elements construct the vertex to element connectivity.</p>
+<p>The elements connected to the ith vertex are located at <code class="docutils literal"><span class="pre">vertices_to_elements[begin:end]</span></code> where
+<code class="docutils literal"><span class="pre">begin</span> <span class="pre">=</span> <span class="pre">vertex_to_element_begin[i]</span></code> and <code class="docutils literal"><span class="pre">end</span> <span class="pre">=</span> <span class="pre">vertex_to_element_begin[i+1]</span></code></p>
+<p>Number of elements in the given block is element_to_vertex.shape[0].
+Number of vertices per element is element_to_vertex.shape[1].</p>
+<p>Uses unsigned 32 bit integers, so upper_bound_vertex must be equal or less than 4,294,967,295 which equals 2^32 − 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>upper_bound_vertex</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – upper limit on largest vertex entry that may possibly appear in <cite>element_to_vertex</cite>,
+i.e., at least one more than the max value appearing in <cite>element_to_vertex</cite>.
+(supplying a larger <cite>upper_bound_vertex</cite> is fine but uses more memory)</li>
+<li><strong>element_to_vertex</strong> (<code class="xref py py-obj docutils literal"><span class="pre">ndarray[uint32_t,</span> <span class="pre">ndim=2,</span> <span class="pre">mode=&quot;c&quot;]</span></code>) – array of element to vertex connectivity with
+shape(num_elements, num_vertex_per_element)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>(max_element_per_vertex, vertex_to_element_begin, vertices_to_elements) -</p>
+<ul class="simple">
+<li>maximum number of elements occurring at a single vertex,</li>
+<li>an array with shape(upper_bound_vertex+1),</li>
+<li>an array shape(indices[-1])</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-obj docutils literal"><span class="pre">Tuple[int,</span> <span class="pre">ndarray[numpy.uint32_t,</span> <span class="pre">ndim=1],</span> <span class="pre">ndarray[numpy.uint32_t,</span> <span class="pre">ndim=1]]</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.connect.boundary_face_to_vertex">
+<code class="descclassname">affect.connect.</code><code class="descname">boundary_face_to_vertex</code><span class="sig-paren">(</span><em>topology</em>, <em>num_boundary_quad_face</em>, <em>num_boundary_tri_face</em>, <em>ndarray element_to_vertex</em>, <em>ndarray neighbor</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.boundary_face_to_vertex" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a uniform block of elements construct the boundary face to vertex connectivity.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>topology</strong> (<a class="reference internal" href="#affect.connect.CellTopology" title="affect.connect.CellTopology"><em>CellTopology</em></a>) – type of cells in this block</li>
+<li><strong>num_boundary_quad_face</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – the number of quad faces on the boundary</li>
+<li><strong>num_boundary_tri_face</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – the number of triangle faces on the boundary</li>
+<li><strong>element_to_vertex</strong> (<code class="xref py py-obj docutils literal"><span class="pre">ndarray[uint32_t,</span> <span class="pre">ndim=2,</span> <span class="pre">mode=&quot;c&quot;]</span></code>) – the element to vertex connectivity</li>
+<li><strong>neighbor</strong> (<code class="xref py py-obj docutils literal"><span class="pre">ndarray[int64_t,</span> <span class="pre">ndim=1]</span></code>) – the element to element connectivity, where -1 indicates an element
+face on the boundary</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">boundary_face_to_vertex - array of shape <code class="docutils literal"><span class="pre">(4*num_boundary_quad_face</span> <span class="pre">+</span> <span class="pre">3*num_boundary_tri_face,)</span></code></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-obj docutils literal"><span class="pre">ndarray[uint32_t,</span> <span class="pre">ndim=1,</span> <span class="pre">mode=&quot;c&quot;]</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="affect.connect.convert_to_local_connectivity">
+<code class="descclassname">affect.connect.</code><code class="descname">convert_to_local_connectivity</code><span class="sig-paren">(</span><em>element_to_vertex_global</em>, <em>num_global_vertices</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.convert_to_local_connectivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert array of element to global vertex to array of element to local vertex.</p>
+<p>Creates a map of local to global vertex indices and a new array of element to local vertex connectivity.</p>
+<p>In the process, this also converts the global array of 64 integers to the local array which uses
+unsigned 32 bit integers, thus the maximum number of unique local vertex indices must be less than or
+equal to 4,294,967,295, which equals 2^32 − 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>element_to_vertex_global</strong> (<code class="xref py py-obj docutils literal"><span class="pre">ndarray[int64_t,</span> <span class="pre">ndim=2,</span> <span class="pre">mode=&quot;c&quot;]</span></code> or <code class="xref py py-obj docutils literal"><span class="pre">ndarray[int32_t,</span> <span class="pre">ndim=2,</span> <span class="pre">mode=&quot;c&quot;]</span></code>) – global element_to_vertex array</li>
+<li><strong>num_global_vertices</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – upper bound of global vertex ID</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>(element_to_vertex_local, local_to_global_vertex) -</p>
+<ul class="simple">
+<li>the local element to vertex connectivity and,</li>
+<li>the array of the global vertex for each local vertex.</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-obj docutils literal"><span class="pre">Tuple[ndarray[uint32_t,</span> <span class="pre">ndim=2,</span> <span class="pre">mode=&quot;c&quot;],</span> <span class="pre">ndarray[numpy.int64_t,ndim=1]]</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="cell-and-element-topology">
+<h3>Cell and Element Topology<a class="headerlink" href="#cell-and-element-topology" title="Permalink to this headline">¶</a></h3>
+<p>Standard cell to vertex connectivities are identified using the CellTopology enum.</p>
+<dl class="class">
+<dt id="affect.connect.CellTopology">
+<em class="property">class </em><code class="descclassname">affect.connect.</code><code class="descname">CellTopology</code><a class="headerlink" href="#affect.connect.CellTopology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/enum.html#enum.IntEnum" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">enum.IntEnum</span></code></a></p>
+<p>Types of element or cell connectivities and aliases.</p>
+<p class="rubric">Examples</p>
+<p>If you want to access members by name (passing the name of an alias will return the original),</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CellTopology</span><span class="p">[</span><span class="s1">&#39;HEX8&#39;</span><span class="p">]</span>
+<span class="go">&lt;CellTopology.HEX8: 0&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CellTopology</span><span class="p">[</span><span class="s1">&#39;HEX&#39;</span><span class="p">]</span>
+<span class="go">&lt;CellTopology.HEX8: 0&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CellTopology</span><span class="p">[</span><span class="s1">&#39;TriangleShell3&#39;</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+<span class="go">&lt;CellTopology.TRISHELL3: 18&gt;</span>
+</pre></div>
+</div>
+<p>If you want to access members by value,</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CellTopology</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">&lt;CellTopology.HEX8: 0&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CellTopology</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">&lt;CellTopology.QUAD4: 5&gt;</span>
+</pre></div>
+</div>
+<p>If you have an instance and need its name or value:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span> <span class="o">=</span> <span class="n">CellTopology</span><span class="o">.</span><span class="n">TET4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;TET4&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">value</span>
+<span class="go">11</span>
+</pre></div>
+</div>
+<p>If you have an instance and need a property, for example the number of connected nodes, vertices, faces, etc.
+of the WEDGE15 element:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span> <span class="o">=</span> <span class="n">CellTopology</span><span class="o">.</span><span class="n">WEDGE15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">spatial_dimension</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">max_edge_per_face</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">max_node_per_face</span>
+<span class="go">8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">max_vertex_per_face</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">num_edge</span>
+<span class="go">9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">num_face</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">num_node</span>
+<span class="go">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">num_node_per_edge</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span><span class="o">.</span><span class="n">num_vertex</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+<p>You need the local number of vertices, nodes, or edges on each face, for example, the WEDGE15 element:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span> <span class="o">=</span> <span class="n">CellTopology</span><span class="o">.</span><span class="n">WEDGE15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">topology</span><span class="o">.</span><span class="n">edge_per_face</span><span class="p">)</span>
+<span class="go">[4 4 4 3 3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">topology</span><span class="o">.</span><span class="n">node_per_face</span><span class="p">)</span>
+<span class="go">[8 8 8 6 6]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">topology</span><span class="o">.</span><span class="n">vertex_per_face</span><span class="p">)</span>
+<span class="go">[4 4 4 3 3]</span>
+</pre></div>
+</div>
+<p>The local order (enumeration) of vertices or nodes on the edges. The shape of the arrays is
+(num_edge,num_vertex) and (num_edge,num_node), respectively. For example, the WEDGE15 element:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span> <span class="o">=</span> <span class="n">CellTopology</span><span class="o">.</span><span class="n">WEDGE15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">topology</span><span class="o">.</span><span class="n">edge_vertex_order</span><span class="p">)</span>
+<span class="go">[[0 1]</span>
+<span class="go"> [1 2]</span>
+<span class="go"> [2 0]</span>
+<span class="go"> [3 4]</span>
+<span class="go"> [4 5]</span>
+<span class="go"> [5 3]</span>
+<span class="go"> [0 3]</span>
+<span class="go"> [1 4]</span>
+<span class="go"> [2 5]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">topology</span><span class="o">.</span><span class="n">edge_node_order</span><span class="p">)</span>
+<span class="go">[[ 0  1  6]</span>
+<span class="go"> [ 1  2  7]</span>
+<span class="go"> [ 2  0  8]</span>
+<span class="go"> [ 3  4 12]</span>
+<span class="go"> [ 4  5 13]</span>
+<span class="go"> [ 5  3 14]</span>
+<span class="go"> [ 0  3  9]</span>
+<span class="go"> [ 1  4 10]</span>
+<span class="go"> [ 2  5 11]]</span>
+</pre></div>
+</div>
+<p>The local order (enumeration) of vertices, nodes, or edge on faces.</p>
+<p>Note that WEDGE and PYRAMID topologies
+require slightly different treatment because the number of entries is different on different faces. So, for
+indices that exceed the local number of entries on that face, the value is UINT32_MAX. The second dimension of
+the shape of the arrays is max_edge_per_face, max_node_per_face, or max_vertex_per_face, respectively.
+For example, the WEDGE15 element:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span> <span class="o">=</span> <span class="n">CellTopology</span><span class="o">.</span><span class="n">WEDGE15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">topology</span><span class="o">.</span><span class="n">face_edge_order</span><span class="p">)</span>
+<span class="go">[[         0          7          3          6]</span>
+<span class="go"> [         1          8          4          7]</span>
+<span class="go"> [         6          5          8          2]</span>
+<span class="go"> [         2          1          0 4294967295]</span>
+<span class="go"> [         3          4          5 4294967295]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">topology</span><span class="o">.</span><span class="n">face_node_order</span><span class="p">)</span>
+<span class="go">[[         0          1          4          3          6         10          12          9]</span>
+<span class="go"> [         1          2          5          4          7         11          13         10]</span>
+<span class="go"> [         0          3          5          2          9         14          11          8]</span>
+<span class="go"> [         0          2          1          8          7          6  4294967295 4294967295]</span>
+<span class="go"> [         3          4          5         12         13         14  4294967295 4294967295]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">topology</span><span class="o">.</span><span class="n">face_vertex_order</span><span class="p">)</span>
+<span class="go">[[         0          1          4          3]</span>
+<span class="go"> [         1          2          5          4]</span>
+<span class="go"> [         0          3          5          2]</span>
+<span class="go"> [         0          2          1 4294967295]</span>
+<span class="go"> [         3          4          5 4294967295]]</span>
+</pre></div>
+</div>
+<p>The array returned by any property of a CellTopology instance are immutable and will raise an Exception if you
+attempt to modify them.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">topology</span> <span class="o">=</span> <span class="n">CellTopology</span><span class="o">.</span><span class="n">HEX8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">topology</span><span class="o">.</span><span class="n">face_edge_order</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="go">ValueError: assignment destination is read-only</span>
+</pre></div>
+</div>
+<p>Pre-constructed sets of the 2D, 3D, and <em>all</em> the cell topologies are available:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CELL_TOPOLOGY_2D</span>
+<span class="go">frozenset({&lt;CellTopology.QUAD4: 5&gt;,</span>
+<span class="go">           &lt;CellTopology.QUAD8: 6&gt;,</span>
+<span class="go">           &lt;CellTopology.QUAD9: 7&gt;,</span>
+<span class="go">           &lt;CellTopology.TRI3: 14&gt;,</span>
+<span class="go">           &lt;CellTopology.TRI4: 15&gt;,</span>
+<span class="go">           &lt;CellTopology.TRI6: 16&gt;})</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CELL_TOPOLOGY_3D</span>
+<span class="go">frozenset({&lt;CellTopology.HEX8: 0&gt;,</span>
+<span class="go">           &lt;CellTopology.HEX20: 1&gt;,</span>
+<span class="go">           &lt;CellTopology.HEX27: 2&gt;,</span>
+<span class="go">           &lt;CellTopology.PYRAMID5: 3&gt;,</span>
+<span class="go">           &lt;CellTopology.PYRAMID13: 4&gt;,</span>
+<span class="go">           &lt;CellTopology.QUAD4: 5&gt;,</span>
+<span class="go">           [...]</span>
+<span class="go">           &lt;CellTopology.WEDGE15: 20&gt;})</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CELL_TOPOLOGY_ALL</span>
+<span class="go">frozenset({&lt;CellTopology.HEX8: 0&gt;,</span>
+<span class="go">           &lt;CellTopology.HEX20: 1&gt;,</span>
+<span class="go">           &lt;CellTopology.HEX27: 2&gt;,</span>
+<span class="go">           &lt;CellTopology.PYRAMID5: 3&gt;,</span>
+<span class="go">           &lt;CellTopology.PYRAMID13: 4&gt;,</span>
+<span class="go">           &lt;CellTopology.QUAD4: 5&gt;,</span>
+<span class="go">           [...]</span>
+<span class="go">           &lt;CellTopology.END_TOPOLOGY: 21&gt;})</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="affect.connect.CellTopology.max_vertex_per_face">
+<code class="descname">max_vertex_per_face</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.CellTopology.max_vertex_per_face" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that is the maximum number of vertices per face of the element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">maximum vertices per face</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="affect.connect.CellTopology.max_node_per_face">
+<code class="descname">max_node_per_face</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.CellTopology.max_node_per_face" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that is the maximum number of nodes per face of the element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">maximum nodes per face</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="affect.connect.CellTopology.num_edge">
+<code class="descname">num_edge</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.CellTopology.num_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that is the number of edges per element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of edges</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="affect.connect.CellTopology.num_face">
+<code class="descname">num_face</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.CellTopology.num_face" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that is the number of faces per element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of faces</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="affect.connect.CellTopology.num_node">
+<code class="descname">num_node</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.CellTopology.num_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that is the number of nodes per element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of nodes</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="affect.connect.CellTopology.num_node_per_edge">
+<code class="descname">num_node_per_edge</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.CellTopology.num_node_per_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that is the number of nodes per edge of the element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">nodes per edge</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="affect.connect.CellTopology.num_vertex">
+<code class="descname">num_vertex</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.CellTopology.num_vertex" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that is the number of vertices per element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of vertices</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="affect.connect.CellTopology.spatial_dimension">
+<code class="descname">spatial_dimension</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#affect.connect.CellTopology.spatial_dimension" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that is the number of spatial dimensions spanned by the element, in range [0,3].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of spatial dimensions</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.HEX8">
+<code class="descname">HEX8</code><em class="property"> = 0</em><a class="headerlink" href="#affect.connect.CellTopology.HEX8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.HEX">
+<code class="descname">HEX</code><em class="property"> = 0</em><a class="headerlink" href="#affect.connect.CellTopology.HEX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.HEX20">
+<code class="descname">HEX20</code><em class="property"> = 1</em><a class="headerlink" href="#affect.connect.CellTopology.HEX20" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.HEX27">
+<code class="descname">HEX27</code><em class="property"> = 2</em><a class="headerlink" href="#affect.connect.CellTopology.HEX27" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.PYRAMID5">
+<code class="descname">PYRAMID5</code><em class="property"> = 3</em><a class="headerlink" href="#affect.connect.CellTopology.PYRAMID5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.PYRAMID">
+<code class="descname">PYRAMID</code><em class="property"> = 3</em><a class="headerlink" href="#affect.connect.CellTopology.PYRAMID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.PYRAMID13">
+<code class="descname">PYRAMID13</code><em class="property"> = 4</em><a class="headerlink" href="#affect.connect.CellTopology.PYRAMID13" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUAD4">
+<code class="descname">QUAD4</code><em class="property"> = 5</em><a class="headerlink" href="#affect.connect.CellTopology.QUAD4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUAD">
+<code class="descname">QUAD</code><em class="property"> = 5</em><a class="headerlink" href="#affect.connect.CellTopology.QUAD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUADRILATERAL4">
+<code class="descname">QUADRILATERAL4</code><em class="property"> = 5</em><a class="headerlink" href="#affect.connect.CellTopology.QUADRILATERAL4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUADRILATERAL">
+<code class="descname">QUADRILATERAL</code><em class="property"> = 5</em><a class="headerlink" href="#affect.connect.CellTopology.QUADRILATERAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUAD8">
+<code class="descname">QUAD8</code><em class="property"> = 6</em><a class="headerlink" href="#affect.connect.CellTopology.QUAD8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUADRILATERAL8">
+<code class="descname">QUADRILATERAL8</code><em class="property"> = 6</em><a class="headerlink" href="#affect.connect.CellTopology.QUADRILATERAL8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUAD9">
+<code class="descname">QUAD9</code><em class="property"> = 7</em><a class="headerlink" href="#affect.connect.CellTopology.QUAD9" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUADRILATERAL9">
+<code class="descname">QUADRILATERAL9</code><em class="property"> = 7</em><a class="headerlink" href="#affect.connect.CellTopology.QUADRILATERAL9" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUADSHELL4">
+<code class="descname">QUADSHELL4</code><em class="property"> = 8</em><a class="headerlink" href="#affect.connect.CellTopology.QUADSHELL4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.SHELL4">
+<code class="descname">SHELL4</code><em class="property"> = 8</em><a class="headerlink" href="#affect.connect.CellTopology.SHELL4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.SHELL">
+<code class="descname">SHELL</code><em class="property"> = 8</em><a class="headerlink" href="#affect.connect.CellTopology.SHELL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUADSHELL">
+<code class="descname">QUADSHELL</code><em class="property"> = 8</em><a class="headerlink" href="#affect.connect.CellTopology.QUADSHELL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUADSHELL8">
+<code class="descname">QUADSHELL8</code><em class="property"> = 9</em><a class="headerlink" href="#affect.connect.CellTopology.QUADSHELL8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.SHELL8">
+<code class="descname">SHELL8</code><em class="property"> = 9</em><a class="headerlink" href="#affect.connect.CellTopology.SHELL8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.QUADSHELL9">
+<code class="descname">QUADSHELL9</code><em class="property"> = 10</em><a class="headerlink" href="#affect.connect.CellTopology.QUADSHELL9" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.SHELL9">
+<code class="descname">SHELL9</code><em class="property"> = 10</em><a class="headerlink" href="#affect.connect.CellTopology.SHELL9" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TET4">
+<code class="descname">TET4</code><em class="property"> = 11</em><a class="headerlink" href="#affect.connect.CellTopology.TET4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TETRA4">
+<code class="descname">TETRA4</code><em class="property"> = 11</em><a class="headerlink" href="#affect.connect.CellTopology.TETRA4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TETRA">
+<code class="descname">TETRA</code><em class="property"> = 11</em><a class="headerlink" href="#affect.connect.CellTopology.TETRA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TET8">
+<code class="descname">TET8</code><em class="property"> = 12</em><a class="headerlink" href="#affect.connect.CellTopology.TET8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TETRA8">
+<code class="descname">TETRA8</code><em class="property"> = 12</em><a class="headerlink" href="#affect.connect.CellTopology.TETRA8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TET10">
+<code class="descname">TET10</code><em class="property"> = 13</em><a class="headerlink" href="#affect.connect.CellTopology.TET10" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TETRA10">
+<code class="descname">TETRA10</code><em class="property"> = 13</em><a class="headerlink" href="#affect.connect.CellTopology.TETRA10" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRI3">
+<code class="descname">TRI3</code><em class="property"> = 14</em><a class="headerlink" href="#affect.connect.CellTopology.TRI3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRIANGLE3">
+<code class="descname">TRIANGLE3</code><em class="property"> = 14</em><a class="headerlink" href="#affect.connect.CellTopology.TRIANGLE3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRIANGLE">
+<code class="descname">TRIANGLE</code><em class="property"> = 14</em><a class="headerlink" href="#affect.connect.CellTopology.TRIANGLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRI">
+<code class="descname">TRI</code><em class="property"> = 14</em><a class="headerlink" href="#affect.connect.CellTopology.TRI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRI4">
+<code class="descname">TRI4</code><em class="property"> = 15</em><a class="headerlink" href="#affect.connect.CellTopology.TRI4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRIANGLE4">
+<code class="descname">TRIANGLE4</code><em class="property"> = 15</em><a class="headerlink" href="#affect.connect.CellTopology.TRIANGLE4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRI6">
+<code class="descname">TRI6</code><em class="property"> = 16</em><a class="headerlink" href="#affect.connect.CellTopology.TRI6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRIANGLE6">
+<code class="descname">TRIANGLE6</code><em class="property"> = 16</em><a class="headerlink" href="#affect.connect.CellTopology.TRIANGLE6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRISHELL3">
+<code class="descname">TRISHELL3</code><em class="property"> = 17</em><a class="headerlink" href="#affect.connect.CellTopology.TRISHELL3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRISHELL">
+<code class="descname">TRISHELL</code><em class="property"> = 17</em><a class="headerlink" href="#affect.connect.CellTopology.TRISHELL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRIANGLESHELL3">
+<code class="descname">TRIANGLESHELL3</code><em class="property"> = 17</em><a class="headerlink" href="#affect.connect.CellTopology.TRIANGLESHELL3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRIANGLESHELL">
+<code class="descname">TRIANGLESHELL</code><em class="property"> = 17</em><a class="headerlink" href="#affect.connect.CellTopology.TRIANGLESHELL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRISHELL6">
+<code class="descname">TRISHELL6</code><em class="property"> = 18</em><a class="headerlink" href="#affect.connect.CellTopology.TRISHELL6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.TRIANGLESHELL6">
+<code class="descname">TRIANGLESHELL6</code><em class="property"> = 18</em><a class="headerlink" href="#affect.connect.CellTopology.TRIANGLESHELL6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.WEDGE6">
+<code class="descname">WEDGE6</code><em class="property"> = 19</em><a class="headerlink" href="#affect.connect.CellTopology.WEDGE6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.WEDGE">
+<code class="descname">WEDGE</code><em class="property"> = 19</em><a class="headerlink" href="#affect.connect.CellTopology.WEDGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.WEDGE15">
+<code class="descname">WEDGE15</code><em class="property"> = 20</em><a class="headerlink" href="#affect.connect.CellTopology.WEDGE15" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="affect.connect.CellTopology.END_TOPOLOGY">
+<code class="descname">END_TOPOLOGY</code><em class="property"> = 21</em><a class="headerlink" href="#affect.connect.CellTopology.END_TOPOLOGY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="affect.connect.CELL_TOPOLOGY_ALL">
+<code class="descclassname">affect.connect.</code><code class="descname">CELL_TOPOLOGY_ALL</code><em class="property"> = frozenset({&lt;CellTopology.HEX8: 0&gt;, &lt;CellTopology.HEX20: 1&gt;, &lt;CellTopology.HEX27: 2&gt;, &lt;CellTopology.PYRAMID5: 3&gt;, &lt;CellTopology.PYRAMID13: 4&gt;, &lt;CellTopology.QUAD4: 5&gt;, &lt;CellTopology.QUAD8: 6&gt;, &lt;CellTopology.QUAD9: 7&gt;, &lt;CellTopology.QUADSHELL4: 8&gt;, &lt;CellTopology.QUADSHELL8: 9&gt;, &lt;CellTopology.QUADSHELL9: 10&gt;, &lt;CellTopology.TET4: 11&gt;, &lt;CellTopology.TET8: 12&gt;, &lt;CellTopology.TET10: 13&gt;, &lt;CellTopology.TRI3: 14&gt;, &lt;CellTopology.TRI4: 15&gt;, &lt;CellTopology.TRI6: 16&gt;, &lt;CellTopology.TRISHELL3: 17&gt;, &lt;CellTopology.TRISHELL6: 18&gt;, &lt;CellTopology.WEDGE6: 19&gt;, &lt;CellTopology.WEDGE15: 20&gt;, &lt;CellTopology.END_TOPOLOGY: 21&gt;})</em><a class="headerlink" href="#affect.connect.CELL_TOPOLOGY_ALL" title="Permalink to this definition">¶</a></dt>
+<dd><p>frozenset() -&gt; empty frozenset object
+frozenset(iterable) -&gt; frozenset object</p>
+<p>Build an immutable unordered collection of unique elements.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="affect.connect.CELL_TOPOLOGY_2D">
+<code class="descclassname">affect.connect.</code><code class="descname">CELL_TOPOLOGY_2D</code><em class="property"> = frozenset({&lt;CellTopology.QUAD4: 5&gt;, &lt;CellTopology.QUAD8: 6&gt;, &lt;CellTopology.QUAD9: 7&gt;, &lt;CellTopology.TRI3: 14&gt;, &lt;CellTopology.TRI4: 15&gt;, &lt;CellTopology.TRI6: 16&gt;})</em><a class="headerlink" href="#affect.connect.CELL_TOPOLOGY_2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>frozenset() -&gt; empty frozenset object
+frozenset(iterable) -&gt; frozenset object</p>
+<p>Build an immutable unordered collection of unique elements.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="affect.connect.CELL_TOPOLOGY_3D">
+<code class="descclassname">affect.connect.</code><code class="descname">CELL_TOPOLOGY_3D</code><em class="property"> = frozenset({&lt;CellTopology.HEX8: 0&gt;, &lt;CellTopology.HEX20: 1&gt;, &lt;CellTopology.HEX27: 2&gt;, &lt;CellTopology.PYRAMID5: 3&gt;, &lt;CellTopology.PYRAMID13: 4&gt;, &lt;CellTopology.QUAD4: 5&gt;, &lt;CellTopology.QUAD8: 6&gt;, &lt;CellTopology.QUAD9: 7&gt;, &lt;CellTopology.QUADSHELL4: 8&gt;, &lt;CellTopology.QUADSHELL8: 9&gt;, &lt;CellTopology.QUADSHELL9: 10&gt;, &lt;CellTopology.TET4: 11&gt;, &lt;CellTopology.TET8: 12&gt;, &lt;CellTopology.TET10: 13&gt;, &lt;CellTopology.TRI3: 14&gt;, &lt;CellTopology.TRI4: 15&gt;, &lt;CellTopology.TRI6: 16&gt;, &lt;CellTopology.TRISHELL3: 17&gt;, &lt;CellTopology.TRISHELL6: 18&gt;, &lt;CellTopology.WEDGE6: 19&gt;, &lt;CellTopology.WEDGE15: 20&gt;})</em><a class="headerlink" href="#affect.connect.CELL_TOPOLOGY_3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>frozenset() -&gt; empty frozenset object
+frozenset(iterable) -&gt; frozenset object</p>
+<p>Build an immutable unordered collection of unique elements.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="exceptions">
+<h3>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h3>
+<p>The exceptions thrown from this module are a part of the interface just as much as the functions and classes.
+We define an Error root exception to allow you to insulate yourself from this API. All the exceptions
+raised by this module inherit from it.</p>
+<dl class="exception">
+<dt id="affect.connect.Error">
+<em class="property">exception </em><code class="descclassname">affect.connect.</code><code class="descname">Error</code><a class="headerlink" href="#affect.connect.Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#Exception" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></a></p>
+<p>Base class for all exceptions raised by this module.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="affect.connect.InvalidFaceCount">
+<em class="property">exception </em><code class="descclassname">affect.connect.</code><code class="descname">InvalidFaceCount</code><a class="headerlink" href="#affect.connect.InvalidFaceCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#affect.connect.Error" title="affect.connect.Error"><code class="xref py py-class docutils literal"><span class="pre">affect.connect.Error</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">ValueError</span></code></a></p>
+<p>Exception raised if number of triangle or quadrilateral faces does not make sense for a cell topology.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="affect.connect.UnknownCellTopology">
+<em class="property">exception </em><code class="descclassname">affect.connect.</code><code class="descname">UnknownCellTopology</code><a class="headerlink" href="#affect.connect.UnknownCellTopology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#affect.connect.Error" title="affect.connect.Error"><code class="xref py py-class docutils literal"><span class="pre">affect.connect.Error</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">ValueError</span></code></a></p>
+<p>Exception raised if the string name of a cell topology was unknown.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dynamics.html" class="btn btn-neutral float-right" title="dynamics — Structural Dynamics Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="arithmetic.html" class="btn btn-neutral" title="math — Calculations on grid and mesh fields" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017–2018, Sandia Corporation.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
