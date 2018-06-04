@@ -2618,8 +2618,6 @@ class Global(EntityCollectionWithVariable, EntityWithVariable):
         Raises:
             InvalidEntityType: if the map_type is invalid
         """
-        cdef extern from "netcdf.h":
-            int nc_inq_varid(int ncid, char *name, int *varidp)
         cdef int exoid
         cdef int mapid
         cdef char *vmap
@@ -2637,7 +2635,7 @@ class Global(EntityCollectionWithVariable, EntityWithVariable):
         exoid = self.ex_id
         vmap = py_bytes
         # look for the netcdf map variable and check for error condition
-        if nc_inq_varid(exoid, vmap, &mapid) != 0:
+        if cexodus.nc_inq_varid(exoid, vmap, &mapid) != 0:
             return False
         else:
             return True

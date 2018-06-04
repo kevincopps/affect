@@ -48,8 +48,10 @@ cdef extern from "global_to_local.h" nogil:
         size_t min_global_index,
         const uint32_t * global_to_local,
         int32_t * local_to_global)
-    
-    
+
+cdef extern from "netcdf.h":
+    int nc_inq_varid(int ncid, char *name, int *varidp)
+
 cdef extern from "exodusII.h":
     
     float API_VERS "EX_API_VERS"
