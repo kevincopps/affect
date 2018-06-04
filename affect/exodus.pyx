@@ -27,9 +27,7 @@ from libc.limits cimport LLONG_MIN
 from libc.stdint cimport uintptr_t, int64_t, int32_t, int8_t, uint32_t, INT64_MAX, INT64_MIN
 from libc.stdio cimport fflush, stderr
 from libc.stdlib cimport malloc, free
-#cdef extern from "unistd.h":
-#    enum: STDERR_FILENO
-from posix.unistd cimport STDERR_FILENO, close, dup, dup2, pipe
+from posix cimport unistd
 
 from .cimport cexodus
 from . import util
@@ -683,21 +681,21 @@ cdef class DebugMessages(object):
         #     int dup(int fildes)
         #     int dup2(int fildes, int fildes2)
         #     int pipe(int fildes[2])
-        self.saved_stderr = dup(STDERR_FILENO) # save stderr for later
-        if pipe(self.err_pipe) != 0:
+        self.saved_stderr = unistd.dup(unistd.STDERR_FILENO) # save stderr for later
+        if unistd.pipe(self.err_pipe) != 0:
             raise InternalError('unable to pipe error messages from ExodusII Library on stderr')
-        dup2(self.err_pipe[1], STDERR_FILENO) # redirect stderr to the pipe
-        close(self.err_pipe[1])
+        unistd.dup2(self.err_pipe[1], unistd.STDERR_FILENO) # redirect stderr to the pipe
+        unistd.close(self.err_pipe[1])
 
     def _release_stderr(self):
-        cdef extern from "unistd.h":
-            int dup2(int fildes, int fildes2)
-            size_t read(int fildes, void *buf, size_t nbyte)
+        #cdef extern from "unistd.h":
+        #    int dup2(int fildes, int fildes2)
+        #    size_t read(int fildes, void *buf, size_t nbyte)
         # noinspection PyGlobalUndefined
         #global stderr
         fflush(stderr)  # make sure everything is now in the pipe
-        read(self.err_pipe[0], self.c_messages, cexodus.MAX_ERR_LENGTH)  # get results from pipe into our buffer
-        dup2(self.saved_stderr, STDERR_FILENO)  # reconnect stderr
+        unistd.read(self.err_pipe[0], self.c_messages, cexodus.MAX_ERR_LENGTH)  # get results from pipe into our buffer
+        unistd.dup2(self.saved_stderr, unistd.STDERR_FILENO)  # reconnect stderr
 
 
 class EntryType(IntEnum):
