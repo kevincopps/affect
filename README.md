@@ -8,7 +8,7 @@ License
 -------
 
 BSD. Specifically the "new/modified BSD" license, also called the "BSD three clause license".
-See [license file](https://github.com/kdcopps/affect/blob/master/LICENSE).
+See [license file](https://github.com/kevincopps/affect/blob/master/LICENSE).
 
 Documentation
 -------------
